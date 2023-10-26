@@ -13,10 +13,10 @@ custom_dropdown(
       builder: (context) {
         return StatefulBuilder(
           builder: (context, setState) {
-            return Container(
+            return SizedBox(
               height: MediaQuery.of(context).size.height * 0.7,
               child: AlertDialog(
-                shape: RoundedRectangleBorder(
+                shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(Radius.circular(15.0))),
                 backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 content: SingleChildScrollView(
@@ -64,7 +64,7 @@ custom_dropdown(
                                                 0.02,
                                       ),
                                       Text(val[index].name),
-                                      Divider()
+                                      const Divider()
                                     ],
                                   ),
                                 );
@@ -88,7 +88,7 @@ custom_dropdown(
                                                 0.02,
                                       ),
                                       Text(val[index].name),
-                                      Divider()
+                                      const Divider()
                                     ],
                                   ),
                                 );

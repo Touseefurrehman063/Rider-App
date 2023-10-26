@@ -7,7 +7,6 @@ import 'package:flutter_riderapp/Models/userprofile.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -126,7 +125,7 @@ class _EditProfileState extends State<EditProfile> {
             fontSize: 24,
             fontWeight: FontWeight.w700,
             height: 1.175,
-            color: Color(0xFF1272D3),
+            color: const Color(0xFF1272D3),
           ),
         ),
         centerTitle: true,
@@ -224,7 +223,7 @@ class _EditProfileState extends State<EditProfile> {
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold),
-                    primcolor: Color(0xFF1272D3),
+                    primcolor: const Color(0xFF1272D3),
                     width: MediaQuery.of(context).size.width * 0.8,
                   ),
                 ],

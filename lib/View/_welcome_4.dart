@@ -1,7 +1,6 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/View/_login.dart';
-import 'package:flutter_riderapp/View/_welcome_3.dart';
 import 'package:flutter_riderapp/View/_welcome_5.dart';
 import 'package:flutter_riderapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';

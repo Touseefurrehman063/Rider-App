@@ -6,7 +6,6 @@ import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/View/Nodata.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +20,7 @@ import 'package:flutter_riderapp/View/_login.dart';
 import 'package:flutter_riderapp/View/_profile.dart';
 import 'package:flutter_riderapp/View/_splash_screen.dart';
 
+// ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
   final String userName;
   late String empId;
@@ -45,9 +45,9 @@ class _DashboardState extends State<Dashboard> {
 
   instance() async {
     if (userprofile != userProfile()) {
-      SharedPreferences _prefs = await SharedPreferences.getInstance();
-      login(await _prefs.getString('username') ?? "",
-          await _prefs.getString('password') ?? "");
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      login(prefs.getString('username') ?? "",
+          prefs.getString('password') ?? "");
     }
   }
 
@@ -61,7 +61,7 @@ LogoutUser() async {
   String? DeviceToken = await LocalDB().getDeviceToken();
   var body = jsonEncode({
     "UserId":"${widget.user!.empId}",
-      "DeviceToken": "$DeviceToken",
+      "DeviceToken": DeviceToken,
   "Manufacturer": "Browser",
   "Model": "Infinix-X680B Infinix X680B",
   "AppVersion": "Infinix-X680B Infinix X680B",
@@ -87,6 +87,7 @@ LogoutUser() async {
     if (status == 1) {
       // ignore: use_build_context_synchronously
    
+      // ignore: unused_local_variable
       var empId = responseData['Id'];
 
      
@@ -112,11 +113,11 @@ LogoutUser() async {
       // style: DrawerStyle.style3,
       dragOffset: 40,
         showShadow: true,
-        shadowLayer2Color:  Color(0xFF2157B2),
-        menuBackgroundColor: Color(0xFF2157B2),
+        shadowLayer2Color:  const Color(0xFF2157B2),
+        menuBackgroundColor: const Color(0xFF2157B2),
         angle: 0,
         slideWidth: 275,
-      menuScreen: DrawerContent(),
+      menuScreen: const DrawerContent(),
       mainScreen: WillPopScope(
 
        onWillPop: () async => false,
@@ -176,20 +177,22 @@ LogoutUser() async {
 }
 
 class DrawerContent extends StatelessWidget {
+  const DrawerContent({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Material(
       child: Container(
-        color: Color(0xFF2157B2),
+        color: const Color(0xFF2157B2),
         child: Column(
           children: <Widget>[
-            // Container(
-            //   width: double.infinity,
-            //   height: Get.height*0.2  ,
-            //   child: Center(
+            SizedBox(
+              width: double.infinity,
+              height: Get.height*0.2  ,
+              child: const Center(
            
-            //   ),
-            // ),
+              ),
+            ),
              Padding(
                padding: const EdgeInsets.only(right:80.0),
                child: Text(
@@ -200,44 +203,44 @@ class DrawerContent extends StatelessWidget {
                      color: Colors.white, fontWeight: FontWeight.bold),
                ),
              ),
-             Divider(
+             const Divider(
               color: Colors.white,
              ),
             
              ListTile(
-              leading: Icon(Icons.history,color: Colors.white,),
+              leading: const Icon(Icons.history,color: Colors.white,),
               title: Text('History', style:
             Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NoDataFound()),
+                  MaterialPageRoute(builder: (context) => const NoDataFound()),
                 );
               },
             ),
              ListTile(
-              leading: Icon(Icons.fingerprint,color: Colors.white,),
+              leading: const Icon(Icons.fingerprint,color: Colors.white,),
               title: Text('Biometric',style:
             Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => NoDataFound()),
+                  MaterialPageRoute(builder: (context) => const NoDataFound()),
                 );
               },
             ),
             ListTile(
-              leading: Icon(Icons.password,color: Colors.white,),
+              leading: const Icon(Icons.password,color: Colors.white,),
               title: Text('Change Password',style:
             Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ChangePassword()),
+                  MaterialPageRoute(builder: (context) => const ChangePassword()),
                 );
               },
             ),
-            Divider(color: Colors.white,),
+            const Divider(color: Colors.white,),
              SizedBox(
                 height: Get.height * 0.02,
               ),
@@ -247,9 +250,9 @@ class DrawerContent extends StatelessWidget {
                   onTap: () {
                     print('Pressed');
                   },
-                  child: Text(
+                  child: const Text(
                     'Privacy & Policy',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white, fontSize: 14),
                   ),
                 ),
@@ -263,9 +266,9 @@ class DrawerContent extends StatelessWidget {
                   onTap: () {
                     print('Pressed');
                   },
-                  child: Text(
+                  child: const Text(
                     'Terms and Conditions',
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white, fontSize: 14),
                   ),
                 ),
@@ -276,7 +279,7 @@ class DrawerContent extends StatelessWidget {
 
 
             ListTile(
-              leading: Icon(Icons.delete,color: Colors.white,),
+              leading: const Icon(Icons.delete,color: Colors.white,),
               title: Text('Delete Account', style:
             Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
               onTap: () {
@@ -286,7 +289,7 @@ class DrawerContent extends StatelessWidget {
               },
             ),
             ListTile(
-              leading: Icon(Icons.logout,color: Colors.white,),
+              leading: const Icon(Icons.logout,color: Colors.white,),
               title: Text('Logout',style:
             Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
               onTap: () {
@@ -374,19 +377,19 @@ void logout(BuildContext context) async{
   );
 }
 
-// Replace these variables with your actual implementations.
+
 int selectedPage = 1;
 String UserName = "YourUsername";
 String empId = "YourEmpId";
 
 final List<Widget> pages = [
-  notification(), // Replace with your Notification widget
-  FirstView(), // Replace with your FirstView widget
-  Profile(empId: empId ?? "", userName: "${UserName}"), // Replace with your Profile widget
+  const notification(), 
+  FirstView(), 
+  Profile(empId: empId, userName: UserName), 
 ];
 
 final items = [
-  Icon(Icons.notifications, size: 30, color: Colors.white),
-  Icon(Icons.home, size: 30, color: Colors.white),
-  Icon(Icons.person, size: 30, color: Colors.white),
+  const Icon(Icons.notifications, size: 30, color: Colors.white),
+  const Icon(Icons.home, size: 30, color: Colors.white),
+  const Icon(Icons.person, size: 30, color: Colors.white),
 ];

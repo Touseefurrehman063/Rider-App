@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/_dashboard.dart';
 
-import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 
 
 class DrawerScreen extends StatefulWidget {
@@ -16,7 +13,7 @@ class DrawerScreen extends StatefulWidget {
 class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return const Scaffold();
     // return   ZoomDrawer(
     //     dragOffset: 40,
     //     showShadow: true,

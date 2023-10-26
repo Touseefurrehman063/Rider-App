@@ -15,10 +15,10 @@ searchableDropdown(
     builder: (context) {
       return StatefulBuilder(
         builder: (context, setState) {
-          return Container(
+          return SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
             child: AlertDialog(
-              shape: RoundedRectangleBorder(
+              shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15.0)),
               ),
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -72,7 +72,7 @@ searchableDropdown(
                                             0.02,
                                   ),
                                   Text(val[index].name),
-                                  Divider()
+                                  const Divider()
                                 ],
                               ),
                             );
@@ -97,7 +97,7 @@ searchableDropdown(
                       Navigator.pop(context);
                     }
                   },
-                  child: Text('OK'),
+                  child: const Text('OK'),
                 ),
               ],
             ),

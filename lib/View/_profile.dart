@@ -1,16 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Models/userprofile.dart';
 import 'package:flutter_riderapp/View/_editprofile.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/_dashboard.dart';
 import 'package:intl/intl.dart';
 
 // ignore: must_be_immutable
@@ -101,7 +97,7 @@ class _ProfileState extends State<Profile> {
             fontSize: 24,
             fontWeight: FontWeight.w700,
             height: 1.175,
-            color: Color(0xFF1272D3),
+            color: const Color(0xFF1272D3),
           ),
         ),
         centerTitle: true,
@@ -128,7 +124,7 @@ class _ProfileState extends State<Profile> {
      Container(
     height: 150,
     width: 150,
-    decoration: BoxDecoration(
+    decoration: const BoxDecoration(
       shape: BoxShape.circle,
       
     ),
@@ -158,7 +154,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               TextSpan(
                                 text:
-                                    'Hi, ${(userprofile?.fullName ?? "Tabib Rider").length > 10 ? (userprofile?.fullName ?? "Tabib Rider").substring(0, 10) + '...' : (userprofile?.fullName ?? "Tabib Rider")}',
+                                    'Hi, ${(userprofile?.fullName ?? "Tabib Rider").length > 10 ? '${(userprofile?.fullName ?? "Tabib Rider").substring(0, 10)}...' : (userprofile?.fullName ?? "Tabib Rider")}',
                                 style: GoogleFonts.raleway(
                                   fontSize: 23,
                                   fontWeight: FontWeight.w800,
@@ -358,7 +354,7 @@ class RecordWidget extends StatelessWidget {
                   child: Text(
                     '$title',
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                           fontSize: 12,
@@ -384,7 +380,7 @@ class RecordWidget extends StatelessWidget {
                     '$name',
                     maxLines: 2,
                     textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.bodyText1!.copyWith(
+                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                           color: Colors.white,
                           fontWeight: FontWeight.w300,
                           fontSize: 12,

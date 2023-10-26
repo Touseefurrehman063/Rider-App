@@ -1,10 +1,10 @@
-class CountryModel {
+class NOKModel{
   String? id;
   String? name;
 
-  CountryModel({this.id, this.name});
+  NOKModel({this.id, this.name});
 
-  CountryModel.fromJson(Map<String, dynamic> json) {
+  NOKModel.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     name = json['Name'];
   }

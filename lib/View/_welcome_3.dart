@@ -4,7 +4,6 @@ import 'package:flutter_riderapp/View/_login.dart';
 import 'package:flutter_riderapp/View/_welcome_4.dart';
 import 'package:flutter_riderapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_riderapp/View/_welcome_2.dart';
 class Welcome3 extends StatefulWidget {
   const Welcome3({super.key});
   @override

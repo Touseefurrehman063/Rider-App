@@ -30,16 +30,16 @@ class InrouteModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PatientId'] = this.patientId;
-    data['BranchLocationId'] = this.branchLocationId;
-    data['LabNo'] = this.labNo;
-    data['RiderLatitude'] = this.riderLatitude;
-    data['RiderLongitude'] = this.riderLongitude;
-    data['UserId'] = this.userId;
-    data['DeliveryBranchLocationId'] = this.deliveryBranchLocationId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['PatientId'] = patientId;
+    data['BranchLocationId'] = branchLocationId;
+    data['LabNo'] = labNo;
+    data['RiderLatitude'] = riderLatitude;
+    data['RiderLongitude'] = riderLongitude;
+    data['UserId'] = userId;
+    data['DeliveryBranchLocationId'] = deliveryBranchLocationId;
     data['InRouteDeliveryBranchLocationId'] =
-        this.inRouteDeliveryBranchLocationId;
+        inRouteDeliveryBranchLocationId;
     return data;
   }
 }

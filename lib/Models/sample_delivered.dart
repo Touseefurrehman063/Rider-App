@@ -33,16 +33,16 @@ class sampledeliveredModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PatientId'] = this.patientId;
-    data['BranchLocationId'] = this.branchLocationId;
-    data['LabNo'] = this.labNo;
-    data['RiderLatitude'] = this.riderLatitude;
-    data['RiderLongitude'] = this.riderLongitude;
-    data['RiderAddress'] = this.riderAddress;
-    data['RiderRemarks'] = this.riderRemarks;
-    data['UserId'] = this.userId;
-    data['DeliveryBranchLocationId'] = this.deliveryBranchLocationId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['PatientId'] = patientId;
+    data['BranchLocationId'] = branchLocationId;
+    data['LabNo'] = labNo;
+    data['RiderLatitude'] = riderLatitude;
+    data['RiderLongitude'] = riderLongitude;
+    data['RiderAddress'] = riderAddress;
+    data['RiderRemarks'] = riderRemarks;
+    data['UserId'] = userId;
+    data['DeliveryBranchLocationId'] = deliveryBranchLocationId;
     return data;
   }
 }

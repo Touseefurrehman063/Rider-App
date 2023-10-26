@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class CustomNotification extends StatefulWidget {
   const CustomNotification({Key? key}) : super(key: key);
@@ -35,7 +34,7 @@ class _CustomNotificationState extends State<CustomNotification> {
       tileColor: Colors.transparent,
       title: Text(
         'Ride Completed',
-        style: Theme.of(context).textTheme.bodyText2?.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: Colors.black,
           fontSize: 14,
           fontWeight: FontWeight.bold,
@@ -43,7 +42,7 @@ class _CustomNotificationState extends State<CustomNotification> {
       ),
       subtitle: Text(
         'Test is delivered successfully to the Lab\n15 mins ago',
-        style: Theme.of(context).textTheme.bodyText2?.copyWith(
+        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
           color: Colors.grey,
           fontSize: 10,
         ),

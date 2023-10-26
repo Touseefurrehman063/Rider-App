@@ -69,14 +69,14 @@ class _ViewInformationState extends State<ViewInformation> {
   List<String> appointmentNameArray = ['appointment detail'];
   final RxString _selectedOption = 'No'.obs;
   int _polylineCount = 1;
-  GoogleMapPolyline _googleMapPolyline =
-      new GoogleMapPolyline(apiKey: "AIzaSyAO9XAv-175N385sGFtr-aeA3EgjEIGWWY");
+  final GoogleMapPolyline _googleMapPolyline =
+      GoogleMapPolyline(apiKey: "AIzaSyAO9XAv-175N385sGFtr-aeA3EgjEIGWWY");
   LatLng _currentLatLng = const LatLng(0.0, 0.0);
   final Completer<GoogleMapController> _controller = Completer();
-  Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
+  final Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
 
   _getPolylinesWithLocation(riderloc, LatLng generic) async {
-    distance = await Geolocator.distanceBetween(
+    distance = Geolocator.distanceBetween(
       double.parse(_currentLatLng.latitude.toString()),
       double.parse(_currentLatLng.longitude.toString()),
       double.parse(ltlg[0].latitude.toString()),
@@ -92,7 +92,7 @@ class _ViewInformationState extends State<ViewInformation> {
     distance = (distance / 1000) * 1.6;
     setState(() {});
     if (_selectedlab != null) {
-      distance = await Geolocator.distanceBetween(
+      distance = Geolocator.distanceBetween(
         double.parse(_currentLatLng.latitude.toString()),
         double.parse(_currentLatLng.longitude.toString()),
         double.parse(generic.latitude.toString()),
@@ -118,7 +118,7 @@ class _ViewInformationState extends State<ViewInformation> {
       );
     }
 
-    List<LatLng>? _coordinates =
+    List<LatLng>? coordinates =
         await _googleMapPolyline.getCoordinatesWithLocation(
             origin: riderloc, destination: generic, mode: RouteMode.driving);
     List<List<PatternItem>> patterns = <List<PatternItem>>[
@@ -133,13 +133,13 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
-    _addPolyline(List<LatLng>? _coordinates) {
+    _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("poly$_polylineCount");
       Polyline polyline = Polyline(
           polylineId: id,
           patterns: patterns[0],
           color: Colors.blueAccent,
-          points: _coordinates!,
+          points: coordinates!,
           width: 10,
           onTap: () {});
       setState(() {
@@ -151,11 +151,11 @@ class _ViewInformationState extends State<ViewInformation> {
     setState(() {
       _polylines.clear();
     });
-    _addPolyline(_coordinates);
+    _addPolyline(coordinates);
   }
 
   _getPolylinesWithLocationforlab(riderloc, LatLng generic) async {
-    distance = await Geolocator.distanceBetween(
+    distance = Geolocator.distanceBetween(
       double.parse(_currentLatLng.latitude.toString()),
       double.parse(_currentLatLng.longitude.toString()),
       double.parse(widget.user.inroutelat.toString()),
@@ -180,7 +180,7 @@ class _ViewInformationState extends State<ViewInformation> {
       ),
     );
 
-    List<LatLng>? _coordinates =
+    List<LatLng>? coordinates =
         await _googleMapPolyline.getCoordinatesWithLocation(
             origin: riderloc, destination: generic, mode: RouteMode.driving);
 
@@ -196,13 +196,13 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
-    _addPolyline(List<LatLng>? _coordinates) {
+    _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("$timeInHours");
       Polyline polyline = Polyline(
           polylineId: id,
           patterns: patterns[0],
           color: Colors.blueAccent,
-          points: _coordinates!,
+          points: coordinates!,
           width: 10,
           onTap: () {
             ScaffoldMessenger.of(context)
@@ -218,7 +218,7 @@ class _ViewInformationState extends State<ViewInformation> {
     setState(() {
       _polylines.clear();
     });
-    _addPolyline(_coordinates);
+    _addPolyline(coordinates);
   }
 
   Location location = Location();
@@ -436,7 +436,7 @@ class _ViewInformationState extends State<ViewInformation> {
         .then((value) {})
         .onError((error, stackTrace) async {
       await Geolocator.requestPermission();
-      print("ERROR" + error.toString());
+      print("ERROR$error");
     });
     return await Geolocator.getCurrentPosition();
   }
@@ -862,22 +862,20 @@ class _ViewInformationState extends State<ViewInformation> {
     };
 
     samplebody bdody = samplebody();
-    if (widget.user != null) {
-      bdody = samplebody(
-        patientId: widget.user.patientid,
-        userId: widget.empId,
-        branchLocationId: widget.user.branchlocationid,
-        labNo: checkinreponselist.isNotEmpty
-            ? checkinreponselist[0].labNo.toString().split(';')[0]
-            : widget.user.labTestChallanNo,
-        visitNo: checkinreponselist.isNotEmpty
-            ? checkinreponselist[0].visitNo
-            : widget.user.visitno,
-        appointmentNo: widget.user.LabNo,
-        price: lst1.isNotEmpty ? lst1.last.totalCharges : "",
-      );
-    }
-
+    bdody = samplebody(
+      patientId: widget.user.patientid,
+      userId: widget.empId,
+      branchLocationId: widget.user.branchlocationid,
+      labNo: checkinreponselist.isNotEmpty
+          ? checkinreponselist[0].labNo.toString().split(';')[0]
+          : widget.user.labTestChallanNo,
+      visitNo: checkinreponselist.isNotEmpty
+          ? checkinreponselist[0].visitNo
+          : widget.user.visitno,
+      appointmentNo: widget.user.LabNo,
+      price: lst1.isNotEmpty ? lst1.last.totalCharges : "",
+    );
+  
     dynamic bd = bdody.toJson();
 
     final response =
@@ -913,7 +911,7 @@ class _ViewInformationState extends State<ViewInformation> {
     var headers = {
       'Content-Type': 'application/json',
     };
-    samplecollectionresponselst.forEach((val) {
+    for (var val in samplecollectionresponselst) {
       listlabsamplelst.add(ListLabServiceDataDetail(
           srNo: 1,
           patientLabCheckInId: val.patientLabCheckInId ?? "",
@@ -952,7 +950,7 @@ class _ViewInformationState extends State<ViewInformation> {
           autoNumberGenerated: val.autoNumberGenerated ?? "",
           autoNumberGenerationLabelText:
               val.autoNumberGenerationLabelText ?? ""));
-    });
+    }
 
     samplecollectedModel bdody = samplecollectedModel(
         isInvestigationQueue: true,
@@ -1167,7 +1165,6 @@ class _ViewInformationState extends State<ViewInformation> {
                               isLoading = false;
                             });
                           }
-                          ;
 
                           setState(() {
                             isLoading = false;
@@ -1244,7 +1241,7 @@ class _ViewInformationState extends State<ViewInformation> {
         inAsyncCall: isLoading,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
-          color: Color(0xfff1272D3),
+          color: Color(0xfff1272d3),
           size: 60,
         ),
         dismissible: false,
@@ -1268,27 +1265,21 @@ class _ViewInformationState extends State<ViewInformation> {
                                 ? Container(
                                     child: time > 60.0
                                         ? Text(
-                                            distance.toStringAsFixed(1) +
-                                                " km , " +
-                                                temptime.toStringAsFixed(1) +
-                                                " hrs",
+                                            "${distance.toStringAsFixed(1)} km , ${temptime.toStringAsFixed(1)} hrs",
                                             style: GoogleFonts.poppins(
                                                 color: Colors.orange,
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.bold),
                                           )
                                         : Text(
-                                            distance.toStringAsFixed(1) +
-                                                " km , " +
-                                                time.toStringAsFixed(1) +
-                                                " mins",
+                                            "${distance.toStringAsFixed(1)} km , ${time.toStringAsFixed(1)} mins",
                                             style: GoogleFonts.poppins(
                                                 color: Colors.orange,
                                                 fontSize: 16.0,
                                                 fontWeight: FontWeight.bold),
                                           ),
                                   )
-                                : SizedBox(),
+                                : const SizedBox(),
                             body: GoogleMap(
                               initialCameraPosition: _kGoogle,
                               mapType: MapType.normal,
@@ -1299,23 +1290,21 @@ class _ViewInformationState extends State<ViewInformation> {
                                 _controller.complete(controller);
 
                                 getUserCurrentLocation().then((value) async {
-                                  print(value.latitude.toString() +
-                                      " " +
-                                      value.longitude.toString());
+                                  print("${value.latitude} ${value.longitude}");
 
                                   // marker added for current users location
                                   _markers.add(Marker(
-                                    markerId: MarkerId("2"),
+                                    markerId: const MarkerId("2"),
                                     position:
                                         LatLng(value.latitude, value.longitude),
-                                    infoWindow: InfoWindow(
+                                    infoWindow: const InfoWindow(
                                       title: 'My Current Location',
                                     ),
                                   ));
 
                                   // specified current users location
                                   CameraPosition cameraPosition =
-                                      new CameraPosition(
+                                      CameraPosition(
                                     target:
                                         LatLng(value.latitude, value.longitude),
                                     zoom: 14,
@@ -1674,7 +1663,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 } else {
                                                                   ScaffoldMessenger.of(
                                                                           context)
-                                                                      .showSnackBar(SnackBar(
+                                                                      .showSnackBar(const SnackBar(
                                                                           content:
                                                                               Text("Please Enter remarks")));
                                                                 }
@@ -1850,7 +1839,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 } else {
                                                                   ScaffoldMessenger.of(
                                                                           context)
-                                                                      .showSnackBar(SnackBar(
+                                                                      .showSnackBar(const SnackBar(
                                                                           content:
                                                                               Text("Please Enter Remarks First")));
                                                                 }
@@ -2031,7 +2020,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                               } else {
                                                                 ScaffoldMessenger.of(
                                                                         context)
-                                                                    .showSnackBar(SnackBar(
+                                                                    .showSnackBar(const SnackBar(
                                                                         content:
                                                                             Text("Please Enter Remarks first")));
                                                               }
@@ -2200,12 +2189,12 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     child:
                                                         DropdownButtonFormField(
                                                       decoration:
-                                                          InputDecoration(
+                                                          const InputDecoration(
                                                         border:
                                                             InputBorder.none,
                                                       ),
                                                       value: Selectpayment,
-                                                      hint: Text(
+                                                      hint: const Text(
                                                           '   Payment Method',
                                                           textAlign:
                                                               TextAlign.center),
@@ -2236,7 +2225,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           Alignment.center,
                                                     ),
                                                   )
-                                                : SizedBox(),
+                                                : const SizedBox(),
                                           ),
                                         ),
                                       ),
@@ -2244,12 +2233,12 @@ class _ViewInformationState extends State<ViewInformation> {
                                       SizedBox(
                                         child: widget.user.paymentstatusname !=
                                                 "Success"
-                                            ? Text(
+                                            ? const Text(
                                                 "Discount:",
                                                 style: TextStyle(
                                                     color: Colors.white),
                                               )
-                                            : Text(""),
+                                            : const Text(""),
                                       ),
                                     if (widget.user.status == "Ride Arrived")
                                       SizedBox(
@@ -2266,7 +2255,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
                                                     children: [
-                                                      Text(
+                                                      const Text(
                                                         'Yes',
                                                         style: TextStyle(
                                                             color:
@@ -2302,7 +2291,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 MainAxisSize
                                                                     .min,
                                                             children: [
-                                                              Text(
+                                                              const Text(
                                                                 'No',
                                                                 style: TextStyle(
                                                                     color: Colors
@@ -2335,7 +2324,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           )),
                                                     ],
                                                   )
-                                                : SizedBox(),
+                                                : const SizedBox(),
                                             Obx(
                                               () => _selectedOption == 'Yes'
                                                   ? Row(
@@ -2366,7 +2355,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           child:
                                                               DropdownButtonFormField(
                                                             decoration:
-                                                                InputDecoration(
+                                                                const InputDecoration(
                                                               border:
                                                                   InputBorder
                                                                       .none,
@@ -2400,7 +2389,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                             elevation: 0,
                                                           ),
                                                         ),
-                                                        Container(
+                                                        SizedBox(
                                                           width: MediaQuery.of(
                                                                       context)
                                                                   .size
@@ -2440,7 +2429,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                   dropdownvalue,
                                                               border:
                                                                   OutlineInputBorder(
-                                                                borderSide: BorderSide(
+                                                                borderSide: const BorderSide(
                                                                     color: Colors
                                                                         .black),
                                                                 borderRadius:
@@ -2449,7 +2438,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                             10.0),
                                                               ),
                                                             ),
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                               color: Colors
                                                                   .black, // Text color
                                                               fontSize:
@@ -2459,7 +2448,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                         ),
                                                       ],
                                                     )
-                                                  : SizedBox(),
+                                                  : const SizedBox(),
                                             )
                                           ],
                                         ),
@@ -2474,7 +2463,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                             if (selectedLabsName == null) {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
-                                                SnackBar(
+                                                const SnackBar(
                                                   content: Text(
                                                       'Please select a Lab'),
                                                 ),
@@ -2600,7 +2589,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   children: [
                                                     Text(
                                                       //"${selectedCountriesName?? "Country"}",
-                                                      "${(selectedLabsName != null) ? (selectedLabsName!.length > 8 ? (selectedLabsName!.substring(0, 8) + '...') : selectedLabsName) : "Select Lab"}",
+                                                      "${(selectedLabsName != null) ? (selectedLabsName!.length > 8 ? ('${selectedLabsName!.substring(0, 8)}...') : selectedLabsName) : "Select Lab"}",
                                                       style: TextStyle(
                                                           fontSize: 17,
                                                           color:
@@ -2856,8 +2845,8 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                   "  Remarks",
                                                               border:
                                                                   OutlineInputBorder(
-                                                                borderSide: BorderSide(
-                                                                    color: const Color
+                                                                borderSide: const BorderSide(
+                                                                    color: Color
                                                                         .fromARGB(
                                                                         255,
                                                                         100,
@@ -2869,7 +2858,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                             10.0),
                                                               ),
                                                             ),
-                                                            style: TextStyle(
+                                                            style: const TextStyle(
                                                               color: Colors
                                                                   .black, // Text color
                                                               fontSize:
@@ -2880,7 +2869,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                       ),
                                                     ),
                                                   ])
-                                            : SizedBox(),
+                                            : const SizedBox(),
                                       ),
                                     if (widget.user.status == "Ride Arrived")
                                       SizedBox(

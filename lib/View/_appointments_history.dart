@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -33,17 +32,23 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
     super.dispose();
   }
 
+  // ignore: non_constant_identifier_names
   String Status = "";
+  // ignore: unused_field
   late Future<List<User>> _appointmentsFuture;
-  List<User> _appointments = [];
+  final List<User> _appointments = [];
   final dateFormat = DateFormat('yyyy-MM-dd');
   DateTime dateTime = DateTime.now().subtract(const Duration(days: 30));
   DateTime dateTime2 = DateTime.now();
+  // ignore: non_constant_identifier_names
   int Selectedoption = 0;
+  // ignore: non_constant_identifier_names
   DateTime? _Selected_Start_Date;
+  // ignore: non_constant_identifier_names
   DateTime? _Selected_End_Date;
   String selectedStatusFilter = "";
 
+  // ignore: unused_element
   Future<void> _selectStartDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
         context: context,
@@ -58,6 +63,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
     }
   }
 
+  // ignore: unused_element
   Future<void> _selectEndDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -74,9 +80,12 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
   }
 
   int start = 0;
+  // ignore: non_constant_identifier_names
   int TotalRecordsData = 0;
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  // ignore: non_constant_identifier_names
   late String StartDate;
+  // ignore: non_constant_identifier_names
   late String EndDate;
   bool isLoadingData = false;
   bool isLoadingmoreData = false;
@@ -114,6 +123,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
     _appointments.clear();
   }
 
+  // ignore: non_constant_identifier_names
   SetStartToFetchNextData() {
     if ((start + AppConstants.maximumDataTobeFetched) < TotalRecordsData) {
       start = start + AppConstants.maximumDataTobeFetched;
@@ -123,8 +133,15 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
     }
   }
 
-  Future<List<User>> getappointments(String empId, String StartDate,
-      String EndDate, int length, int start) async {
+  // ignore: non_constant_identifier_names
+  Future<List<User>> getappointments(
+      String empId,
+      // ignore: non_constant_identifier_names
+      String StartDate,
+      // ignore: non_constant_identifier_names
+      String EndDate,
+      int length,
+      int start) async {
     if (start == 0) {
       isLoadingData = true;
       setState(() {});
@@ -163,15 +180,12 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
           if (start == 0) {
             _appointments.clear();
           }
-          if (ulist != null) {
-            ulist.forEach((element) {
-              _appointments.add(element);
-            });
+          for (var element in ulist) {
+            _appointments.add(element);
           }
           setState(() {});
-          print(ulist);
         }
-        print(ulist);
+
         isLoadingData = false;
         isLoadingmoreData = false;
         setState(() {});
@@ -207,7 +221,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
         inAsyncCall: isLoadingData,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
-          color: Color(0xfff1272D3),
+          color: Color(0xff1272d3),
           size: 60,
         ),
         dismissible: false,
@@ -241,13 +255,13 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 height: 1.175,
-                color: Color(0xFF1272D3),
+                color: const Color(0xFF1272D3),
               ),
             ),
             actions: [
               InkWell(
                 onTap: () {
-                  print('Image tapped');
+                
                 },
                 child: PopupMenuButton<int>(
                   shape: const RoundedRectangleBorder(
@@ -381,7 +395,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                     color: Colors.grey.withOpacity(0.2),
                                     spreadRadius: 5,
                                     blurRadius: 7,
-                                    offset: Offset(0, 1),
+                                    offset: const Offset(0, 1),
                                   ),
                                 ],
                                 borderRadius: BorderRadius.circular(7),
@@ -458,7 +472,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                   color: Colors.grey.withOpacity(0.2),
                                   spreadRadius: 5,
                                   blurRadius: 7,
-                                  offset: Offset(0, 1),
+                                  offset: const Offset(0, 1),
                                 ),
                               ],
                               borderRadius: BorderRadius.circular(10),
@@ -522,6 +536,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                         StartDate = formatDate(dateTime);
                         EndDate = formatDate(dateTime2);
                         resetAllDataValues();
+                        // ignore: unused_local_variable
                         List<User> fetchedAppointments = await getappointments(
                           widget.empId,
                           formatDate(dateTime),
@@ -565,308 +580,302 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                 //             child: Text('No appointments.'),
                 //           );
                 //         }
+                // ignore: unnecessary_null_comparison
                 (((_appointments != null) ? _appointments.length : 0) != 0)
                     ? Expanded(
                         child: ListView.builder(
                           controller: _scrollController,
+                          // ignore: unnecessary_null_comparison
                           itemCount: ((_appointments != null)
                               ? _appointments.length
                               : 0),
                           itemBuilder: (context, index) {
-                            if (_appointments[index] != null) {
-                              User user = _appointments[index];
+                            User user = _appointments[index];
 
-                              if (user.status.toString() ==
-                                  selectedStatusFilter.toString()) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, right: 15, left: 15),
-                                  child: Card(
-                                    color: Color(0xFF1272D3),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
-
-                                    child: ListTile(
-                                        title: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ListTile(
-                                          title: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text(
-                                                user.patientName ?? "",
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text.rich(
-                                                TextSpan(
-                                                  text: "Test  | ",
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  children: [
-                                                    TextSpan(
-                                                        text: user.test ?? "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal)),
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text.rich(
-                                                TextSpan(
-                                                  text: "Address  | ",
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                            user.address ?? "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: Text(
-                                            user.status ?? "",
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ViewInformation(
-                                                            empId: widget.empId,
-                                                            user: user,
-                                                            labid:
-                                                                user.labTestChallanNo ??
-                                                                    "",
-                                                          )));
-                                              debugPrint(widget.empId);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              fixedSize: const Size(380, 4),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    15), // Set the border radius here
-                                              ),
-                                            ),
-                                            child: Text(
-                                              'View Information',
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    )),
-                                    // child: ListTile(
-
-                                    //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                    //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
-
-                                    // ),
+                            if (user.status.toString() ==
+                                selectedStatusFilter.toString()) {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, right: 15, left: 15),
+                                child: Card(
+                                  color: const Color(0xFF1272D3),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                );
-                              } else if (selectedStatusFilter.toString() ==
-                                  "") {
-                                return Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, right: 15, left: 15),
-                                  child: Card(
-                                    color: Color(0xFF1272D3),
-                                    elevation: 0,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(15),
-                                    ),
 
-                                    child: ListTile(
+                                  child: ListTile(
+                                      title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
                                         title: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        ListTile(
-                                          title: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                                style: const TextStyle(
-                                                    fontSize: 10,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text(
-                                                user.patientName ?? "",
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text.rich(
-                                                TextSpan(
-                                                  text: "Test  | ",
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  children: [
-                                                    TextSpan(
-                                                        text: user.test ?? "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal)),
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              Text.rich(
-                                                TextSpan(
-                                                  text: "Address  | ",
-                                                  style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                  children: [
-                                                    TextSpan(
-                                                        text:
-                                                            user.address ?? "",
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontSize: 12,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .normal)),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          trailing: Text(
-                                            user.status ?? "",
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.white),
-                                          ),
-                                        ),
-                                        Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: ElevatedButton(
-                                            onPressed: () {
-                                              Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          ViewInformation(
-                                                            empId: widget.empId,
-                                                            user: user,
-                                                            labid:
-                                                                user.labTestChallanNo ??
-                                                                    "",
-                                                          )));
-                                              debugPrint(widget.empId);
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Colors.white,
-                                              fixedSize: const Size(380, 4),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(
-                                                    15), // Set the border radius here
-                                              ),
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                              style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
                                             ),
-                                            child: Text(
-                                              'View Information',
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              user.patientName ?? "",
                                               style: GoogleFonts.poppins(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.blue),
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text.rich(
+                                              TextSpan(
+                                                text: "Test  | ",
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                      text: user.test ?? "",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text.rich(
+                                              TextSpan(
+                                                text: "Address  | ",
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                      text: user.address ?? "",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: Text(
+                                          user.status ?? "",
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ViewInformation(
+                                                          empId: widget.empId,
+                                                          user: user,
+                                                          labid:
+                                                              user.labTestChallanNo ??
+                                                                  "",
+                                                        )));
+                                            debugPrint(widget.empId);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            fixedSize: const Size(380, 4),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  15), // Set the border radius here
                                             ),
                                           ),
+                                          child: Text(
+                                            'View Information',
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue),
+                                          ),
                                         ),
-                                      ],
-                                    )),
-                                    // child: ListTile(
+                                      ),
+                                    ],
+                                  )),
+                                  // child: ListTile(
 
-                                    //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                    //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
+                                  //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
+                                  //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
 
-                                    // ),
+                                  // ),
+                                ),
+                              );
+                            } else if (selectedStatusFilter.toString() == "") {
+                              return Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, right: 15, left: 15),
+                                child: Card(
+                                  color: const Color(0xFF1272D3),
+                                  elevation: 0,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(15),
                                   ),
-                                );
-                              } else {
-                                Container();
-                              }
+
+                                  child: ListTile(
+                                      title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      ListTile(
+                                        title: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                              style: const TextStyle(
+                                                  fontSize: 10,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text(
+                                              user.patientName ?? "",
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 20,
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text.rich(
+                                              TextSpan(
+                                                text: "Test  | ",
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                      text: user.test ?? "",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            Text.rich(
+                                              TextSpan(
+                                                text: "Address  | ",
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  TextSpan(
+                                                      text: user.address ?? "",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 12,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .normal)),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        trailing: Text(
+                                          user.status ?? "",
+                                          style: const TextStyle(
+                                              fontSize: 12,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.bottomCenter,
+                                        child: ElevatedButton(
+                                          onPressed: () {
+                                            Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        ViewInformation(
+                                                          empId: widget.empId,
+                                                          user: user,
+                                                          labid:
+                                                              user.labTestChallanNo ??
+                                                                  "",
+                                                        )));
+                                            debugPrint(widget.empId);
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: Colors.white,
+                                            fixedSize: const Size(380, 4),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(
+                                                  15), // Set the border radius here
+                                            ),
+                                          ),
+                                          child: Text(
+                                            'View Information',
+                                            style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  )),
+                                  // child: ListTile(
+
+                                  //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
+                                  //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
+
+                                  // ),
+                                ),
+                              );
+                            } else {
+                              Container();
                             }
+                            return null;
                           },
                         ),
                       )
                     : Expanded(
-                        child: Container(
+                        child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.7,
-                          child: Center(
+                          child: const Center(
                             child: Text('No Record Found'),
                           ),
                         ),
                       ),
 
                 (isLoadingmoreData == true)
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    ? const Padding(
+                        padding: EdgeInsets.only(top: 8, bottom: 8),
                         child: SpinKitSpinningLines(
-                          color: Color(0xfff1272D3),
+                          color: Color(0xff1272d3),
                           size: 60,
                         ),
                       )

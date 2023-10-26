@@ -56,7 +56,7 @@ dynamic  sessionUserId;
     if (json['ListLabServiceDataDetail'] != null) {
       listLabServiceDataDetail = <ListLabServiceDataDetail>[];
       json['ListLabServiceDataDetail'].forEach((v) {
-        listLabServiceDataDetail!.add(new ListLabServiceDataDetail.fromJson(v));
+        listLabServiceDataDetail!.add(ListLabServiceDataDetail.fromJson(v));
       });
     }
     paidAmount = json['PaidAmount'];
@@ -68,29 +68,29 @@ dynamic  sessionUserId;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['IsInvestigationQueue'] = this.isInvestigationQueue;
-    data['PatientId'] = this.patientId;
-    data['VisitNo'] = this.visitNo;
-    data['statusBit'] = this.statusBit;
-    data['DepartmentId'] = this.departmentId;
-    data['SubDepartmentId'] = this.subDepartmentId;
-    data['DoctorId'] = this.doctorId;
-    data['SubServiceId'] = this.subServiceId;
-    data['RoleId'] = this.roleId;
-    data['DesignationId'] = this.designationId;
-    data['UserId'] = this.userId;
-    data['PatientCheckInId'] = this.patientCheckInId;
-    if (this.listLabServiceDataDetail != null) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['IsInvestigationQueue'] = isInvestigationQueue;
+    data['PatientId'] = patientId;
+    data['VisitNo'] = visitNo;
+    data['statusBit'] = statusBit;
+    data['DepartmentId'] = departmentId;
+    data['SubDepartmentId'] = subDepartmentId;
+    data['DoctorId'] = doctorId;
+    data['SubServiceId'] = subServiceId;
+    data['RoleId'] = roleId;
+    data['DesignationId'] = designationId;
+    data['UserId'] = userId;
+    data['PatientCheckInId'] = patientCheckInId;
+    if (listLabServiceDataDetail != null) {
       data['ListLabServiceDataDetail'] =
-          this.listLabServiceDataDetail!.map((v) => v.toJson()).toList();
+          listLabServiceDataDetail!.map((v) => v.toJson()).toList();
     }
-    data['PaidAmount'] = this.paidAmount;
-    data['SubDepartmentManualCodeString'] = this.subDepartmentManualCodeString;
-    data['SampleCollectionStickerCount'] = this.sampleCollectionStickerCount;
-    data['AutoNumberGenerated'] = this.autoNumberGenerated;
-    data['AutoNumberGenerationLabelText'] = this.autoNumberGenerationLabelText;
-    data['SessionUserId'] = this.sessionUserId;
+    data['PaidAmount'] = paidAmount;
+    data['SubDepartmentManualCodeString'] = subDepartmentManualCodeString;
+    data['SampleCollectionStickerCount'] = sampleCollectionStickerCount;
+    data['AutoNumberGenerated'] = autoNumberGenerated;
+    data['AutoNumberGenerationLabelText'] = autoNumberGenerationLabelText;
+    data['SessionUserId'] = sessionUserId;
     return data;
   }
 }
@@ -196,38 +196,38 @@ dynamic  autoNumberGenerationLabelText;
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['SrNo'] = this.srNo;
-    data['Id'] = this.id;
-    data['PatientLabCheckInId'] = this.patientLabCheckInId;
-    data['PatientId'] = this.patientId;
-    data['DepartmentId'] = this.departmentId;
-    data['SubDepartmentId'] = this.subDepartmentId;
-    data['UserId'] = this.userId;
-    data['DesignationId'] = this.designationId;
-    data['RoleId'] = this.roleId;
-    data['IsInPatient'] = this.isInPatient;
-    data['PatientVisitNo'] = this.patientVisitNo;
-    data['SubserviceName'] = this.subserviceName;
-    data['PrescribedbyName'] = this.prescribedbyName;
-    data['Charges'] = this.charges;
-    data['PrescribedQuantity'] = this.prescribedQuantity;
-    data['TotalCharges'] = this.totalCharges;
-    data['VisitTime'] = this.visitTime;
-    data['Total'] = this.total;
-    data['PatientStatusId'] = this.patientStatusId;
-    data['SubServiceId'] = this.subServiceId;
-    data['PatientStatusValue'] = this.patientStatusValue;
-    data['ServiceTotal'] = this.serviceTotal;
-    data['IsOutsideSample'] = this.isOutsideSample;
-    data['OutSourcedBranchId'] = this.outSourcedBranchId;
-    data['OutSideSampleComments'] = this.outSideSampleComments;
-    data['ConsumtionItems'] = this.consumtionItems;
-    data['Html'] = this.html;
-    data['PrescribedBy'] = this.prescribedBy;
-    data['PatientEntitled'] = this.patientEntitled;
-    data['AutoNumberGenerated'] = this.autoNumberGenerated;
-    data['AutoNumberGenerationLabelText'] = this.autoNumberGenerationLabelText;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['SrNo'] = srNo;
+    data['Id'] = id;
+    data['PatientLabCheckInId'] = patientLabCheckInId;
+    data['PatientId'] = patientId;
+    data['DepartmentId'] = departmentId;
+    data['SubDepartmentId'] = subDepartmentId;
+    data['UserId'] = userId;
+    data['DesignationId'] = designationId;
+    data['RoleId'] = roleId;
+    data['IsInPatient'] = isInPatient;
+    data['PatientVisitNo'] = patientVisitNo;
+    data['SubserviceName'] = subserviceName;
+    data['PrescribedbyName'] = prescribedbyName;
+    data['Charges'] = charges;
+    data['PrescribedQuantity'] = prescribedQuantity;
+    data['TotalCharges'] = totalCharges;
+    data['VisitTime'] = visitTime;
+    data['Total'] = total;
+    data['PatientStatusId'] = patientStatusId;
+    data['SubServiceId'] = subServiceId;
+    data['PatientStatusValue'] = patientStatusValue;
+    data['ServiceTotal'] = serviceTotal;
+    data['IsOutsideSample'] = isOutsideSample;
+    data['OutSourcedBranchId'] = outSourcedBranchId;
+    data['OutSideSampleComments'] = outSideSampleComments;
+    data['ConsumtionItems'] = consumtionItems;
+    data['Html'] = html;
+    data['PrescribedBy'] = prescribedBy;
+    data['PatientEntitled'] = patientEntitled;
+    data['AutoNumberGenerated'] = autoNumberGenerated;
+    data['AutoNumberGenerationLabelText'] = autoNumberGenerationLabelText;
     return data;
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
@@ -40,7 +39,7 @@ Future<Map<String, dynamic>> login(String userName, String password) async {
   var body = jsonEncode({
     'username': userName,
     'password': password,
-      "DeviceToken": "$DeviceToken",
+      "DeviceToken": DeviceToken,
   "Manufacturer": "Browser",
   "Model": "Infinix-X680B Infinix X680B",
   "AppVersion": "Infinix-X680B Infinix X680B",
@@ -168,7 +167,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
   child: TextFormField(
     controller: userNameController,
     keyboardType: TextInputType.text,
-    style: TextStyle(
+    style: const TextStyle(
       fontSize: 18, // Set the font size
       color: Colors.black, // Set the text color
     ),
@@ -176,7 +175,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
       labelText: 'UserName',
       contentPadding: const EdgeInsets.all(16), // Set the padding
       border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                borderSide: const BorderSide(color: Colors.blue, width: 2.0),
                 borderRadius: BorderRadius.circular(10.0),
               ),
     ),
@@ -199,7 +198,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
             decoration: InputDecoration(
               labelText: 'Password',
               border: OutlineInputBorder(
-                borderSide: BorderSide(color: Colors.blue, width: 2.0),
+                borderSide: const BorderSide(color: Colors.blue, width: 2.0),
                 borderRadius: BorderRadius.circular(10.0),
               ),
               fillColor: Colors.transparent,
@@ -217,7 +216,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
               ),
             ),
             keyboardType: TextInputType.text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               color: Colors.black,
             ),
@@ -293,7 +292,7 @@ SharedPreferences prefs = await SharedPreferences.getInstance();
                           const Text("Don't Have An Account?"),
                           TextButton(
                             onPressed: () async {
-                             Get.to(Signup());
+                             Get.to(const Signup());
                             },  
                             style: TextButton.styleFrom(
                               foregroundColor: Colors.blue,

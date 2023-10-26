@@ -1,14 +1,8 @@
-import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Models/User.dart';
-import 'package:flutter_riderapp/Repositeries/localdb.dart';
-import 'package:flutter_riderapp/Utilities.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riderapp/View/_login.dart';
-import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 class Registered extends StatefulWidget {
   const Registered({super.key});

@@ -18,7 +18,7 @@ class checkintry {
     if (json['PatientCheckIn'] != null) {
       patientCheckIn = <PatientCheckIn>[];
       json['PatientCheckIn'].forEach((v) {
-        patientCheckIn!.add(new PatientCheckIn.fromJson(v));
+        patientCheckIn!.add(PatientCheckIn.fromJson(v));
       });
     }
     paymentNo = json['PaymentNo'];
@@ -26,7 +26,7 @@ class checkintry {
     if (json['patientServicelist'] != null) {
       patientServicelist = <PatientServicelist>[];
       json['patientServicelist'].forEach((v) {
-        patientServicelist!.add(new PatientServicelist.fromJson(v));
+        patientServicelist!.add(PatientServicelist.fromJson(v));
       });
     }
     branchLocationIds = json['BranchLocationIds'];
@@ -34,19 +34,19 @@ class checkintry {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.patientCheckIn != null) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (patientCheckIn != null) {
       data['PatientCheckIn'] =
-          this.patientCheckIn!.map((v) => v.toJson()).toList();
+          patientCheckIn!.map((v) => v.toJson()).toList();
     }
-    data['PaymentNo'] = this.paymentNo;
-    data['DoctorCheckInType'] = this.doctorCheckInType;
-    if (this.patientServicelist != null) {
+    data['PaymentNo'] = paymentNo;
+    data['DoctorCheckInType'] = doctorCheckInType;
+    if (patientServicelist != null) {
       data['patientServicelist'] =
-          this.patientServicelist!.map((v) => v.toJson()).toList();
+          patientServicelist!.map((v) => v.toJson()).toList();
     }
-    data['BranchLocationIds'] = this.branchLocationIds;
-    data['UserId'] = this.userId;
+    data['BranchLocationIds'] = branchLocationIds;
+    data['UserId'] = userId;
     return data;
   }
 }
@@ -63,9 +63,9 @@ class PatientCheckIn {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PatientId'] = this.patientId;
-    data['CheckInTypeId'] = this.checkInTypeId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['PatientId'] = patientId;
+    data['CheckInTypeId'] = checkInTypeId;
     return data;
   }
 }
@@ -129,24 +129,24 @@ class PatientServicelist {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['SubServiceId'] = this.subServiceId;
-    data['Charges'] = this.charges;
-    data['TypeBit'] = this.typeBit;
-    data['DiscountType'] = this.discountType;
-    data['DiscountRate'] = this.discountRate;
-    data['TotalCharges'] = this.totalCharges;
-    data['PaidAmount'] = this.paidAmount;
-    data['IsUrgent'] = this.isUrgent;
-    data['ExecutionDateTime'] = this.executionDateTime;
-    data['UrgentDateTime'] = this.urgentDateTime;
-    data['GovernmentCharges'] = this.governmentCharges;
-    data['SubServiceCount'] = this.subServiceCount;
-    data['Preference'] = this.preference;
-    data['IsAutoNumberGenerationEnabled'] = this.isAutoNumberGenerationEnabled;
-    data['SpecimenName'] = this.specimenName;
-    data['VATPercentage'] = this.vatpercentage;
-    data['VATAmount'] = this.vatamount;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['SubServiceId'] = subServiceId;
+    data['Charges'] = charges;
+    data['TypeBit'] = typeBit;
+    data['DiscountType'] = discountType;
+    data['DiscountRate'] = discountRate;
+    data['TotalCharges'] = totalCharges;
+    data['PaidAmount'] = paidAmount;
+    data['IsUrgent'] = isUrgent;
+    data['ExecutionDateTime'] = executionDateTime;
+    data['UrgentDateTime'] = urgentDateTime;
+    data['GovernmentCharges'] = governmentCharges;
+    data['SubServiceCount'] = subServiceCount;
+    data['Preference'] = preference;
+    data['IsAutoNumberGenerationEnabled'] = isAutoNumberGenerationEnabled;
+    data['SpecimenName'] = specimenName;
+    data['VATPercentage'] = vatpercentage;
+    data['VATAmount'] = vatamount;
     return data;
   }
 }

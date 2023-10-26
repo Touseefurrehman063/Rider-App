@@ -122,7 +122,7 @@ class CheckInModel {
     if (json['PatientCheckIn'] != dynamic) {
       patientCheckIn = <PatientCheckIn>[];
       json['PatientCheckIn'].forEach((v) {
-        patientCheckIn!.add(new PatientCheckIn.fromJson(v));
+        patientCheckIn!.add(PatientCheckIn.fromJson(v));
       });
     }
     patientServiceAppointmentId = json['PatientServiceAppointmentId'];
@@ -131,7 +131,7 @@ class CheckInModel {
     if (json['patientServicelist'] != dynamic) {
       patientServicelist = <PatientServicelist>[];
       json['patientServicelist'].forEach((v) {
-        patientServicelist!.add(new PatientServicelist.fromJson(v));
+        patientServicelist!.add(PatientServicelist.fromJson(v));
       });
     }
     if (json['MiscellaneousServicesList'] != dynamic) {
@@ -198,77 +198,77 @@ class CheckInModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    if (this.patientCheckIn != dynamic) {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    if (patientCheckIn != dynamic) {
       data['PatientCheckIn'] =
-          this.patientCheckIn!.map((v) => v.toJson()).toList();
+          patientCheckIn!.map((v) => v.toJson()).toList();
     }
-    data['PatientServiceAppointmentId'] = this.patientServiceAppointmentId;
-    data['PaymentNo'] = this.paymentNo;
-    data['DoctorCheckInType'] = this.doctorCheckInType;
-    if (this.patientServicelist != dynamic) {
+    data['PatientServiceAppointmentId'] = patientServiceAppointmentId;
+    data['PaymentNo'] = paymentNo;
+    data['DoctorCheckInType'] = doctorCheckInType;
+    if (patientServicelist != dynamic) {
       data['patientServicelist'] =
-          this.patientServicelist!.map((v) => v.toJson()).toList();
+          patientServicelist!.map((v) => v.toJson()).toList();
     }
-    if (this.miscellaneousServicesList != dynamic) {
+    if (miscellaneousServicesList != dynamic) {
       // data['MiscellaneousServicesList'] =
       //     this.miscellaneousServicesList!.map((v) => v.toJson()).toList();
     }
-    data['DiscountReference'] = this.discountReference;
-    data['DiscountRemarks'] = this.discountRemarks;
-    data['CheckInBranchLocationId'] = this.checkInBranchLocationId;
-    data['SMSSendTo'] = this.sMSSendTo;
-    data['AirlineId'] = this.airlineId;
-    data['FlightNo'] = this.flightNo;
-    data['FlightDate'] = this.flightDate;
-    data['FlightDestinationId'] = this.flightDestinationId;
-    data['FlightDestinationName'] = this.flightDestinationName;
-    data['AirportId'] = this.airportId;
-    data['OEPRefNo'] = this.oEPRefNo;
-    data['NationalityId'] = this.nationalityId;
-    data['OEPId'] = this.oEPId;
-    data['JobTradeId'] = this.jobTradeId;
-    data['AgentId'] = this.agentId;
-    data['CountryToVisitId'] = this.countryToVisitId;
-    data['ReferenceType'] = this.referenceType;
-    data['ReferenceNumber'] = this.referenceNumber;
-    data['BookingRemarks'] = this.bookingRemarks;
-    data['IncludeFitToTravelCertificate'] = this.includeFitToTravelCertificate;
-    data['ValidityHours'] = this.validityHours;
-    data['VIPBooking'] = this.vIPBooking;
-    data['SampleCollectionSticker'] = this.sampleCollectionSticker;
-    data['SampleReceivedFrom'] = this.sampleReceivedFrom;
-    data['SampleReceivedFromRemarks'] = this.sampleReceivedFromRemarks;
+    data['DiscountReference'] = discountReference;
+    data['DiscountRemarks'] = discountRemarks;
+    data['CheckInBranchLocationId'] = checkInBranchLocationId;
+    data['SMSSendTo'] = sMSSendTo;
+    data['AirlineId'] = airlineId;
+    data['FlightNo'] = flightNo;
+    data['FlightDate'] = flightDate;
+    data['FlightDestinationId'] = flightDestinationId;
+    data['FlightDestinationName'] = flightDestinationName;
+    data['AirportId'] = airportId;
+    data['OEPRefNo'] = oEPRefNo;
+    data['NationalityId'] = nationalityId;
+    data['OEPId'] = oEPId;
+    data['JobTradeId'] = jobTradeId;
+    data['AgentId'] = agentId;
+    data['CountryToVisitId'] = countryToVisitId;
+    data['ReferenceType'] = referenceType;
+    data['ReferenceNumber'] = referenceNumber;
+    data['BookingRemarks'] = bookingRemarks;
+    data['IncludeFitToTravelCertificate'] = includeFitToTravelCertificate;
+    data['ValidityHours'] = validityHours;
+    data['VIPBooking'] = vIPBooking;
+    data['SampleCollectionSticker'] = sampleCollectionSticker;
+    data['SampleReceivedFrom'] = sampleReceivedFrom;
+    data['SampleReceivedFromRemarks'] = sampleReceivedFromRemarks;
     data['PatientLabBookingSlipAttachmentPath'] =
-        this.patientLabBookingSlipAttachmentPath;
-    data['GCCSlipNo'] = this.gCCSlipNo;
+        patientLabBookingSlipAttachmentPath;
+    data['GCCSlipNo'] = gCCSlipNo;
     data['SampleReceivedFromPanelOrganizationId'] =
-        this.sampleReceivedFromPanelOrganizationId;
-    data['DiscountReferenceId'] = this.discountReferenceId;
+        sampleReceivedFromPanelOrganizationId;
+    data['DiscountReferenceId'] = discountReferenceId;
     data['IsBookingHasTestWithoutSpecimenAndAutoNumber'] =
-        this.isBookingHasTestWithoutSpecimenAndAutoNumber;
-    data['CanRebookTest'] = this.canRebookTest;
-    data['PaymentMethodId'] = this.paymentMethodId;
-    data['PrescribedById'] = this.prescribedById;
-    data['PaymentMethodRemarks'] = this.paymentMethodRemarks;
-    data['OutDoorDoctor'] = this.outDoorDoctor;
-    data['IsCreditPaymentPending'] = this.isCreditPaymentPending;
-    data['CreditPaymentRemarks'] = this.creditPaymentRemarks;
-    data['CreditPaymentType'] = this.creditPaymentType;
-    data['CreditPaymentAmount'] = this.creditPaymentAmount;
-    data['IsReferralPanelBooking'] = this.isReferralPanelBooking;
-    data['ReferralPanelBookingRemarks'] = this.referralPanelBookingRemarks;
-    data['AdvanceSecurityPaidAmount'] = this.advanceSecurityPaidAmount;
-    data['PatientPassportImagePath'] = this.patientPassportImagePath;
-    data['PatientPicturePath'] = this.patientPicturePath;
-    data['PassportNumber'] = this.passportNumber;
-    data['BookingConcentFormAttachment'] = this.bookingConcentFormAttachment;
-    data['BranchLocationIds'] = this.branchLocationIds;
-    data['UserId'] = this.userId;
-    data['WorkingSessionId'] = this.workingSessionId;
-    data['IsOPDQueueSysEnabled'] = this.isOPDQueueSysEnabled;
-    data['IsLabQueueSysEnabled'] = this.isLabQueueSysEnabled;
-    data['IsPreRegTokenEnabled'] = this.isPreRegTokenEnabled;
+        isBookingHasTestWithoutSpecimenAndAutoNumber;
+    data['CanRebookTest'] = canRebookTest;
+    data['PaymentMethodId'] = paymentMethodId;
+    data['PrescribedById'] = prescribedById;
+    data['PaymentMethodRemarks'] = paymentMethodRemarks;
+    data['OutDoorDoctor'] = outDoorDoctor;
+    data['IsCreditPaymentPending'] = isCreditPaymentPending;
+    data['CreditPaymentRemarks'] = creditPaymentRemarks;
+    data['CreditPaymentType'] = creditPaymentType;
+    data['CreditPaymentAmount'] = creditPaymentAmount;
+    data['IsReferralPanelBooking'] = isReferralPanelBooking;
+    data['ReferralPanelBookingRemarks'] = referralPanelBookingRemarks;
+    data['AdvanceSecurityPaidAmount'] = advanceSecurityPaidAmount;
+    data['PatientPassportImagePath'] = patientPassportImagePath;
+    data['PatientPicturePath'] = patientPicturePath;
+    data['PassportNumber'] = passportNumber;
+    data['BookingConcentFormAttachment'] = bookingConcentFormAttachment;
+    data['BranchLocationIds'] = branchLocationIds;
+    data['UserId'] = userId;
+    data['WorkingSessionId'] = workingSessionId;
+    data['IsOPDQueueSysEnabled'] = isOPDQueueSysEnabled;
+    data['IsLabQueueSysEnabled'] = isLabQueueSysEnabled;
+    data['IsPreRegTokenEnabled'] = isPreRegTokenEnabled;
     return data;
   }
 }
@@ -395,46 +395,46 @@ class PatientCheckIn {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['PatientId'] = this.patientId;
-    data['TokenNumber'] = this.tokenNumber;
-    data['IncreasedPaymentAmountRemarks'] = this.increasedPaymentAmountRemarks;
-    data['IncreasedPaymentAmount'] = this.increasedPaymentAmount;
-    data['CustomPanelEntitleLetterB'] = this.customPanelEntitleLetterB;
-    data['CustomPanelEntitleLetterA'] = this.customPanelEntitleLetterA;
-    data['CustomPanelEmployeeNo'] = this.customPanelEmployeeNo;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['PatientId'] = patientId;
+    data['TokenNumber'] = tokenNumber;
+    data['IncreasedPaymentAmountRemarks'] = increasedPaymentAmountRemarks;
+    data['IncreasedPaymentAmount'] = increasedPaymentAmount;
+    data['CustomPanelEntitleLetterB'] = customPanelEntitleLetterB;
+    data['CustomPanelEntitleLetterA'] = customPanelEntitleLetterA;
+    data['CustomPanelEmployeeNo'] = customPanelEmployeeNo;
     data['CustomPanelOrganizationPackageId'] =
-        this.customPanelOrganizationPackageId;
-    data['CustomPanelOrganizationId'] = this.customPanelOrganizationId;
-    data['VoucherCouponAmount'] = this.voucherCouponAmount;
-    data['VoucherCouponDiscountType'] = this.voucherCouponDiscountType;
-    data['VoucherCouponCode'] = this.voucherCouponCode;
-    data['VoucherCouponId'] = this.voucherCouponId;
-    data['ShareAmount'] = this.shareAmount;
-    data['ShareType'] = this.shareType;
-    data['ShareEntityName'] = this.shareEntityName;
-    data['BookingShareConfigId'] = this.bookingShareConfigId;
-    data['PatientAppointmentId'] = this.patientAppointmentId;
-    data['PassengerNameRecord'] = this.passengerNameRecord;
-    data['IsOnline'] = this.isOnline;
-    data['IndividualPackageId'] = this.individualPackageId;
-    data['CheckInDiagnosisId'] = this.checkInDiagnosisId;
-    data['CheckInDoctorId'] = this.checkInDoctorId;
-    data['FateofReffered'] = this.fateofReffered;
-    data['ModeofReffered'] = this.modeofReffered;
-    data['RefferedByName'] = this.refferedByName;
-    data['RefferedFromInstituteId'] = this.refferedFromInstituteId;
-    data['CheckInTypeId'] = this.checkInTypeId;
-    data['PaidAmount'] = this.paidAmount;
-    data['Description'] = this.description;
-    data['PoliceStation'] = this.policeStation;
-    data['PatientCondition'] = this.patientCondition;
-    data['DiscountType'] = this.discountType;
-    data['Total'] = this.total;
-    data['DiscountRate'] = this.discountRate;
-    data['ChargeRate'] = this.chargeRate;
-    data['DepartmentId'] = this.departmentId;
-    data['DoctorId'] = this.doctorId;
+        customPanelOrganizationPackageId;
+    data['CustomPanelOrganizationId'] = customPanelOrganizationId;
+    data['VoucherCouponAmount'] = voucherCouponAmount;
+    data['VoucherCouponDiscountType'] = voucherCouponDiscountType;
+    data['VoucherCouponCode'] = voucherCouponCode;
+    data['VoucherCouponId'] = voucherCouponId;
+    data['ShareAmount'] = shareAmount;
+    data['ShareType'] = shareType;
+    data['ShareEntityName'] = shareEntityName;
+    data['BookingShareConfigId'] = bookingShareConfigId;
+    data['PatientAppointmentId'] = patientAppointmentId;
+    data['PassengerNameRecord'] = passengerNameRecord;
+    data['IsOnline'] = isOnline;
+    data['IndividualPackageId'] = individualPackageId;
+    data['CheckInDiagnosisId'] = checkInDiagnosisId;
+    data['CheckInDoctorId'] = checkInDoctorId;
+    data['FateofReffered'] = fateofReffered;
+    data['ModeofReffered'] = modeofReffered;
+    data['RefferedByName'] = refferedByName;
+    data['RefferedFromInstituteId'] = refferedFromInstituteId;
+    data['CheckInTypeId'] = checkInTypeId;
+    data['PaidAmount'] = paidAmount;
+    data['Description'] = description;
+    data['PoliceStation'] = policeStation;
+    data['PatientCondition'] = patientCondition;
+    data['DiscountType'] = discountType;
+    data['Total'] = total;
+    data['DiscountRate'] = discountRate;
+    data['ChargeRate'] = chargeRate;
+    data['DepartmentId'] = departmentId;
+    data['DoctorId'] = doctorId;
     return data;
   }
 }
@@ -492,22 +492,22 @@ class PatientServicelist {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['SubServiceId'] = this.subServiceId;
-    data['Charges'] = this.charges;
-    data['TypeBit'] = this.typeBit;
-    data['DiscountType'] = this.discountType;
-    data['DiscountRate'] = this.discountRate;
-    data['TotalCharges'] = this.totalCharges;
-    data['PaidAmount'] = this.paidAmount;
-    data['IsUrgent'] = this.isUrgent;
-    data['ExecutionDateTime'] = this.executionDateTime;
-    data['UrgentDateTime'] = this.urgentDateTime;
-    data['GovernmentCharges'] = this.governmentCharges;
-    data['SubServiceCount'] = this.subServiceCount;
-    data['Preference'] = this.preference;
-    data['IsAutoNumberGenerationEnabled'] = this.isAutoNumberGenerationEnabled;
-    data['SpecimenName'] = this.specimenName;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['SubServiceId'] = subServiceId;
+    data['Charges'] = charges;
+    data['TypeBit'] = typeBit;
+    data['DiscountType'] = discountType;
+    data['DiscountRate'] = discountRate;
+    data['TotalCharges'] = totalCharges;
+    data['PaidAmount'] = paidAmount;
+    data['IsUrgent'] = isUrgent;
+    data['ExecutionDateTime'] = executionDateTime;
+    data['UrgentDateTime'] = urgentDateTime;
+    data['GovernmentCharges'] = governmentCharges;
+    data['SubServiceCount'] = subServiceCount;
+    data['Preference'] = preference;
+    data['IsAutoNumberGenerationEnabled'] = isAutoNumberGenerationEnabled;
+    data['SpecimenName'] = specimenName;
     return data;
   }
 }

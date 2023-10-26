@@ -33,16 +33,16 @@ class LabsModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['Id'] = this.id;
-    data['UserId'] = this.userId;
-    data['Name'] = this.name;
-    data['PermissionValue'] = this.permissionValue;
-    data['TaxPercentage'] = this.taxPercentage;
-    data['IsOnlinePayment'] = this.isOnlinePayment;
-    data['Latitude'] = this.latitude;
-    data['Longitude'] = this.longitude;
-    data['Address'] = this.address;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Id'] = id;
+    data['UserId'] = userId;
+    data['Name'] = name;
+    data['PermissionValue'] = permissionValue;
+    data['TaxPercentage'] = taxPercentage;
+    data['IsOnlinePayment'] = isOnlinePayment;
+    data['Latitude'] = latitude;
+    data['Longitude'] = longitude;
+    data['Address'] = address;
     return data;
   }
 }

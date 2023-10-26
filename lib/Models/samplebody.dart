@@ -33,16 +33,16 @@ class samplebody {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['UserId'] = this.userId;
-    data['PatientId'] = this.patientId;
-    data['PatientStatusId'] = this.patientStatusId;
-    data['LabNo'] = this.labNo;
-    data['VisitNo'] = this.visitNo;
-    data['BranchLocationId'] = this.branchLocationId;
-    data['AppointmentNo'] = this.appointmentNo;
-    data['SubServiceId'] = this.subServiceId;
-    data['Price'] = this.price;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['UserId'] = userId;
+    data['PatientId'] = patientId;
+    data['PatientStatusId'] = patientStatusId;
+    data['LabNo'] = labNo;
+    data['VisitNo'] = visitNo;
+    data['BranchLocationId'] = branchLocationId;
+    data['AppointmentNo'] = appointmentNo;
+    data['SubServiceId'] = subServiceId;
+    data['Price'] = price;
     return data;
   }
 }

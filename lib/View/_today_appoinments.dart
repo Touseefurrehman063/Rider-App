@@ -35,7 +35,7 @@ class _TodayAppoinmentsState extends State<TodayAppoinments> {
   int TotalRecordsData = 0;
   int Selectedoption = 0;
   String Status = "";
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
   String EndDate = "";
   String StartDate = "";
 
@@ -137,12 +137,10 @@ callvback();
           if (start == 0) {
             _appointments.clear();
           }
-          if (ulist != null) {
-            ulist.forEach((element) {
-              _appointments.add(element);
-            });
+          for (var element in ulist) {
+            _appointments.add(element);
           }
-        }
+                }
         print(ulist);
 
         isLoadingData = false;
@@ -183,7 +181,7 @@ callvback();
         inAsyncCall: isLoadingData,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
-          color: Color(0xfff1272D3),
+          color: Color(0xfff1272d3),
           size: 60,
         ),
         dismissible: false,
@@ -221,7 +219,7 @@ callvback();
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
                 height: 1.175,
-                color: Color(0xFF1272D3),
+                color: const Color(0xFF1272D3),
               ),
             ),
             actions: [
@@ -336,7 +334,7 @@ callvback();
                         ? Expanded(
                           child: ListView.builder(
                             controller: _scrollController,
-                            physics: BouncingScrollPhysics(),
+                            physics: const BouncingScrollPhysics(),
                             shrinkWrap: true,
                             itemCount: ((_appointments.isNotEmpty)
                                 ? _appointments.length
@@ -352,7 +350,7 @@ callvback();
                                     padding: const EdgeInsets.only(
                                         top: 10, right: 15, left: 15),
                                     child: Card(
-                                      color: Color(0xFF1272D3),
+                                      color: const Color(0xFF1272D3),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -504,7 +502,7 @@ callvback();
                                     padding: const EdgeInsets.only(
                                         top: 10, right: 15, left: 15),
                                     child: Card(
-                                      color: Color(0xFF1272D3),
+                                      color: const Color(0xFF1272D3),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
                                         borderRadius:
@@ -649,26 +647,27 @@ callvback();
                                   );
                                 } else {
                                   Container(
-                                    child: Text("Not Data Found"),
+                                    child: const Text("Not Data Found"),
                                   );
                                 }
+                                return null;
                               
                             },
                           ),
                         )
                         : Expanded(
-                            child: Container(
+                            child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,
-                              child: Center(
-                                child: const Text('No Record Found'),
+                              child: const Center(
+                                child: Text('No Record Found'),
                               ),
                             ),
                           ),
                     (isLoadingmoreData == true)
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 8, bottom: 8),
+                        ? const Padding(
+                            padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: SpinKitSpinningLines(
-                              color: Color(0xfff1272D3),
+                              color: Color(0xfff1272d3),
                               size: 60,
                             ),
                           )

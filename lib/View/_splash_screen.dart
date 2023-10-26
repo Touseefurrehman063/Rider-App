@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/View/welcome_1.dart';
-import 'package:get/get.dart';
 // import 'package:flutter_riderapp/Utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riderapp/View/_dashboard.dart';

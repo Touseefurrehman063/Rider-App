@@ -31,7 +31,7 @@ class customFormField extends StatelessWidget {
            autofocus: false,
    
     decoration: InputDecoration(
-      hintStyle: TextStyle(
+      hintStyle: const TextStyle(
         fontSize: 18,
         color:Colors.black
       ),

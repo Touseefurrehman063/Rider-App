@@ -14,12 +14,12 @@ class _HomeNotificationState extends State<HomeNotification> {
   Widget build(BuildContext context) {
     return  SafeArea(child: Scaffold(
 
-      body: Padding(padding: EdgeInsets.all(20),
+      body: Padding(padding: const EdgeInsets.all(20),
       child: Column(
         children: [
          const  Text("Today",style: TextStyle(fontSize: 16,color: Colors.black),),
           SizedBox(height: Get.height*0.05,),
-          CustomNotification(),
+          const CustomNotification(),
           
         ],
       ),

@@ -2,7 +2,6 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Models/userprofile.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/View/Nodata.dart';
 import 'package:get/get.dart';
@@ -102,7 +101,7 @@ class _MenuScreenState extends State<MenuScreen> {
                customListTile(
                 context,
                 isIcon: true,
-                icon:  Icon(
+                icon:  const Icon(
                   Icons.password,
                   color: Colors.white,
                   size: 30,

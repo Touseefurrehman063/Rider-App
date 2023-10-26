@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Widgets/custom_notification.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_riderapp/View/_dashboard.dart';
 
 
 
@@ -12,7 +10,7 @@ import 'package:flutter_riderapp/View/_dashboard.dart';
 class notification extends StatefulWidget {
 
 
-   notification({super.key});
+   const notification({super.key});
 
   @override
   State<notification> createState() => _notificationState();
@@ -67,16 +65,16 @@ return  SafeArea(child: Scaffold(
           children:  [
            Padding(
              padding: EdgeInsets.only(right:Get.width*0.8),
-             child: Text("Today",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),),
+             child: const Text("Today",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),),
            ),
           
-            CustomNotification(),
+            const CustomNotification(),
             SizedBox(height: Get.height*0.05,),
             Padding(
              padding: EdgeInsets.only(right:Get.width*0.7),
-             child: Text("Yesterday",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),),
+             child: const Text("Yesterday",style: TextStyle(fontSize: 16,color: Colors.black,fontWeight: FontWeight.bold),),
            ),
-            CustomNotification(),
+            const CustomNotification(),
             
           ],
         ),

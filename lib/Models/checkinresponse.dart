@@ -33,16 +33,16 @@ class checkinresponse {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['VisitNo'] = this.visitNo;
-    data['LabNo'] = this.labNo;
-    data['IsInPatient'] = this.isInPatient;
-    data['BedDetails'] = this.bedDetails;
-    data['ChatURL'] = this.chatURL;
-    data['IsPreMedicalAssessmentBooking'] = this.isPreMedicalAssessmentBooking;
-    data['LabSpecimenCodeOutput'] = this.labSpecimenCodeOutput;
-    data['AutoNumberGeneratedOutput'] = this.autoNumberGeneratedOutput;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['VisitNo'] = visitNo;
+    data['LabNo'] = labNo;
+    data['IsInPatient'] = isInPatient;
+    data['BedDetails'] = bedDetails;
+    data['ChatURL'] = chatURL;
+    data['IsPreMedicalAssessmentBooking'] = isPreMedicalAssessmentBooking;
+    data['LabSpecimenCodeOutput'] = labSpecimenCodeOutput;
+    data['AutoNumberGeneratedOutput'] = autoNumberGeneratedOutput;
     return data;
   }
 }

@@ -146,12 +146,12 @@ Map<String, dynamic> toJson(http.Response response){
   data['DateofBirth']=dob;
   data['CellNumber']=cellNumber;
   data['Token']=token;
-   data['LabTestChallanNo'] = this.labTestChallanNo;
-   data['Time']=this.time;
-   data['InRouteLatitude']=this.inroutelat;
-   data['InRouteLongitude']=this.inroutelon;
-   data['PaymentStatusName']=this.paymentstatusname;
-   data['PaymentStatusValue']=this.paymentstatusvalue;
+   data['LabTestChallanNo'] = labTestChallanNo;
+   data['Time']=time;
+   data['InRouteLatitude']=inroutelat;
+   data['InRouteLongitude']=inroutelon;
+   data['PaymentStatusName']=paymentstatusname;
+   data['PaymentStatusValue']=paymentstatusvalue;
 
 
 
