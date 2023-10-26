@@ -2,7 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:flutter_riderapp/View/_login.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
 
 class Registered extends StatefulWidget {
   const Registered({super.key});

@@ -1,6 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/View/_editprofile.dart';
+import 'package:flutter_riderapp/Screen/Profile/_editprofile.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';

@@ -10,10 +10,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_riderapp/AppConstants.dart';
-import 'package:flutter_riderapp/View/_view_information.dart';
+import 'package:flutter_riderapp/Screen/ViewInformation/_view_information.dart';
 
-import '../Models/User.dart';
-import '../Utilities.dart';
+import '../../Models/User.dart';
+import '../../Utilities.dart';
 
 // ignore: must_be_immutable
 class AppointmentHistory extends StatefulWidget {
@@ -260,9 +260,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
             ),
             actions: [
               InkWell(
-                onTap: () {
-                
-                },
+                onTap: () {},
                 child: PopupMenuButton<int>(
                   shape: const RoundedRectangleBorder(
                     borderRadius: BorderRadius.all(

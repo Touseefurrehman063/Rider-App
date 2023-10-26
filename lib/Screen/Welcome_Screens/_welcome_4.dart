@@ -1,15 +1,15 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/View/_login.dart';
-import 'package:flutter_riderapp/View/_welcome_3.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/_welcome_5.dart';
 import 'package:flutter_riderapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';
-class Welcome2 extends StatefulWidget {
-  const Welcome2({super.key});
+class Welcome4 extends StatefulWidget {
+  const Welcome4({super.key});
   @override
-  State<Welcome2> createState() => _Welcome2State();
+  State<Welcome4> createState() => _Welcome4State();
 }
-class _Welcome2State extends State<Welcome2> {
+class _Welcome4State extends State<Welcome4> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,9 +51,9 @@ class _Welcome2State extends State<Welcome2> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.14),
+                        left: MediaQuery.of(context).size.width * 0.07),
                     child: Text(
-                      'Check',
+                      'Arrived',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -67,7 +67,7 @@ class _Welcome2State extends State<Welcome2> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.003),
                     child: Text(
-                      'Appointments',
+                      'Sampling',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -82,7 +82,7 @@ class _Welcome2State extends State<Welcome2> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.09,
               ),
-              Image.asset('assets/Frame.png'),
+              Image.asset('assets/Frame3.png'),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.09,
                 child: InkWell(
@@ -90,7 +90,7 @@ class _Welcome2State extends State<Welcome2> {
                     log(initScreen.toString());
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Welcome3()),
+                      MaterialPageRoute(builder: (context) => const Welcome5()),
                     );
                   },
                   child: Image.asset('assets/arrow.png'),

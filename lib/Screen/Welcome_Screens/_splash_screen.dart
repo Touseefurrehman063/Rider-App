@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/welcome_1.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/welcome_1.dart';
 // import 'package:flutter_riderapp/Utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_riderapp/View/_dashboard.dart';
-import 'package:flutter_riderapp/View/_login.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 // import '../Models/User.dart';

@@ -1,15 +1,14 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/View/_login.dart';
-import 'package:flutter_riderapp/View/_welcome_5.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:flutter_riderapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';
-class Welcome4 extends StatefulWidget {
-  const Welcome4({super.key});
+class Welcome5 extends StatefulWidget {
+  const Welcome5({super.key});
   @override
-  State<Welcome4> createState() => _Welcome4State();
+  State<Welcome5> createState() => _Welcome5State();
 }
-class _Welcome4State extends State<Welcome4> {
+class _Welcome5State extends State<Welcome5> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,7 +52,7 @@ class _Welcome4State extends State<Welcome4> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.07),
                     child: Text(
-                      'Arrived',
+                      'Sample',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -67,7 +66,7 @@ class _Welcome4State extends State<Welcome4> {
                     padding: EdgeInsets.only(
                         left: MediaQuery.of(context).size.width * 0.003),
                     child: Text(
-                      'Sampling',
+                      'Delivered',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -82,7 +81,7 @@ class _Welcome4State extends State<Welcome4> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.09,
               ),
-              Image.asset('assets/Frame3.png'),
+              Image.asset('assets/Frame2.png'),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.09,
                 child: InkWell(
@@ -90,7 +89,7 @@ class _Welcome4State extends State<Welcome4> {
                     log(initScreen.toString());
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Welcome5()),
+                      MaterialPageRoute(builder: (context) => const Login()),
                     );
                   },
                   child: Image.asset('assets/arrow.png'),

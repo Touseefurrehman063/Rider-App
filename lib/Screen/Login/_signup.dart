@@ -1,35 +1,56 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/Models/countrymodel.dart';
-import 'package:flutter_riderapp/Models/nok_model.dart';
-import 'package:flutter_riderapp/Models/patient_registration-model.dart';
-import 'package:flutter_riderapp/Models/relations.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
-import 'package:flutter_riderapp/View/_signup.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
-import 'package:flutter_riderapp/Widgets/searchabledropdown.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_riderapp/Models/Register.dart';
 import 'package:flutter_riderapp/Models/city.dart';
 import 'package:flutter_riderapp/Models/gender.dart';
+import 'package:flutter_riderapp/Models/vehicle.dart';
 // ignore: unused_import
-import 'package:flutter_riderapp/View/_login.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_riderapp/Screen/Login/_registered.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
+import 'package:image/image.dart' as img;
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-class PatientRegistration extends StatefulWidget {
-  const PatientRegistration({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<PatientRegistration> createState() => _PatientRegistrationState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _PatientRegistrationState extends State<PatientRegistration> {
+class _SignupState extends State<Signup> {
+  vehicle? Vehicle;
+
+  late File _heicImage;
+  String hintText = "";
+  String? countryCode;
+
+  Future convertImage() async {
+    final imageData = await _heicImage.readAsBytes();
+    final image = img.decodeImage(imageData);
+    final jpegImage = img.encodeJpg(image!);
+
+    final file = await _heicImage.copy('${_heicImage.path}.jpeg');
+    await file.writeAsBytes(jpegImage);
+
+    setState(() {
+      _heicImage = file;
+    });
+  }
+
   DateTime dateTime = DateTime.now();
   final dateFormat = DateFormat('yyyy-MM-dd');
   DateTime selectedDate = DateTime.now();
@@ -37,22 +58,53 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   TextEditingController Name = TextEditingController();
   TextEditingController mobile_number = TextEditingController();
   TextEditingController email = TextEditingController();
+  TextEditingController datetimecontroller = TextEditingController();
   final TextEditingController gvt_id = TextEditingController();
+  final MaskTextInputFormatter maskFormatter = MaskTextInputFormatter(
+    mask: 'XXX-XXXX-XXXXXXXX-X',
+    filter: {"X": RegExp(r'[0-9]')},
+  );
+  TextEditingController v_type = TextEditingController();
+  TextEditingController L_No = TextEditingController();
+  TextEditingController Password = TextEditingController();
+  TextEditingController Re_Password = TextEditingController();
   TextEditingController City = TextEditingController();
   TextEditingController Address = TextEditingController();
   TextEditingController v_number = TextEditingController();
-  TextEditingController GuardianName = TextEditingController();
-  TextEditingController NOKName = TextEditingController();
-  final TextEditingController gvt_guardian_id = TextEditingController();
-  
 
 // final GlobalKey _dropdownKey = GlobalKey();
 
+  bool passwordVisible = true;
+  bool PasswordVisible = true;
   bool registered = false;
   FocusNode focusNode = FocusNode();
 
   final formkey = GlobalKey<FormState>();
   bool passToggle = true;
+
+  bool isPasswordMatch() {
+    String password = Password.text;
+    String rePassword = Re_Password.text;
+    return password == rePassword;
+  }
+
+  XFile? _imageFile;
+  final ImagePicker _picker = ImagePicker();
+  PickedFile? pickedFile;
+  // bool passwordVisible=false;
+  // ignore: unused_field
+  bool _isBottomSheetVisible = false;
+  void _showBottomSheet() {
+    setState(() {
+      _isBottomSheetVisible = true;
+    });
+  }
+
+  void _hideBottomSheet() {
+    setState(() {
+      _isBottomSheetVisible = false;
+    });
+  }
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
@@ -81,15 +133,51 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   String? selectedGender;
   String? selectedVehicle;
   String? selectedCity;
-  String? selectedRelation;
-  String? selectedNOK;
-  String? selectedNOKName;
-   String? selectedCountriesName;
   String? selectedCountries;
   String? SelectedState;
-  String? countryCode;
+  String? selectedCountriesName;
   String? selectedCityName;
   String? SelectedStateName;
+
+  List<String> cityNameArray = ['Select Vehicle'];
+  List<CityModel> cities = [];
+  Future<void> cityapi(String id) async {
+    final url = '$ip/api/ddl/GetCities';
+    final headers = {'Content-Type': 'application/json'};
+
+    try {
+      var body = {
+        "StateORProvinceId": id,
+      };
+      print('To post Body of City API : $body');
+      print('To post headers of City API : $headers');
+      var response = await http.post(Uri.parse(url),
+          headers: headers, body: jsonEncode(body));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        print((data['Status'] == 1 &&
+            data['Status'] != null &&
+            data['Data'] != null));
+        if (data['Status'] != null &&
+            data['Status'] == 1 &&
+            data['Data'] != null) {
+          for (var cityData in data['Data']) {
+            cities.add(CityModel.fromJson(cityData));
+          }
+          List<String> selectedCity = ['Select City'];
+
+          setState(() {
+            cityNameArray = selectedCity;
+          });
+        }
+      } else {
+        throw Exception('Failed to fetch data from the server.');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+  }
 
   List<String> genderNameArray = ['Select gender'];
   List<int> genderIdArray = [];
@@ -115,7 +203,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
           List<String> selectedGender = ['Select Gender'];
 
           setState(() {
-            genderNameArray = selectedGender;
+            vechilesNameArray = selectedGender;
           });
         }
       } else {
@@ -126,11 +214,13 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     }
   }
 
-// city api
-  List<String> cityNameArray = ['Select Vehicle'];
-  List<CityModel> cities = [];
-  Future<void> cityapi() async {
-    final url = '$ip/api/RiderRegistrationRequest/GetCitiesIndependently';
+//vehicle api
+  List<String> vechilesNameArray = ['Select Vehicle'];
+  List<int> vechileIdArray = [];
+  List<vehicle> vehicles = [];
+
+  Future<void> vehicleapi() async {
+    final url = '$ip/api/RiderRegistrationRequest/GetVehicleTypes';
     final headers = {'Content-Type': 'application/json'};
 
     try {
@@ -142,48 +232,14 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         if (data['Status'] != null &&
             data['Status'] == 1 &&
             data['Results'] != null) {
-          for (var cityData in data['Results']) {
-            cities.add(CityModel.fromJson(cityData));
+          for (var vehicleData in data['Results']) {
+            vehicles.add(vehicle.fromJson(vehicleData));
           }
 
-          List<String> selectedCity = ['Select City'];
+          List<String> selectedVehicle = ['Select Vehicle'];
 
           setState(() {
-            cityNameArray = selectedCity;
-          });
-        }
-      } else {
-        throw Exception('Failed to fetch data from the server.');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-  }
-
-// Relation api
-  List<String> relationNameArray = ['Select Relation'];
-  List<RelationModel> relations = [];
-  Future<void> relationapi() async {
-    final url = '$ip/api/ddl/GetRelationshipTypes';
-    final headers = {'Content-Type': 'application/json'};
-
-    try {
-      final response = await http.post(Uri.parse(url), headers: headers);
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        if (data['Status'] != null &&
-            data['Status'] == 1 &&
-            data['Data'] != null) {
-          for (var relationData in data['Data']) {
-            relations.add(RelationModel.fromJson(relationData));
-          }
-
-          List<String> selectedRelation = ['Select Relation'];
-
-          setState(() {
-            relationNameArray = selectedRelation;
+            vechilesNameArray = selectedVehicle;
           });
         }
       } else {
@@ -201,11 +257,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     final headers = {'Content-Type': 'application/json'};
 
     try {
-      final response = await http.get(Uri.parse(url), headers: headers);
-
+      var response = await http.get(Uri.parse(url), headers: headers);
+      print(response.statusCode);
       if (response.statusCode == 200) {
+        print('Body is : ${response.body}');
         final data = jsonDecode(response.body);
-
         if (data['Status'] != null &&
             data['Status'] == 1 &&
             data['Data'] != null) {
@@ -290,41 +346,25 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     }
   }
 
-//  NOKModel testing= NOKModel(id: '84385',name: 'attiq testing');
+  Future<String> uploadPicture(XFile file) async {
+    String r = '';
+    var url = '$ip/api/account/UploadPicture';
 
-// NOK api
-  List<String> NOKNameArray = ['Select Relation'];
-  List<NOKModel> NOK = [];
-  Future<void> NOKapi() async {
-    //  NOK.add(testing);
-    setState(() {});
-    final url = '$ip/api/ddl/GetNOKRelations';
-    final headers = {'Content-Type': 'application/json'};
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('image', file.path));
 
-    try {
-      final response = await http.post(Uri.parse(url), headers: headers);
+    final res = await request.send();
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        print(data);
-        if (data['Status'] != null &&
-            data['Status'] == 1 &&
-            data['Data'] != null) {
-          for (var relationData in data['Data']) {
-            NOK.add(NOKModel.fromJson(relationData));
-          }
-          List<String> selectedNOK = ['Select Relation'];
+    if (res.statusCode == 200) {
+      dynamic data = jsonDecode(await res.stream.bytesToString());
+      r = data["Path"];
 
-          setState(() {
-            NOKNameArray = selectedNOK;
-          });
-        }
-      } else {
-        throw Exception('Failed to fetch data from the server.');
-      }
-    } catch (e) {
-      print('Error: $e');
+      print('Upload success: ');
+    } else {
+      print('Upload failed with status ${res.statusCode}');
     }
+
+    return r;
   }
 
   @override
@@ -332,91 +372,108 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     // cityapi();
     genderapi();
     countriesapi();
-    relationapi();
-    NOKapi();
-    // vehicleapi();
-    // TODO: implement initState
+    vehicleapi();
+    // datetimecontroller.text = "Date of Birth";
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          elevation: 0.0,
-          leading: Row(
-            children: [
-              InkWell(
-                onTap: Get.back,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Image.asset(
-                    "assets/back.png",
-                    height: Get.height * 0.1,
-                    width: Get.width * 0.08,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0.0,
+        leading: Row(
+          children: [
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(left: 10.0),
+                child: Image.asset(
+                  "assets/back.png",
+                  height: Get.height * 0.1,
+                  width: Get.width * 0.08,
 
-                    // color: Colors.white,
-                  ),
+                  // color: Colors.white,
                 ),
               ),
-            ],
-          ),
-          title: Text(
-            'Registration',
-            textAlign: TextAlign.center,
-            style: GoogleFonts.raleway(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              height: 1.175,
-              color: const Color(0xFF1272D3),
             ),
-          ),
-          centerTitle: true,
+          ],
         ),
-        body: LayoutBuilder(builder: (context, constraints) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Form(
-              key: formkey,
-              child: Container(
-                // height: MediaQuery.of(context).size.height,
-                // width: MediaQuery.of(context).size.width,
-                decoration: const BoxDecoration(
+        title: SizedBox(
+          height: MediaQuery.of(context).size.height * 0.065,
+          child: Image.asset(
+            'assets/Helpful.png',
+            width: MediaQuery.of(context).size.width / 2,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: LayoutBuilder(builder: (context, constraints) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+          child: Form(
+            key: formkey,
+            child: Container(
+              // height: MediaQuery.of(context).size.height,
+              // width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
                 image: DecorationImage(
                   image: AssetImage('assets/helpbackgraound.png'),
                   alignment: Alignment.centerLeft,
                 ),
               ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.02,
-                    ),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          'Register Now',
+                          style: GoogleFonts.raleway(
+                            textStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 30,
+                              color: Color(0xFF1272D3),
                             ),
-                           SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            AuthTextField(
-                              validator: (p0) {
-                                if (p0!.isEmpty) {
-                                  return 'Enter your full name';
-                                }
-                                return null;
-                              },
-                              controller: Name,
-                              hintText: 'Full Name',
-                            ),
-          
-                             SizedBox(
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: ImageProfile(),
+                      )
+                    ],
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          AuthTextField(
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return 'Enter your full name';
+                              }
+                              return null;
+                            },
+                            controller: Name,
+                            hintText: 'Full Name',
+                          ),
+
+                          SizedBox(
                             height: Get.height * 0.02,
                           ),
                           SizedBox(
@@ -454,7 +511,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             ),
                           ),
 
-                           SizedBox(
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
@@ -467,15 +524,14 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             controller: email,
                             hintText: 'Email',
                           ),
- SizedBox(
+
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
                           AuthTextField(
                             readOnly: true,
-                            controller: TextEditingController(
-                                    text: dateFormat.format(dateTime),
-                                  ),
+                            controller: datetimecontroller,
                             validator: (value) {
                               return null;
                             },
@@ -493,10 +549,13 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                         backgroundColor: Colors.white,
                                         initialDateTime:
                                             selectedDate ?? DateTime.now(),
-                                         onDateTimeChanged:
-                                                (DateTime newTime) {
-                                              setState(() => dateTime = newTime);
-                                            
+                                        onDateTimeChanged: (DateTime newTime) {
+                                          setState(() {
+                                            selectedDate = newTime;
+                                            datetimecontroller.text =
+                                                DateFormat('dd-M-yyyy')
+                                                    .format(newTime);
+                                          });
                                         },
                                         use24hFormat: true,
                                         mode: CupertinoDatePickerMode.date,
@@ -508,7 +567,59 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               icon: const Icon(Icons.calendar_month),
                             ),
                           ),
-                             SizedBox(
+
+                          // SizedBox(
+                          //   height: MediaQuery.of(context).size.height * 0.088,
+                          //   child: Padding(
+                          //     padding:
+                          //         const EdgeInsets.symmetric(horizontal: 20),
+                          //     child: CupertinoTextField(
+                          //       readOnly: true,
+                          //       controller: datetimecontroller,
+                          //       decoration: BoxDecoration(
+                          //         border: Border.all(
+                          //           color: Colors.black54,
+                          //           width: 1.0,
+                          //         ),
+                          //         borderRadius: BorderRadius.circular(10),
+                          //         color: Colors.transparent,
+                          //       ),
+                          //       prefix: const Padding(
+                          //         padding: EdgeInsets.only(left: 20),
+                          //         child: Icon(
+                          //           CupertinoIcons.calendar,
+                          //           color: CupertinoColors.black,
+                          //         ),
+                          //       ),
+                          //       onTap: () {
+                          //         showCupertinoModalPopup(
+                          //           context: context,
+                          //           builder: (BuildContext context) => Center(
+                          //             child: SizedBox(
+                          //               height: 200,
+                          //               child: CupertinoDatePicker(
+                          //                 backgroundColor: Colors.white,
+                          //                 initialDateTime:
+                          //                     selectedDate ?? DateTime.now(),
+                          //                 onDateTimeChanged:
+                          //                     (DateTime newTime) {
+                          //                   setState(() {
+                          //                     selectedDate = newTime;
+                          //                     datetimecontroller.text =
+                          //                         '${newTime.day.toString().padLeft(2, '0')}-${newTime.month.toString().padLeft(2, '0')}-${newTime.year}';
+                          //                   });
+                          //                 },
+                          //                 use24hFormat: true,
+                          //                 mode: CupertinoDatePickerMode.date,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         );
+                          //       },
+                          //     ),
+                          //   ),
+                          // ),
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
@@ -587,8 +698,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               ),
                             ),
                           ),
-                           
-                            SizedBox(
+
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
@@ -601,7 +712,157 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             controller: gvt_id,
                             hintText: 'ID 01-2345-6789',
                           ),
-                            SizedBox(
+
+                          // Padding(
+                          //  padding: const EdgeInsets.symmetric(horizontal: 20),
+                          //   child:  customFormField(hinttext: "  ID 123-4567-8910"
+                          //   ,
+
+                          //  controller: gvt_id,
+
+                          //   ),
+                          // ),
+
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+
+                          InkWell(
+                            onTap: () async {
+                              selectedVehicle = null;
+                              vehicles.clear();
+                              await vehicleapi();
+                              setState(() {});
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.075,
+                              child: DropdownButtonFormField(
+                                decoration: InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(10),
+                                      borderSide: const BorderSide(
+                                          width: 1, color: Colors.black)),
+                                  contentPadding: checkval
+                                      ? const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 18)
+                                      : const EdgeInsets.symmetric(
+                                          horizontal: 14, vertical: 14),
+                                ),
+                                value: selectedVehicle,
+                                hint: const Text(
+                                  "  Vehicle Type",
+                                  style: TextStyle(
+                                      color: Colors.grey, fontSize: 12),
+                                ),
+                                items: vehicles.map<DropdownMenuItem<String>>(
+                                    (vehicle val) {
+                                  return DropdownMenuItem<String>(
+                                    value: val.id,
+                                    child: Text(val.name.toString()),
+                                  );
+                                }).toList(),
+                                style: const TextStyle(
+                                    color: Colors.black, fontSize: 14),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    selectedVehicle = newValue;
+                                  });
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please select a gender';
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                elevation: 0,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+
+                          AuthTextField(
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return 'Enter Vehicle Number';
+                              }
+                              return null;
+                            },
+                            controller: v_number,
+                            hintText: 'Vehicle Number',
+                          ),
+
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          AuthTextField(
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return 'Enter Liscence Number';
+                              }
+                              return null;
+                            },
+                            controller: L_No,
+                            hintText: 'Liscence Number',
+                          ),
+
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: AuthTextField(
+                              hintText: 'Password',
+                              keyboardType: TextInputType.text,
+                              controller: Password,
+                              obscureText: PasswordVisible,
+                              suffixIcon: IconButton(
+                                icon: Icon(PasswordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                                onPressed: () {
+                                  setState(() {
+                                    PasswordVisible = !PasswordVisible;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.02,
+                          ),
+                          AuthTextField(
+                            hintText: 'Re-Password',
+                            keyboardType: TextInputType.text,
+                            controller: Re_Password,
+                            obscureText: passwordVisible,
+                            suffixIcon: IconButton(
+                              icon: Icon(passwordVisible
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
+                            ),
+                            validator: (value) {
+                              if (Re_Password.text == value) {
+                                return null;
+                              } else {
+                                return 'Passwords do not match!';
+                              }
+                            },
+                            function: (value) {},
+                          ),
+
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
@@ -675,11 +936,12 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               ),
                             ),
                           ),
-                           SizedBox(
+
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
-                            InkWell(
+                          InkWell(
                             onTap: () async {
                               SelectedState = null;
                               setState(() {});
@@ -693,7 +955,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 cities.clear();
                                 selectedCity = null;
                                 selectedCityName = null;
-                                await cityapi();
+                                await cityapi(generic.id);
                               }
                               setState(() {});
                             },
@@ -743,7 +1005,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             ),
                           ),
 
-                           SizedBox(
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
@@ -808,7 +1070,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             ),
                           ),
 
-                           SizedBox(
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
@@ -821,328 +1083,271 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             controller: Address,
                             hintText: 'Address',
                           ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            Center(
-                              child: Text(
-                                'Guardian',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                selectedRelation = null;
-                                relations.clear();
-                                await relationapi();
-                                setState(() {});
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 1),
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.065,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.5),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.transparent,
-                                    ),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.98,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
-                                    child: DropdownButtonFormField(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                            EdgeInsets.symmetric(horizontal: 15),
-                                      ),
-                                      value: selectedRelation,
-                                      hint: const Text("Relation",style: TextStyle(fontSize: 14,color: Colors.grey),),
-                                      items: relations
-                                          .map<DropdownMenuItem<String>>(
-                                              (RelationModel val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val.id,
-                                          child: Text(val.name.toString(),style: const TextStyle(fontSize: 14),),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedRelation = newValue;
-                                        });
-                                      },
-                                      elevation: 0,
-                                      menuMaxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              0.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                           SizedBox(
+
+                          SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
-                          AuthTextField(
-                            validator: (p0) {
-                              if (p0!.isEmpty) {
-                                return 'Enter Gaurdians Name';
-                              }
-                              return null;
-                            },
-                            controller: GuardianName,
-                            hintText: 'Name',
-                          ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            Center(
-                              child: Text(
-                                'Next of Kin',
-                                style: GoogleFonts.poppins(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.blue),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                selectedNOK = null;
-                                NOK.clear();
-                                await NOKapi();
-                                setState(() {});
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 1),
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.065,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.5),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.transparent,
-                                    ),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.98,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
-                                    child: DropdownButtonFormField(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding:
-                                            EdgeInsets.symmetric(horizontal: 15),
-                                      ),
-                                      value: selectedNOK,
-                                      hint: const Text("Relation",style: TextStyle(fontSize: 14,color: Colors.grey),),
-                                      items: NOK.map<DropdownMenuItem<String>>(
-                                          (NOKModel val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val.id,
-                                          child: Text(val.name.toString(),style: const TextStyle(fontSize: 14),),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedNOK = newValue;
-                                        });
-                                      },
-                                      elevation: 0,
-                                      menuMaxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              0.5,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          AuthTextField(
-                            validator: (p0) {
-                              if (p0!.isEmpty) {
-                                return 'Enter Next Of Kin Name';
-                              }
-                              return null;
-                            },
-                            controller: NOKName,
-                            hintText: 'Name',
-                          ),
-                            SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.02,
-                          ),
-                          AuthTextField(
-                            validator: (p0) {
-                              if (p0!.isEmpty) {
-                                return 'Enter ID Number';
-                              }
-                              return null;
-                            },
-                            controller: gvt_guardian_id,
-                            hintText: 'ID 01-2345-6789',
-                          ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                NOK.clear();
-                                NOKapi();
-                                dynamic generic = await searchabledropdown(
-                                    context, constraints, NOK);
-                                selectedNOK = generic.id;
-                                selectedNOKName = 'ddfds';
-                                selectedNOKName =
-                                    (generic.name == '') ? null : generic.name;
-                                setState(() {});
-                              },
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 1),
-                                child: SizedBox(
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.065,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.5),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.transparent,
-                                    ),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.98,
-                                    height:
-                                        MediaQuery.of(context).size.height * 0.05,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal:
-                                              MediaQuery.of(context).size.width *
-                                                  0.04),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            selectedNOKName ?? "Select Role",
-                                            style: const TextStyle(color: Colors.grey,fontSize: 14),
-                                          ),
-                                          const Icon(
-                                            Icons.arrow_drop_down,
-                                            size: 25,
-                                            color: Colors.black,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.03,
-                            ),
-                            CupertinoButton(
-                                color: CupertinoColors.activeBlue,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 120, vertical: 0.5),
-                                borderRadius: BorderRadius.circular(8),
-                                onPressed: () async {
-                                  if (formkey.currentState!.validate()) {
-                                    PatientRegistrationModal register =
-                                        PatientRegistrationModal();
-          
-                                    register.firstName = Name.text.toString();
-                                    register.cellNumber =
+                          CupertinoButton(
+                              color: CupertinoColors.activeBlue,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 120, vertical: 0.5),
+                              borderRadius: BorderRadius.circular(8),
+                              onPressed: () async {
+                                String str = "";
+                                if (_imageFile != null) {
+                                  str = await uploadPicture(_imageFile!);
+                                }
+
+                                if (formkey.currentState!.validate()) {
+                                  if (Password.text.toString() ==
+                                      Re_Password.text.toString()) {
+                                    Register register = Register();
+                                    register.fullName = Name.text.toString();
+                                    register.mobileNo =
                                         mobile_number.text.toString();
+                                    register.email = email.text.toString();
                                     register.dateOfBirth = dateTime.toString();
-                                    register.genderId = selectedGender.toString();
-                                    register.CNICNumber = gvt_id.text.toString();
-                                    register.countryId =
-                                        selectedCountries.toString();
-                                    print(register.countryId);
-          
-                                    // register.fullName=Name.text.toString();
-                                    // register.mobileNo=mobile_number.text.toString();
-                                    // register.email=email.text.toString();
-                                    // register.dateOfBirth=dateTime.toString();
-                                    // register.genderId=selectedGender.toString();
-                                    // register.identityNo=gvt_id.text.toString();
-                                    // register.vehicleTypeId=selectedVehicle.toString();
-                                    // register.vehicleNumber=v_number.text.toString();
-                                    // register.cityId=selectedCity.toString();
-                                    // register.address=Address.text.toString();
-          
-                                    //await  _register_api(register);
-          
-                                    // Navigator.push(
-                                    //   context,
-                                    //   MaterialPageRoute(builder: ((context) {
-                                    //     return const Registered();
-                                    //   })),
-                                    // );
-                                  } else {}
-                                },
-                                child: Text(
-                                  "Register",
-                                  style: GoogleFonts.poppins(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: CupertinoColors.white),
-                                )),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.03,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text("Already have an account?"),
-                                TextButton(
-                                  onPressed: () async {
+                                    register.genderId =
+                                        selectedGender.toString();
+                                    register.identityNo =
+                                        gvt_id.text.toString();
+                                    register.vehicleTypeId =
+                                        selectedVehicle.toString();
+                                    register.vehicleNumber =
+                                        v_number.text.toString();
+                                    register.licenseNo = L_No.text.toString();
+                                    register.password =
+                                        Password.text.toString();
+                                    register.password =
+                                        Re_Password.text.toString();
+                                    register.cityId = selectedCity.toString();
+                                    register.address = Address.text.toString();
+                                    str != ""
+                                        ? register.profilePictureImagePath = str
+                                            .toString()
+                                            .split('=')[1]
+                                            .split('"')[0]
+                                        : "";
+
+                                    await _register_api(register);
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: ((context) {
-                                        return const Login();
+                                        return const Registered();
                                       })),
                                     );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                  ),
-                                  child: const Text("Sign in"),
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                "Password doesn't Match")));
+                                  }
+
+                                  checkval = true;
+                                  setState(() {});
+                                } else {
+                                  checkval = false;
+                                  setState(() {});
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                          content: Text(
+                                              " Please enter valid data")));
+                                }
+                              },
+                              child: Text(
+                                "Register",
+                                style: GoogleFonts.poppins(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: CupertinoColors.white),
+                              )),
+
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.03,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              const Text("Already have an account?"),
+                              TextButton(
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(builder: ((context) {
+                                      return const Login();
+                                    })),
+                                  );
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.blue,
                                 ),
-                              ],
-                            ),
-                          ],
-                        ),
+                                child: const Text("Sign in"),
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
-                    )
-                  ],
-                ),
+                    ),
+                  )
+                ],
               ),
             ),
-          );
-        }));
+          ),
+        );
+      }),
+    );
   }
+
+  Widget bottomsheet() {
+    return Container(
+      height: 100.0,
+      width: MediaQuery.of(context).size.width,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 20,
+      ),
+      child: Column(
+        children: <Widget>[
+          Text(
+            "Choose Profile Photo",
+            style: GoogleFonts.raleway(
+                fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blue),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              TextButton.icon(
+                icon: const Icon(Icons.camera),
+                onPressed: () {
+                  TakePhoto(ImageSource.camera);
+                  Navigator.pop(context);
+                },
+                label: Text(
+                  "camera",
+                  style: GoogleFonts.raleway(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue),
+                ),
+              ),
+              TextButton.icon(
+                icon: const Icon(Icons.image),
+                onPressed: () {
+                  TakePhoto(ImageSource.gallery);
+                  Navigator.pop(context);
+                },
+                label: Text(
+                  "Gallery",
+                  style: GoogleFonts.raleway(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue),
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  void TakePhoto(ImageSource source) async {
+    final XFile? pickedFile = await _picker.pickImage(source: source);
+    if (pickedFile != null) {
+      setState(() {
+        _heicImage = File(pickedFile.path);
+        _imageFile = pickedFile;
+      });
+    } else {}
+  }
+
   bool checkval = true;
+
+  Widget ImageProfile() {
+    return Stack(
+      children: <Widget>[
+        CircleAvatar(
+            radius: 50.0,
+            backgroundImage: _imageFile == null
+                ? const AssetImage("assets/pp.jpg")
+                : FileImage(File(_imageFile!.path)) as ImageProvider),
+        Positioned(
+          bottom: 5.0,
+          right: 5.0,
+          child: InkWell(
+            onTap: () {
+              showModalBottomSheet(
+                  context: context, builder: (builder) => bottomsheet());
+            },
+            child: const Icon(
+              Icons.camera_alt,
+              color: Colors.blue,
+              size: 28.0,
+            ),
+          ),
+        )
+      ],
+    );
+  }
+
+  String validatorforformfield = "";
+}
+
+class AuthTextField extends StatelessWidget {
+  final Function(String)? function;
+  final bool? obscureText;
+  final List<TextInputFormatter>? formatters;
+  final TextEditingController? controller;
+  final String? Function(String?)? validator;
+  final TextInputType? keyboardType;
+  final Widget? suffixIcon;
+  final String? hintText;
+  final bool? readOnly;
+  const AuthTextField({
+    super.key,
+    this.hintText,
+    this.suffixIcon,
+    this.controller,
+    this.validator,
+    this.readOnly,
+    this.formatters,
+    this.obscureText,
+    this.keyboardType,
+    this.function,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      onChanged: function,
+      keyboardType: keyboardType,
+      obscureText: obscureText ?? false,
+      inputFormatters: formatters,
+      readOnly: readOnly ?? false,
+      validator: validator,
+      controller: controller,
+      decoration: InputDecoration(
+          errorStyle: Theme.of(context)
+              .textTheme
+              .bodySmall!
+              .copyWith(color: Colors.red, fontSize: 12),
+          suffixIcon: suffixIcon,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 20),
+          hintText: hintText,
+          hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
+          disabledBorder: const OutlineInputBorder(),
+          errorBorder: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.red)),
+          enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.grey)),
+          border: const OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey))),
+    );
+  }
 }

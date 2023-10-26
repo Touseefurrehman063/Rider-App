@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/Nodata.dart';
-import 'package:flutter_riderapp/View/_appointments_history.dart';
-import 'package:flutter_riderapp/View/_splash_screen.dart';
-import 'package:flutter_riderapp/View/_today_appoinments.dart';
+import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
 import 'package:flutter_riderapp/Widgets/registration_selection.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

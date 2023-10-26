@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/View/_login.dart';
-import 'package:flutter_riderapp/View/_welcome_4.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/_welcome_4.dart';
 import 'package:flutter_riderapp/main.dart';
 import 'package:google_fonts/google_fonts.dart';
 class Welcome3 extends StatefulWidget {

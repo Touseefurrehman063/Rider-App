@@ -8,11 +8,11 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_riderapp/Models/userprofile.dart';
-import 'package:flutter_riderapp/View/_dashboard.dart';
-import 'package:flutter_riderapp/View/_signup.dart';
-import 'package:flutter_riderapp/View/_splash_screen.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
+import 'package:flutter_riderapp/Screen/Login/_signup.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 
-import '../Utilities.dart';
+import '../../Utilities.dart';
 
 
 class Login extends StatefulWidget {

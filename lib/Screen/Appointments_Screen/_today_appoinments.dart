@@ -8,11 +8,11 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:flutter_riderapp/View/_view_information.dart';
+import 'package:flutter_riderapp/Screen/ViewInformation/_view_information.dart';
 
-import '../AppConstants.dart';
-import '../Models/User.dart';
-import '../Utilities.dart';
+import '../../AppConstants.dart';
+import '../../Models/User.dart';
+import '../../Utilities.dart';
 
 // ignore: must_be_immutable
 class TodayAppoinments extends StatefulWidget {

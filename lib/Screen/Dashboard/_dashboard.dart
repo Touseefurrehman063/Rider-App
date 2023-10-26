@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/AppConstants.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/Nodata.dart';
+import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
+import 'package:flutter_riderapp/Widgets/Utils/languages_dialogue.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
@@ -13,12 +15,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Models/userprofile.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
-import 'package:flutter_riderapp/View/change_password.dart';
-import 'package:flutter_riderapp/View/firstview.dart';
-import 'package:flutter_riderapp/View/notification.dart';
-import 'package:flutter_riderapp/View/_login.dart';
-import 'package:flutter_riderapp/View/_profile.dart';
-import 'package:flutter_riderapp/View/_splash_screen.dart';
+import 'package:flutter_riderapp/Screen/Login/Signup/change_password.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/firstview.dart';
+import 'package:flutter_riderapp/Screen/Notification/notification.dart';
+import 'package:flutter_riderapp/Screen/Login/_login.dart';
+import 'package:flutter_riderapp/Screen/Profile/_profile.dart';
+import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -229,6 +231,16 @@ class DrawerContent extends StatelessWidget {
                 );
               },
             ),
+             ListTile(
+              leading: const Icon(Icons.fingerprint,color: Colors.white,),
+              title: Text('Language',style:
+            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
+              onTap: () async{
+                await languageSelector(context, AppConstants.languages);
+              },
+            ),
+          
+           
             ListTile(
               leading: const Icon(Icons.password,color: Colors.white,),
               title: Text('Change Password',style:
