@@ -249,7 +249,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
               ],
             ),
             title: Text(
-              'Appointment History',
+              'appointmenhistory'.tr,
               textAlign: TextAlign.center,
               style: GoogleFonts.raleway(
                 fontSize: 20,
@@ -353,7 +353,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                     Padding(
                       padding: const EdgeInsets.only(left: 20.0),
                       child: Text(
-                        'From',
+                        'from'.tr,
                         style: GoogleFonts.poppins(
                             fontSize: 14, fontWeight: FontWeight.w600),
                       ),
@@ -364,7 +364,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                     Padding(
                       padding: const EdgeInsets.only(right: 30.0),
                       child: Text(
-                        'To',
+                        'to'.tr,
                         style: GoogleFonts.poppins(
                             fontSize: 14, fontWeight: FontWeight.w600),
                       ),
@@ -630,7 +630,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             const SizedBox(height: 5),
                                             Text.rich(
                                               TextSpan(
-                                                text: "Test  | ",
+                                                text: "test".tr,
                                                 style: const TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.white,
@@ -651,7 +651,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             const SizedBox(height: 5),
                                             Text.rich(
                                               TextSpan(
-                                                text: "Address  | ",
+                                                text: "addres".tr,
                                                 style: const TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.white,
@@ -704,7 +704,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             ),
                                           ),
                                           child: Text(
-                                            'View Information',
+                                            'viewinformation'.tr,
                                             style: GoogleFonts.poppins(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
@@ -761,7 +761,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             const SizedBox(height: 5),
                                             Text.rich(
                                               TextSpan(
-                                                text: "Test  | ",
+                                                text: "test".tr,
                                                 style: const TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.white,
@@ -782,7 +782,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             const SizedBox(height: 5),
                                             Text.rich(
                                               TextSpan(
-                                                text: "Address  | ",
+                                                text: "addres".tr,
                                                 style: const TextStyle(
                                                     fontSize: 12,
                                                     color: Colors.white,
@@ -835,7 +835,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                             ),
                                           ),
                                           child: Text(
-                                            'View Information',
+                                            'viewinformation'.tr,
                                             style: GoogleFonts.poppins(
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,

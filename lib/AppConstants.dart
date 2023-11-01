@@ -7,6 +7,6 @@ class AppConstants {
   static List<LanguageModel> languages = [
     LanguageModel(name: 'English', id: 1, locale: const Locale('en', 'US')),
     LanguageModel(name: 'عربي'.tr, id: 2, locale: const Locale('ar', 'SA')),
-     LanguageModel(name: 'اردو'.tr, id: 2, locale: const Locale('ar', 'Ur')),
+     LanguageModel(name: 'اردو'.tr, id: 3, locale: const Locale('ur', 'PK')),
   ];
 }

@@ -79,9 +79,11 @@ Future<String?> languageSelector(
                         style: ElevatedButton.styleFrom(
                             backgroundColor: ColorManager.kPrimaryLightColor),
                         onPressed: () {
-                          Navigator.pop(context, 'ok'.tr);
+                         
                           cont.updateLocale(cont.selected!.locale!);
                           LocalDb().setLanguage(cont.selected);
+                           Navigator.pop(context, 'ok'.tr);
+                          
                         },
                         child:  Text(
                           'ok'.tr,

@@ -1,7 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Screen/Profile/_editprofile.dart';
-import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -39,13 +37,13 @@ class _ProfileState extends State<Profile> {
     var hour = now.hour;
 
     if (hour < 10) {
-      return 'Good Morning';
+      return 'goodmorning'.tr;
     } else if (hour < 18) {
-      return 'Good Afternoon';
+      return 'goodAfterNoon'.tr;
     } else if (hour < 22) {
-      return 'Good Evening';
+      return 'goodEvening'.tr;
     } else {
-      return 'Good Night';
+      return 'goodNight'.tr;
     }
   }
   
@@ -91,7 +89,7 @@ class _ProfileState extends State<Profile> {
         //   ],
         // ),
         title: Text(
-          'Profile',
+          'profile'.tr,
           textAlign: TextAlign.center,
           style: GoogleFonts.raleway(
             fontSize: 24,
@@ -175,7 +173,7 @@ class _ProfileState extends State<Profile> {
                                 style: GoogleFonts.raleway(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w700,
-                                  letterSpacing: 4.5,
+                                  // letterSpacing: 4.5,
                                   color: const Color(0xff1272d3),
                                 ),
                               ),
@@ -202,28 +200,28 @@ class _ProfileState extends State<Profile> {
                     child: Column(
                       children: [
                         RecordWidget(
-                          title: "Vehicle Number",
+                          title: "vehiclenumber".tr,
                           name: userprofile?.vehicleNumber ?? "_",
                         ),
                         SizedBox(
                           height: Get.height * 0.03,
                         ),
                         RecordWidget(
-                          title: "Government ID",
+                          title: "govid".tr,
                           name: userprofile?.cNICNumber ?? "_",
                         ),
                         SizedBox(
                           height: Get.height * 0.03,
                         ),
                         RecordWidget(
-                          title: "Contact No",
+                          title: "contact".tr,
                           name: userprofile?.cellNumber ?? "_",
                         ),
                         SizedBox(
                           height: Get.height * 0.03,
                         ),
                         RecordWidget(
-                          title: "Date of Birth",
+                          title: "dob".tr,
                           name:
                                             userprofile?.dateofBirth != null
                                                 ? DateFormat('dd MMMM yyyy')
@@ -238,7 +236,7 @@ class _ProfileState extends State<Profile> {
                           height: Get.height * 0.03,
                         ),
                         RecordWidget(
-                          title: "Address",
+                          title: "address".tr,
                           name: userprofile?.userAddress ?? "_",
                         ),
                         SizedBox(
@@ -247,26 +245,26 @@ class _ProfileState extends State<Profile> {
                         const SizedBox(
                           height: 20,
                         ),
-                        CustomButton(
-                          width: Get.width*0.7,
-                          onPressed: () async {
-                            await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const EditProfile()));
-                            setState(() {
-                              userprofile;
-                            });
-                          },
-                          title: "Edit Profile",
-                          radius: 20,
-                          style: GoogleFonts.poppins(
-                              color: Colors.blue,
-                              fontSize: 16,
+                        // CustomButton(
+                        //   width: Get.width*0.7,
+                        //   onPressed: () async {
+                        //     await Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => const EditProfile()));
+                        //     setState(() {
+                        //       userprofile;
+                        //     });
+                        //   },
+                        //   title: "Edit Profile",
+                        //   radius: 20,
+                        //   style: GoogleFonts.poppins(
+                        //       color: Colors.blue,
+                        //       fontSize: 16,
                               
-                              fontWeight: FontWeight.bold),
-                          primcolor: Colors.white,
-                        ),
+                        //       fontWeight: FontWeight.bold),
+                        //   primcolor: Colors.white,
+                        // ),
                       ],
                     ),
                   ),

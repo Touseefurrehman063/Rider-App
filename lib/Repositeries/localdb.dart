@@ -5,6 +5,7 @@ class LocalDB
 {
 saveDeviceToken(String? token) async {
     SharedPreferences s = await SharedPreferences.getInstance();
+    // ignore: unused_local_variable
     var string = s.setString('devicetoken', token!);
     log('saved in pref $token');
   }

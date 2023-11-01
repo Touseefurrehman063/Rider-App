@@ -213,7 +213,7 @@ callvback();
               ],
             ),
             title: Text(
-              'Today Appointments',
+              'todayappointment'.tr,
               textAlign: TextAlign.center,
               style: GoogleFonts.raleway(
                 fontSize: 20,
@@ -385,9 +385,10 @@ callvback();
                                                           FontWeight.bold),
                                                 ),
                                                 const SizedBox(height: 5),
+                                                
                                                 Text.rich(
                                                   TextSpan(
-                                                    text: "Test  | ",
+                                                    text: "test".tr,
                                                     style: const TextStyle(
                                                         fontSize: 12,
                                                         color: Colors.white,
@@ -410,7 +411,7 @@ callvback();
                                                 const SizedBox(height: 5),
                                                 Text.rich(
                                                   TextSpan(
-                                                    text: "Address  | ",
+                                                    text: "addres".tr,
                                                     style: const TextStyle(
                                                         fontSize: 12,
                                                         color: Colors.white,
@@ -476,7 +477,7 @@ callvback();
                                                 ),
                                               ),
                                               child: Text(
-                                                'View Information',
+                                                'viewinformation'.tr,
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 16,
                                                     fontWeight:
@@ -538,7 +539,7 @@ callvback();
                                                 const SizedBox(height: 5),
                                                 Text.rich(
                                                   TextSpan(
-                                                    text: "Test  | ",
+                                                    text: "test".tr,
                                                     style: const TextStyle(
                                                         fontSize: 12,
                                                         color: Colors.white,
@@ -561,7 +562,7 @@ callvback();
                                                 const SizedBox(height: 5),
                                                 Text.rich(
                                                   TextSpan(
-                                                    text: "Address  | ",
+                                                    text: "addres".tr,
                                                     style: const TextStyle(
                                                         fontSize: 12,
                                                         color: Colors.white,
@@ -626,7 +627,7 @@ callvback();
                                                 ),
                                               ),
                                               child: Text(
-                                                'View Information',
+                                                'viewinformation'.tr,
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 16,
                                                     fontWeight:

@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/View/Nodata.dart';
+import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:get/get.dart';
 
 

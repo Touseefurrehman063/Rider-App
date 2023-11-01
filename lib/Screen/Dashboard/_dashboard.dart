@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/AppConstants.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
+import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:flutter_riderapp/Widgets/Utils/languages_dialogue.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Replace these with your actual implementations.
@@ -48,81 +53,72 @@ class _DashboardState extends State<Dashboard> {
   instance() async {
     if (userprofile != userProfile()) {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      login(prefs.getString('username') ?? "",
-          prefs.getString('password') ?? "");
+      login(
+          prefs.getString('username') ?? "", prefs.getString('password') ?? "");
     }
   }
 
-
-LogoutUser() async {
-  
-  var url = '$ip/api/account/Logoff';
-  var headers = {
-    'Content-Type': 'application/json',
-  };
-  String? DeviceToken = await LocalDB().getDeviceToken();
-  var body = jsonEncode({
-    "UserId":"${widget.user!.empId}",
+  LogoutUser() async {
+    var url = '$ip/api/account/Logoff';
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+    String? DeviceToken = await LocalDB().getDeviceToken();
+    var body = jsonEncode({
+      "UserId": "${widget.user!.empId}",
       "DeviceToken": DeviceToken,
-  "Manufacturer": "Browser",
-  "Model": "Infinix-X680B Infinix X680B",
-  "AppVersion": "Infinix-X680B Infinix X680B",
-  "DeviceVersion": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-  });
+      "Manufacturer": "Browser",
+      "Model": "Infinix-X680B Infinix X680B",
+      "AppVersion": "Infinix-X680B Infinix X680B",
+      "DeviceVersion":
+          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
+    });
 
-  var response = await http.post(Uri.parse(url), headers: headers, body: body);
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
 
-  if (response.statusCode == 200) {
-    var responseData = jsonDecode(response.body);
-    var status = responseData['Status'];
-    dynamic usr=responseData;
-    widget.user=User.fromJson(usr);
-    var sharedpref = await SharedPreferences.getInstance();
-    sharedpref.setString('Token',widget.user!.token.toString());
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      var status = responseData['Status'];
+      dynamic usr = responseData;
+      widget.user = User.fromJson(usr);
+      var sharedpref = await SharedPreferences.getInstance();
+      sharedpref.setString('Token', widget.user!.token.toString());
 
+      print('API Response: $responseData');
 
-   
+      if (status == 1) {
+        // ignore: use_build_context_synchronously
 
-      print('API Response: $responseData'); 
+        // ignore: unused_local_variable
+        var empId = responseData['Id'];
 
+        //          showDialog(context: context, builder: (context){
+        //   return const Center(child: CircularProgressIndicator(),);
 
-    if (status == 1) {
-      // ignore: use_build_context_synchronously
-   
-      // ignore: unused_local_variable
-      var empId = responseData['Id'];
-
-     
-  //          showDialog(context: context, builder: (context){
-  //   return const Center(child: CircularProgressIndicator(),);
-
-  // });
-
-      
-
-    } else if (status == 0) {
-
+        // });
+      } else if (status == 0) {}
     }
+
+    return {'isLoggedoff': false, 'empId': null};
   }
 
-  return {'isLoggedoff': false, 'empId': null};
-  
-}
   @override
   Widget build(BuildContext context) {
     return ZoomDrawer(
       controller: zoomController,
       // style: DrawerStyle.style3,
       dragOffset: 40,
-        showShadow: true,
-        shadowLayer2Color:  const Color(0xFF2157B2),
-        menuBackgroundColor: const Color(0xFF2157B2),
-        angle: 0,
-        slideWidth: 275,
+      
+      showShadow: true,
+      
+      shadowLayer2Color: const Color(0xFF2157B2),
+      menuBackgroundColor: const Color(0xFF2157B2),
+      angle: 0,
+      slideWidth: 275,
       menuScreen: const DrawerContent(),
       mainScreen: WillPopScope(
-
-       onWillPop: () async => false,
+        onWillPop: () async => false,
         child: Scaffold(
           appBar: selectedPage == 1
               ? AppBar(
@@ -132,7 +128,8 @@ LogoutUser() async {
                   title: SizedBox(
                     width: MediaQuery.of(context).size.width * 0.4,
                     height: MediaQuery.of(context).size.width * 0.4,
-                    child: Image.asset("assets/Helpful.png"), // Replace with your image
+                    child: Image.asset(
+                        "assets/Helpful.png"), // Replace with your image
                   ),
                   leading: Builder(
                     builder: (BuildContext context) {
@@ -173,212 +170,457 @@ LogoutUser() async {
         ),
       ),
       borderRadius: 24.0,
+      
       // showShadow: true,
     );
   }
 }
 
-class DrawerContent extends StatelessWidget {
+class DrawerContent extends StatefulWidget {
   const DrawerContent({super.key});
 
   @override
+  State<DrawerContent> createState() => _DrawerContentState();
+}
+
+class _DrawerContentState extends State<DrawerContent> {
+  @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Container(
-        color: const Color(0xFF2157B2),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: double.infinity,
-              height: Get.height*0.2  ,
-              child: const Center(
-           
+    return ListView(children: <Widget>[
+      Material(
+        child: Container(
+          color: const Color(0xFF2157B2),
+          child: Column(
+            children: <Widget>[
+              SizedBox(
+                width: double.infinity,
+                height: Get.height * 0.1,
+                child: const Center(),
               ),
-            ),
-             Padding(
-               padding: const EdgeInsets.only(right:80.0),
-               child: Text(
-                 userprofile?.fullName != null
-                     ? '${userprofile?.fullName}'
-                     : 'Rider',
-                 style: const TextStyle(
-                     color: Colors.white, fontWeight: FontWeight.bold),
-               ),
-             ),
-             const Divider(
-              color: Colors.white,
-             ),
-            
-             ListTile(
-              leading: const Icon(Icons.history,color: Colors.white,),
-              title: Text('History', style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NoDataFound()),
-                );
-              },
-            ),
-             ListTile(
-              leading: const Icon(Icons.fingerprint,color: Colors.white,),
-              title: Text('Biometric',style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const NoDataFound()),
-                );
-              },
-            ),
-             ListTile(
-              leading: const Icon(Icons.fingerprint,color: Colors.white,),
-              title: Text('Language',style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () async{
-                await languageSelector(context, AppConstants.languages);
-              },
-            ),
-          
-           
-            ListTile(
-              leading: const Icon(Icons.password,color: Colors.white,),
-              title: Text('Change Password',style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ChangePassword()),
-                );
-              },
-            ),
-            const Divider(color: Colors.white,),
-             SizedBox(
-                height: Get.height * 0.02,
-              ),
-            Padding(
-              padding: const EdgeInsets.only(right:80.0),
-              child: InkWell(
-                  onTap: () {
-                    print('Pressed');
-                  },
-                  child: const Text(
-                    'Privacy & Policy',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 14),
-                  ),
+              Padding(
+                padding: const EdgeInsets.only(right: 110.0),
+                child: CircleAvatar(
+                  radius: 28,
+                  backgroundColor: const Color(0xFFFEF4F7),
+                  child: userprofile?.imagePath == null
+                      ? const CircleAvatar(
+                          backgroundImage: AssetImage("assets/pp.jpg"),
+                          radius: 25,
+                        )
+                      : Hero(
+                          tag: 'profile',
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage('${userprofile?.imagePath}'),
+                            radius: 25,
+                          ),
+                        ),
                 ),
-            ),
+              ),
               SizedBox(
                 height: Get.height * 0.02,
               ),
-            Padding(
-              padding: const EdgeInsets.only(right:45.0),
-              child: InkWell(
+              Padding(
+                padding: const EdgeInsets.only(right: 10.0),
+                child: Text(
+                  userprofile?.fullName != null
+                      ? '${userprofile?.fullName}'
+                      : 'Rider',
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
+                      fontSize: 16),
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.only(left: 30.0),
+                child: Divider(
+                  color: Colors.white,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 80.0),
+                child: Text(
+                  "MRN: ${userprofile?.employeeNumber ?? "A24589"}",
+                  style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14),
+                ),
+              ),
+
+              // customListTile(context, onTap: () {
+              //   Get.to(() => const NoDataFound());
+              // },
+              //     isIcon: true,
+              //     icon: const Icon(
+              //       Icons.history,
+              //       size: 30,
+              //       color: Colors.white,
+              //     ),
+              //     title: 'History'.tr),
+              customListTile(context, onTap: () async {
+                Get.to(() => const ChangePassword());
+              },
+                  // isIcon: true,
+                  // icon: const Icon(
+                  //   Icons.password,
+                  //   color: Colors.white,
+                  // ),
+                  imagePath: Images.lock,
+                  imageHeight: 10,
+                  title: 'changepassword'.tr,
+                  textColor: ColorManager.kWhiteColor),
+              customListTile(
+                context,
+                onTap: () async {
+                  bool auth = await Authentication.authentication();
+                  print("Authenticate:$auth");
+                },
+                isIcon: true,
+                icon: const Icon(
+                  Icons.fingerprint,
+                  color: Colors.white,
+                ),
+                title: 'biometric'.tr,
+                togglebutton: false,
+              ),
+              // ListTile(
+              //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
+              //   contentPadding:
+              //       const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
+              //   leading: Icon(
+              //     Icons.fingerprint,
+              //     color: Colors.white,
+              //   ),
+              //   trailing: Transform.scale(
+              //     scale: 0.54,
+              //     child: Switch(
+              //       value: isBiometric,
+              //       activeColor: ColorManager.kWhiteColor,
+              //       onChanged: (value) async {
+              //         // print(‘namename’);
+              //         // print(EditProfileController.i.name);
+              //         if (value) {
+              //           authentication = await _authenticate();
+              //           if (authentication) {
+              //             if (userprofile?.fullName == null) {
+              //               fingerprint = authentication;
+              //             } else {
+              //               ScaffoldMessenger.of(context).showSnackBar(
+              //                   const SnackBar(
+              //                       content:
+              //                           Text("You are already Logged in")));
+              //                                          setState(() {
+              //           //   fingerprint = value;
+              //           });
+                                        
+              //               // Utils().toastmessage(“You are already Logged in”);
+
+              //               fingerprint = true;
+              //             }
+              //           } else {
+              //             // ScaffoldMessenger.of(context).showSnackBar(
+              //             //     const SnackBar(
+              //             //         content: Text(
+              //             //             “You declined the biometric login.“)));
+              //           }
+              //           if (fingerprint) {
+              //             if (authentication) {
+              //               if (userprofile?.fullName != null) {
+              //                 ScaffoldMessenger.of(context).showSnackBar(
+              //                     const SnackBar(
+              //                         content:
+              //                             Text("You are already Logged in")));
+              //                              setState(() {
+              //           //   fingerprint = value;
+              //           });
+
+              //                 fingerprint = true;
+              //               }
+              //             } else {
+              //               fingerprint = true;
+              //             }
+              //             // LocalDb.set (‘fingerprint’, !fingerprint);
+              //           }
+              //           // setState(() {
+              //           //   fingerprint = value;
+              //           // });
+              //         } else {
+              //           // prefs!.setBool(‘fingerprint’, !fingerprint);
+
+              //           fingerprint = false;
+              //           // authentication = !fingerprint;
+              //         }
+              //       },
+              //     ),
+              //   ),
+              //   title: Text(
+              //     "Biometric".tr,
+              //     style: Theme.of(context)
+              //         .textTheme
+              //         .bodySmall
+              //         ?.copyWith(color: Colors.white),
+              //   ),
+              //   onTap: () {
+              //     //Navigator.pop(context);
+              //   },
+              // ),
+
+              customListTile(
+                context,
+                isIcon: true,
+                icon: const Icon(
+                  Icons.language,
+                  color: Colors.white,
+                  size: 25,
+                ),
+                // imagePath: Images.language,
+                title: 'languages'.tr,
+
+                onTap: () async {
+                  await languageSelector(context, AppConstants.languages);
+                },
+              ),
+
+              const Padding(
+                padding: EdgeInsets.only(left: 30.0),
+                child: Divider(
+                  color: Colors.white,
+                ),
+              ),
+              SizedBox(
+                height: Get.height * 0.02,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 80.0),
+                child: InkWell(
                   onTap: () {
                     print('Pressed');
                   },
-                  child: const Text(
-                    'Terms and Conditions',
-                    style: TextStyle(
-                        color: Colors.white, fontSize: 14),
+                  child:  Text(
+                    'privacyPolicy'.tr,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
                   ),
                 ),
-            ),
-             SizedBox(
-                height: Get.height * 0.07,
+              ),
+              SizedBox(
+                height: Get.height * 0.02,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(right: 45.0),
+                child: InkWell(
+                  onTap: () {
+                    print('Pressed');
+                  },
+                  child:  Text(
+                    'termsAndConditions'.tr,
+                    style: const TextStyle(color: Colors.white, fontSize: 14),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: Get.height * 0.10,
+              ),
+              customListTile(context, onTap: () async {
+                deleteaccount();
+
+                logout(context);
+              },
+                  isIcon: true,
+                  icon: const Icon(
+                    Icons.delete_sharp,
+                    color: Colors.white,
+                  ),
+                  title: 'deleteAccount'.tr,
+                  textColor: ColorManager.kWhiteColor),
+
+              customListTile(
+                context,
+                // isIcon: true,
+                // icon: const Icon(
+                //   Icons.logout,
+                //   color: Colors.white,
+                // ),
+                 imagePath: Images.logout,
+                  // imageHeight: 10,
+                imageHeight: Get.height * 0.025,
+                title: 'logout'.tr,
+                onTap: () async {
+                  logout(context);
+                  // int ret=await LogoutUser();
+                  // if(ret==1)
+                  // {
+                  //    Navigator.pushReplacement(
+                  //                   context,
+                  //                   MaterialPageRoute(builder: (context) => Login(),
+
+                  //                   ));
+
+                  // }
+                  // else{
+                  //   ScaffoldMessenger.of(context).showSnackBar(
+                  //                   const SnackBar(
+                  //                     content: Text('Log Out Fail'),
+                  //                     duration: Duration(seconds: 5),
+                  //                   ),
+                  //                 );
+
+                  // }
+                },
               ),
 
+              // ListTile(
+              //   leading: const Icon(Icons.logout,color: Colors.white,),
+              //   title: Text('Logout',style:
+              // Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
+              //   onTap: () {
+              //      logout(context);
+              //   // int ret=await LogoutUser();
+              //   // if(ret==1)
+              //   // {
+              //   //    Navigator.pushReplacement(
+              //   //                   context,
+              //   //                   MaterialPageRoute(builder: (context) => Login(),
 
-            ListTile(
-              leading: const Icon(Icons.delete,color: Colors.white,),
-              title: Text('Delete Account', style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () {
-                deleteaccount();
-              
-              logout(context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout,color: Colors.white,),
-              title: Text('Logout',style:
-            Theme.of(context).textTheme.bodySmall?.copyWith(color:Colors.white,fontSize: 14)),
-              onTap: () {
-                 logout(context);
-              // int ret=await LogoutUser();
-              // if(ret==1)
-              // {
-              //    Navigator.pushReplacement(
-              //                   context,
-              //                   MaterialPageRoute(builder: (context) => Login(),
-                              
-                            
-                              
-                               
-              //                   ));
+              //   //                   ));
 
-              // }
-              // else{
-              //   ScaffoldMessenger.of(context).showSnackBar(
-              //                   const SnackBar(
-              //                     content: Text('Log Out Fail'),
-              //                     duration: Duration(seconds: 5),
-              //                   ),
-              //                 );
+              //   // }
+              //   // else{
+              //   //   ScaffoldMessenger.of(context).showSnackBar(
+              //   //                   const SnackBar(
+              //   //                     content: Text('Log Out Fail'),
+              //   //                     duration: Duration(seconds: 5),
+              //   //                   ),
+              //   //                 );
 
-              // }
-              },
-            ),
-          ],
+              //   // }
+              //   },
+              // ),
+            ],
+          ),
         ),
+      )
+    ]);
+  }
+
+  Future<void> deleteaccount() async {
+    var url = '$ip/api/account/DeleteUserAccount';
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+    var sharedpref = await SharedPreferences.getInstance();
+    String userid = sharedpref.getString('userId').toString();
+    String token = sharedpref.getString('Token').toString();
+
+    var body = jsonEncode({
+      'UserId': userid,
+      'Token': token,
+    });
+
+    var response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode == 200) {
+      var responseData = jsonDecode(response.body);
+      var status = responseData['Status'];
+      print(responseData);
+
+      print('API Response: $responseData');
+      if (status == 1) {}
+    }
+  }
+
+  customListTile(
+    BuildContext context, {
+    String? title,
+    Function()? onTap,
+    Widget? icon,
+    Color? textColor = ColorManager.kWhiteColor,
+    String? imagePath,
+    double? imageHeight = 20,
+    bool? togglebutton = false,
+    bool? isIcon = false,
+    bool isToggled = false,
+    bool isImageThere = false,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      minLeadingWidth: 10,
+      dense: false,
+      horizontalTitleGap: 20,
+      contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+      leading: isIcon == false
+          ? (imagePath != null && imagePath.isNotEmpty)
+              ? SizedBox(
+                  height: 30,
+                  width: 30,
+                  child: Image.asset(
+                    imagePath,
+                  ),
+                )
+              : const SizedBox.shrink()
+          : icon ??
+              const Icon(
+                Icons.delete,
+                color: ColorManager.kRedColor,
+                size: 30,
+              ),
+      title: Text(
+        '$title',
+        style:
+            Theme.of(context).textTheme.bodySmall?.copyWith(color: textColor),
       ),
+      trailing: togglebutton == true
+          ? CupertinoSwitch(
+              value: isToggled,
+              onChanged: (value) {
+                if (onTap != null) {
+                  onTap();
+                }
+              },
+            )
+          : const SizedBox.shrink(),
     );
   }
-  Future <void> deleteaccount() async {
-  var url = '$ip/api/account/DeleteUserAccount';
-  var headers = {
-    'Content-Type': 'application/json',
-  };
-    var sharedpref = await SharedPreferences.getInstance();
-   String userid=sharedpref.getString('userId').toString();
-   String token=sharedpref.getString('Token').toString();
-   
-       
-  var body = jsonEncode({
-    'UserId':userid,
-    'Token':token,
-  });
+}
 
-  var response = await http.post(Uri.parse(url), headers: headers, body: body);
+bool isBiometric = false;
 
-  if (response.statusCode == 200) {
-    var responseData = jsonDecode(response.body);
-    var status = responseData['Status'];
-    print(responseData);
+final LocalAuthentication auth = LocalAuthentication();
+List<BiometricType>? _availableBiometrics;
+String _authorized = "Not Authorized";
+bool _isAuthenticating = false;
+bool authentication = false;
+Future<bool> _authenticate() async {
+  bool authenticated = false;
+  try {
+    _isAuthenticating = true;
+    _authorized = "Authenticating";
 
+    authenticated = await auth.authenticate(
+      localizedReason: "Let OS determine authentication method",
+      options: const AuthenticationOptions(
+        stickyAuth: true,
+      ),
+    );
 
-      print('API Response: $responseData'); 
-      if (status==1){
-        
-       
-      }
+    _isAuthenticating = false;
+  } on PlatformException catch (e) {
+    _isAuthenticating = false;
+    _authorized = "Error - ${e.message}";
+    print(e.message.toString());
 
-
-   
+    return authenticated;
   }
-  
 
-  
+  () => _authorized = authenticated ? "Authorized" : "Not Authorized";
+  return authenticated;
 }
 
+bool fingerprint = false;
 
-
-
-}
-
-
-void logout(BuildContext context) async{
+void logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool(SplashscreenState.KEYLOGIN, false);
   prefs.clear();
@@ -389,15 +631,14 @@ void logout(BuildContext context) async{
   );
 }
 
-
 int selectedPage = 1;
 String UserName = "YourUsername";
 String empId = "YourEmpId";
 
 final List<Widget> pages = [
-  const notification(), 
-  FirstView(), 
-  Profile(empId: empId, userName: UserName), 
+  const notification(),
+  FirstView(),
+  Profile(empId: empId, userName: UserName),
 ];
 
 final items = [

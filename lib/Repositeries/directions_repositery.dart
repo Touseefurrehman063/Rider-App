@@ -1,14 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_riderapp/Models/directions_model.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:flutter_riderapp/View/.env.dart';
+import 'package:flutter_riderapp/Screen/.env.dart';
 
 
 
 class DirectionsRepository{
   static const String _baseUrl='https://maps.googleapis.com/maps/api/distancematrix/json';
   final Dio _dio;
-  DirectionsRepository({required Dio dio}): _dio=dio ?? Dio();
+  DirectionsRepository({required Dio dio}): _dio=dio;
   Future<Directions?> getDirections({
     required LatLng origin,
     required LatLng destination,

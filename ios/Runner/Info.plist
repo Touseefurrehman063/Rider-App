@@ -20,6 +20,10 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.1.0</string>
+	<key>NSFaceIDUsageDescription</key>
+<string>Face ID need for Biometric</string>
+<key>NSLocalUsageDescription</key>
+<string>Authenthentication need for Biometric</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
