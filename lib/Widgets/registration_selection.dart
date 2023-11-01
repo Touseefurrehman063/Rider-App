@@ -2,6 +2,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Screen/Families_screen/_patient_registration.dart';
+import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:flutter_riderapp/Widgets/appimages.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -90,14 +91,14 @@ void RegistrationSelectionPopup(
                           height: MediaQuery.of(context).size.height*0.01,
                         ),
                         CupertinoButton(
-                            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                            padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                             onPressed: () {
-                              // Navigator.pushReplacement(
-                              //   context,
-                              //   MaterialPageRoute(builder: ((context) {
-                              //     return const Login();
-                              //   })),
-                              // );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(builder: ((context) {
+                                  return const NoDataFound();
+                                })),
+                              );
 
                             },
                             color:CupertinoColors.activeBlue,

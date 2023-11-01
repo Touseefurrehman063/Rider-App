@@ -220,17 +220,14 @@ class _DrawerContentState extends State<DrawerContent> {
               SizedBox(
                 height: Get.height * 0.02,
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: Text(
-                  userprofile?.fullName != null
-                      ? '${userprofile?.fullName}'
-                      : 'Rider',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w900,
-                      fontSize: 16),
-                ),
+              Text(
+                userprofile?.fullName != null
+                    ? '${userprofile?.fullName}'
+                    : 'Rider',
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w900,
+                    fontSize: 16),
               ),
               const Padding(
                 padding: EdgeInsets.only(left: 30.0),
@@ -285,87 +282,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 title: 'biometric'.tr,
                 togglebutton: false,
               ),
-              // ListTile(
-              //   visualDensity: const VisualDensity(horizontal: 0, vertical: -4),
-              //   contentPadding:
-              //       const EdgeInsets.symmetric(horizontal: 20, vertical: 0),
-              //   leading: Icon(
-              //     Icons.fingerprint,
-              //     color: Colors.white,
-              //   ),
-              //   trailing: Transform.scale(
-              //     scale: 0.54,
-              //     child: Switch(
-              //       value: isBiometric,
-              //       activeColor: ColorManager.kWhiteColor,
-              //       onChanged: (value) async {
-              //         // print(‘namename’);
-              //         // print(EditProfileController.i.name);
-              //         if (value) {
-              //           authentication = await _authenticate();
-              //           if (authentication) {
-              //             if (userprofile?.fullName == null) {
-              //               fingerprint = authentication;
-              //             } else {
-              //               ScaffoldMessenger.of(context).showSnackBar(
-              //                   const SnackBar(
-              //                       content:
-              //                           Text("You are already Logged in")));
-              //                                          setState(() {
-              //           //   fingerprint = value;
-              //           });
-                                        
-              //               // Utils().toastmessage(“You are already Logged in”);
-
-              //               fingerprint = true;
-              //             }
-              //           } else {
-              //             // ScaffoldMessenger.of(context).showSnackBar(
-              //             //     const SnackBar(
-              //             //         content: Text(
-              //             //             “You declined the biometric login.“)));
-              //           }
-              //           if (fingerprint) {
-              //             if (authentication) {
-              //               if (userprofile?.fullName != null) {
-              //                 ScaffoldMessenger.of(context).showSnackBar(
-              //                     const SnackBar(
-              //                         content:
-              //                             Text("You are already Logged in")));
-              //                              setState(() {
-              //           //   fingerprint = value;
-              //           });
-
-              //                 fingerprint = true;
-              //               }
-              //             } else {
-              //               fingerprint = true;
-              //             }
-              //             // LocalDb.set (‘fingerprint’, !fingerprint);
-              //           }
-              //           // setState(() {
-              //           //   fingerprint = value;
-              //           // });
-              //         } else {
-              //           // prefs!.setBool(‘fingerprint’, !fingerprint);
-
-              //           fingerprint = false;
-              //           // authentication = !fingerprint;
-              //         }
-              //       },
-              //     ),
-              //   ),
-              //   title: Text(
-              //     "Biometric".tr,
-              //     style: Theme.of(context)
-              //         .textTheme
-              //         .bodySmall
-              //         ?.copyWith(color: Colors.white),
-              //   ),
-              //   onTap: () {
-              //     //Navigator.pop(context);
-              //   },
-              // ),
+             
 
               customListTile(
                 context,
@@ -420,7 +337,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
               ),
               SizedBox(
-                height: Get.height * 0.10,
+                height: Get.height * 0.15,
               ),
               customListTile(context, onTap: () async {
                 deleteaccount();
@@ -547,8 +464,8 @@ class _DrawerContentState extends State<DrawerContent> {
     return ListTile(
       onTap: onTap,
       minLeadingWidth: 10,
-      dense: false,
-      horizontalTitleGap: 20,
+      dense: true,
+      horizontalTitleGap: 10,
       contentPadding: const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
       leading: isIcon == false
           ? (imagePath != null && imagePath.isNotEmpty)

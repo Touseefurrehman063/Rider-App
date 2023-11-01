@@ -86,6 +86,7 @@ class Localization extends Translations {
           'order':'Order:',
 
           //Registration
+          'registernow':'Register Now',
           'fullname': 'Full Name',
           'email': 'Email',
           'gender': 'Gender',
@@ -100,6 +101,28 @@ class Localization extends Translations {
           'selectgender': 'Please select a gender',
           'enterid': 'Enter ID Number',
           'enteraddress': 'Enter Your Address',
+          'vehicletype':'Vehicle Type',
+          'vehicleno':'Vehicle Number',
+          'liscenceno':'Liscence Number',
+          'password':'Password',
+          'repassword':'Re-Password',
+          'entervehicle':'Enter Vehicle Number',
+          'enterliscenceno':'Enter Liscence Number',
+          'passnotmatch':'Passwords do not match!',
+          'entervaliddata':'Please Enter Valid Data',
+          'register':'Register',
+          'alreadyhaveacount':'Already have an account?',
+          'signin':'Sign In',
+          //Login
+          'login':'LOGIN',
+          'username':'Username',
+          'enterusername':'Please Enter Your Username' ,
+          'invalid':'Invalid Username and Password', 
+          'dontaccount':'Don`t Have An Account?',  
+
+
+
+
           
         },
         "ar_SA": {
@@ -184,6 +207,7 @@ class Localization extends Translations {
           'pleaseselect':"الرجاء اختيار المختبر",
 
           //Registration
+          'registernow':'سجل الان',
           'fullname': 'الاسم الكامل',
           'email': 'البريد الإلكتروني',
           'gender': 'الجنس',
@@ -198,6 +222,24 @@ class Localization extends Translations {
           'selectgender': 'الرجاء تحديد الجنس',
           'enterid': 'أدخل رقم الهوية',
           'enteraddress': 'أدخل عنوانك',
+          'vehicletype':'نوع السيارة',
+          'vehicleno':'عدد المركبات',
+          'liscenceno':'رقم الرخصة',
+          'password':'كلمة المرور',
+          'repassword':'إعادة كلمة المرور',
+          'entervehicle':'أدخل رقم السيارة',
+          'enterliscenceno':'أدخل رقم الترخيص',
+          'passnotmatch':'كلمة السر غير مطابقة!',
+          'register':'يسجل',
+          'alreadyhaveacount':'لديك حساب بالفعل؟',
+          'signin':'تسجيل الدخول',
+          'entervaliddata':'الرجاء إدخال بيانات صحيحة',
+          //Login
+          'login':'تسجيل الدخول',
+          'username':'اسم المستخدم',
+          'enterusername':'الرجاء إدخال اسم المستخدم' ,
+          'invalid':'اسم المستخدم وكلمة المرور غير صالحة', 
+          'dontaccount':'ليس لديك حساب؟',  
         },
         "ur_PK": {
           //drawer
@@ -281,6 +323,7 @@ class Localization extends Translations {
           'pleaseselect':"براہ کرم لیب کو منتخب کریں",
 
           //Registration
+          'registernow':'ابھی رجسٹر کریں',
           'fullname': 'پورا نام',
           'email': 'ای میل',
           'gender': 'جنس',
@@ -295,6 +338,25 @@ class Localization extends Translations {
           'selectgender': 'براہ کرم ایک جنس منتخب کریں',
           'enterid': 'شناختی نمبر درج کریں',
           'enteraddress': 'اپنا پتہ درج کریں',
+          'vehicletype':'گاڑی کی قسم',
+          'vehicleno':'گاڑی کا نمبر',
+          'liscenceno':'لائسنس نمبر',
+          'password':'پاس ورڈ',
+          'repassword':'دوبارہ پاس ورڈ',
+          'entervehicle':'گاڑی کا نمبر درج کریں',
+          'enterliscenceno':'لائسنس نمبر درج کریں',
+          'passnotmatch':'پاس ورڈ نہیں مل رہا!',
+           'register':'رجسٹر کریں',
+          'alreadyhaveacount':'پہلے سے اکاؤنٹ ہے؟',
+          'signin':'سائن ان',
+          'entervaliddata':'براہ کرم درست ڈیٹا درج کریں',
+           //Login
+          'login':'لاگ ان کریں',
+          'username':'صارف نام',
+          'enterusername':'براہ کرم اپنا صارف نام درج کریں',
+          'invalid':' صارف نام اور پاس ورڈغلط ہیں', 
+          'dontaccount':'کیا آپ کا اکاؤنٹ نہیں ہے؟',  
+        
         }
       };
 }

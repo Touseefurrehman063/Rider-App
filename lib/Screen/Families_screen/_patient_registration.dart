@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -33,15 +35,24 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   final dateFormat = DateFormat('yyyy-MM-dd');
   DateTime selectedDate = DateTime.now();
 
+  // ignore: non_constant_identifier_names
   TextEditingController Name = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController mobile_number = TextEditingController();
   TextEditingController email = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController gvt_id = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController City = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController Address = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController v_number = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController GuardianName = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController NOKName = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController gvt_guardian_id = TextEditingController();
   
 
@@ -85,9 +96,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   String? selectedNOKName;
    String? selectedCountriesName;
   String? selectedCountries;
+  // ignore: non_constant_identifier_names
   String? SelectedState;
   String? countryCode;
   String? selectedCityName;
+  // ignore: non_constant_identifier_names
   String? SelectedStateName;
 
   List<String> genderNameArray = ['Select gender'];
@@ -121,6 +134,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -155,6 +169,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -171,6 +186,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        // ignore: avoid_print
         print(data);
         if (data['Status'] != null &&
             data['Status'] == 1 &&
@@ -189,6 +205,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -222,6 +239,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -238,13 +256,16 @@ class _PatientRegistrationState extends State<PatientRegistration> {
       var body = {
         "CountryId": id,
       };
+      // ignore: avoid_print
       print(body);
+      // ignore: avoid_print
       print(headers);
       var response = await http.post(Uri.parse(url),
           headers: headers, body: jsonEncode(body));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        // ignore: avoid_print
         print(data);
         if (data['Status'] != null &&
             data['Status'] == 1 &&
@@ -263,6 +284,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -275,11 +297,13 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(register.toJson()));
+    // ignore: avoid_print
     print("Response: ${response.body}");
 
     if (response.statusCode == 200) {
       setState(() {});
       var data = jsonDecode(response.body);
+      // ignore: avoid_print
       print("Response data: $data");
 
       // ignore: unused_local_variable
@@ -292,8 +316,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 //  NOKModel testing= NOKModel(id: '84385',name: 'attiq testing');
 
 // NOK api
+  // ignore: non_constant_identifier_names
   List<String> NOKNameArray = ['Select Relation'];
+  // ignore: non_constant_identifier_names
   List<NOKModel> NOK = [];
+  // ignore: non_constant_identifier_names
   Future<void> NOKapi() async {
     //  NOK.add(testing);
     setState(() {});
@@ -305,6 +332,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
+        // ignore: avoid_print
         print(data);
         if (data['Status'] != null &&
             data['Status'] == 1 &&
@@ -322,6 +350,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -334,7 +363,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
     relationapi();
     NOKapi();
     // vehicleapi();
-    // TODO: implement initState
+   
     super.initState();
   }
 
@@ -492,7 +521,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                       child: CupertinoDatePicker(
                                         backgroundColor: Colors.white,
                                         initialDateTime:
-                                            selectedDate ?? DateTime.now(),
+                                            selectedDate,
                                          onDateTimeChanged:
                                                 (DateTime newTime) {
                                               setState(() => dateTime = newTime);
@@ -522,69 +551,61 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 1),
-                              child: SizedBox(
-                                
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.075,
-                                child: SizedBox(
-                                  child: DropdownButtonFormField(
-                                      decoration: checkval
-                                          ? InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                      width: 1,
-                                                      color: Colors.black)),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 17,
-                                                      vertical: 13),
-                                            )
-                                          : InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                      width: 1,
-                                                      color: Colors.black)),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 17,
-                                                      vertical: 13),
-                                            ),
-                                      value: selectedGender,
-                                      hint:  Text(
-                                        'gender'.tr,
-                                        style: const TextStyle(
-                                            color: Colors.grey, fontSize: 10),
-                                      ),
-                                      items: gender
-                                          .map<DropdownMenuItem<String>>(
-                                              (Gender val) {
-                                        return DropdownMenuItem<String>(
-                                          
-                                          value: val.id,
-                                          child: Text(val.name.toString()),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedGender = newValue;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'selectgender'.tr;
-                                        } else {
-                                          return null;
-                                        }
-                                      }),
-                                ),
-                              ),
+                              child: DropdownButtonFormField(
+                                  decoration: checkval
+                                      ? InputDecoration(
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                  width: 1,
+                                                  color: Colors.black)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 17,
+                                                  vertical: 13),
+                                        )
+                                      : InputDecoration(
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                  width: 1,
+                                                  color: Colors.black)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 17,
+                                                  vertical: 13),
+                                        ),
+                                  value: selectedGender,
+                                  hint:  Text(
+                                    'gender'.tr,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 10),
+                                  ),
+                                  items: gender
+                                      .map<DropdownMenuItem<String>>(
+                                          (Gender val) {
+                                    return DropdownMenuItem<String>(
+                                      
+                                      value: val.id,
+                                      child: Text(val.name.toString()),
+                                    );
+                                  }).toList(),
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 14),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedGender = newValue;
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'selectgender'.tr;
+                                    } else {
+                                      return null;
+                                    }
+                                  }),
                             ),
                           ),
                            
@@ -670,10 +691,12 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               countries.clear();
                               await countriesapi();
                               setState(() {});
+                              // ignore: use_build_context_synchronously
                               dynamic generic = await searchableDropdown(
                                   context, constraints, countries);
                               selectedCountriesName = null;
                               if (generic != null && generic != '') {
+                                // ignore: prefer_interpolation_to_compose_strings
                                 print('Countries selected Id' + generic.id);
                                 selectedCountries = generic.id;
                                 selectedCountriesName =
@@ -903,6 +926,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                     register.countryId =
                                         selectedCountries.toString();
                                     print(register.countryId);
+                                    await _register_api(register as Register);
           
                                     // register.fullName=Name.text.toString();
                                     // register.mobileNo=mobile_number.text.toString();

@@ -436,7 +436,7 @@ class _SignupState extends State<Signup> {
                       Padding(
                         padding: const EdgeInsets.only(top: 20.0),
                         child: Text(
-                          'Register Now',
+                          'registernow'.tr,
                           style: GoogleFonts.raleway(
                             textStyle: const TextStyle(
                               fontWeight: FontWeight.bold,
@@ -465,12 +465,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter your full name';
+                                return 'entername'.tr;
                               }
                               return null;
                             },
                             controller: Name,
-                            hintText: 'Full Name',
+                            hintText: 'fullname'.tr,
                           ),
 
                           SizedBox(
@@ -504,7 +504,7 @@ class _SignupState extends State<Signup> {
                               },
                               validator: (value) {
                                 if (!value!.isValidNumber()) {
-                                  return 'Please enter a valid number';
+                                  return 'entervalidno'.tr;
                                 }
                                 return null;
                               },
@@ -517,12 +517,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter Your Email';
+                                return 'enteremail'.tr;
                               }
                               return null;
                             },
                             controller: email,
-                            hintText: 'Email',
+                            hintText: 'email'.tr,
                           ),
 
                           SizedBox(
@@ -536,7 +536,7 @@ class _SignupState extends State<Signup> {
                               return null;
                             },
                             hintText: selectedDate == null
-                                ? "Date of birth"
+                                ? "dob".tr
                                 : DateFormat('dd-M-yyyy').format(selectedDate),
                             suffixIcon: IconButton(
                               onPressed: () async {
@@ -633,69 +633,61 @@ class _SignupState extends State<Signup> {
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 1),
-                              child: SizedBox(
-                                
-                                width: MediaQuery.of(context).size.width * 0.9,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.075,
-                                child: SizedBox(
-                                  child: DropdownButtonFormField(
-                                      decoration: checkval
-                                          ? InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                      width: 1,
-                                                      color: Colors.black)),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 18),
-                                            )
-                                          : InputDecoration(
-                                              border: OutlineInputBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  borderSide: const BorderSide(
-                                                      width: 1,
-                                                      color: Colors.black)),
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 14,
-                                                      vertical: 13),
-                                            ),
-                                      value: selectedGender,
-                                      hint: const Text(
-                                        '  Gender',
-                                        style: TextStyle(
-                                            color: Colors.grey, fontSize: 12),
-                                      ),
-                                      items: gender
-                                          .map<DropdownMenuItem<String>>(
-                                              (Gender val) {
-                                        return DropdownMenuItem<String>(
-                                          
-                                          value: val.id,
-                                          child: Text(val.name.toString()),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 14),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedGender = newValue;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'Please select a gender';
-                                        } else {
-                                          return null;
-                                        }
-                                      }),
-                                ),
-                              ),
+                              child: DropdownButtonFormField(
+                                  decoration: checkval
+                                      ? InputDecoration(
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                  width: 1,
+                                                  color: Colors.black)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 12,
+                                                  vertical: 10),
+                                        )
+                                      : InputDecoration(
+                                          border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              borderSide: const BorderSide(
+                                                  width: 1,
+                                                  color: Colors.black)),
+                                          contentPadding:
+                                              const EdgeInsets.symmetric(
+                                                  horizontal: 14,
+                                                  vertical: 10),
+                                        ),
+                                  value: selectedGender,
+                                  hint:  Text(
+                                    'gender'.tr,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 10),
+                                  ),
+                                  items: gender
+                                      .map<DropdownMenuItem<String>>(
+                                          (Gender val) {
+                                    return DropdownMenuItem<String>(
+                                      
+                                      value: val.id,
+                                      child: Text(val.name.toString()),
+                                    );
+                                  }).toList(),
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 14),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedGender = newValue;
+                                    });
+                                  },
+                                  validator: (value) {
+                                    if (value == null || value.isEmpty) {
+                                      return 'selectgender'.tr;
+                                    } else {
+                                      return null;
+                                    }
+                                  }),
                             ),
                           ),
 
@@ -705,12 +697,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter ID Number';
+                                return 'enterid'.tr;
                               }
                               return null;
                             },
                             controller: gvt_id,
-                            hintText: 'ID 01-2345-6789',
+                            hintText: 'nationalid'.tr,
                           ),
 
                           // Padding(
@@ -734,51 +726,46 @@ class _SignupState extends State<Signup> {
                               await vehicleapi();
                               setState(() {});
                             },
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.9,
-                              height:
-                                  MediaQuery.of(context).size.height * 0.075,
-                              child: DropdownButtonFormField(
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(10),
-                                      borderSide: const BorderSide(
-                                          width: 1, color: Colors.black)),
-                                  contentPadding: checkval
-                                      ? const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 18)
-                                      : const EdgeInsets.symmetric(
-                                          horizontal: 14, vertical: 14),
-                                ),
-                                value: selectedVehicle,
-                                hint: const Text(
-                                  "  Vehicle Type",
-                                  style: TextStyle(
-                                      color: Colors.grey, fontSize: 12),
-                                ),
-                                items: vehicles.map<DropdownMenuItem<String>>(
-                                    (vehicle val) {
-                                  return DropdownMenuItem<String>(
-                                    value: val.id,
-                                    child: Text(val.name.toString()),
-                                  );
-                                }).toList(),
-                                style: const TextStyle(
-                                    color: Colors.black, fontSize: 14),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedVehicle = newValue;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please select a gender';
-                                  } else {
-                                    return null;
-                                  }
-                                },
-                                elevation: 0,
+                            child: DropdownButtonFormField(
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide: const BorderSide(
+                                        width: 1, color: Colors.black)),
+                                contentPadding: checkval
+                                    ? const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 12)
+                                    : const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 10),
                               ),
+                              value: selectedVehicle,
+                              hint:  Text(
+                                "vehicletype".tr,
+                                style: TextStyle(
+                                    color: Colors.grey, fontSize: 10),
+                              ),
+                              items: vehicles.map<DropdownMenuItem<String>>(
+                                  (vehicle val) {
+                                return DropdownMenuItem<String>(
+                                  value: val.id,
+                                  child: Text(val.name.toString()),
+                                );
+                              }).toList(),
+                              style: const TextStyle(
+                                  color: Colors.black, fontSize: 14),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedVehicle = newValue;
+                                });
+                              },
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'selectgender'.tr;
+                                } else {
+                                  return null;
+                                }
+                              },
+                              elevation: 0,
                             ),
                           ),
                           SizedBox(
@@ -788,12 +775,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter Vehicle Number';
+                                return 'entervehicle'.tr;
                               }
                               return null;
                             },
                             controller: v_number,
-                            hintText: 'Vehicle Number',
+                            hintText: 'vehicleno'.tr,
                           ),
 
                           SizedBox(
@@ -802,12 +789,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter Liscence Number';
+                                return 'enterliscenceno'.tr;
                               }
                               return null;
                             },
                             controller: L_No,
-                            hintText: 'Liscence Number',
+                            hintText: 'liscenceno'.tr,
                           ),
 
                           SizedBox(
@@ -817,7 +804,7 @@ class _SignupState extends State<Signup> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 1),
                             child: AuthTextField(
-                              hintText: 'Password',
+                              hintText: 'password'.tr,
                               keyboardType: TextInputType.text,
                               controller: Password,
                               obscureText: PasswordVisible,
@@ -838,7 +825,7 @@ class _SignupState extends State<Signup> {
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
-                            hintText: 'Re-Password',
+                            hintText: 'repassword'.tr,
                             keyboardType: TextInputType.text,
                             controller: Re_Password,
                             obscureText: passwordVisible,
@@ -856,7 +843,7 @@ class _SignupState extends State<Signup> {
                               if (Re_Password.text == value) {
                                 return null;
                               } else {
-                                return 'Passwords do not match!';
+                                return 'passnotmatch'.tr;
                               }
                             },
                             function: (value) {},
@@ -916,7 +903,7 @@ class _SignupState extends State<Signup> {
                                     children: [
                                       Text(
                                         //"${selectedCountriesName?? "Country"}",
-                                        "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "Country"}",
+                                        "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "country".tr}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: selectedCountriesName != null
@@ -930,6 +917,7 @@ class _SignupState extends State<Signup> {
                                             ? Colors.black
                                             : Colors.black,
                                       )
+                                      
                                     ],
                                   ),
                                 ),
@@ -984,7 +972,7 @@ class _SignupState extends State<Signup> {
                                     children: [
                                       Text(
                                         // "${SelectedStateName?? "State"}",
-                                        "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "State"}",
+                                        "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "state".tr}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: SelectedStateName != null
@@ -1049,7 +1037,7 @@ class _SignupState extends State<Signup> {
                                     children: [
                                       Text(
                                         // "${selectedCityName?? "City"}",
-                                        "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "City"}",
+                                        "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "city".tr}",
                                         style: TextStyle(
                                             fontSize: 12,
                                             color: selectedCityName != null
@@ -1076,12 +1064,12 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             validator: (p0) {
                               if (p0!.isEmpty) {
-                                return 'Enter Your Address';
+                                return 'enteraddress'.tr;
                               }
                               return null;
                             },
                             controller: Address,
-                            hintText: 'Address',
+                            hintText: 'address'.tr,
                           ),
 
                           SizedBox(
@@ -1139,9 +1127,9 @@ class _SignupState extends State<Signup> {
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
+                                         SnackBar(
                                             content: Text(
-                                                "Password doesn't Match")));
+                                                "passnotmatch".tr)));
                                   }
 
                                   checkval = true;
@@ -1150,13 +1138,13 @@ class _SignupState extends State<Signup> {
                                   checkval = false;
                                   setState(() {});
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
+                                       SnackBar(
                                           content: Text(
-                                              " Please enter valid data")));
+                                              "entervaliddata".tr)));
                                 }
                               },
                               child: Text(
-                                "Register",
+                                "register".tr,
                                 style: GoogleFonts.poppins(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
@@ -1170,7 +1158,7 @@ class _SignupState extends State<Signup> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              const Text("Already have an account?"),
+                                Text("alreadyhaveacount".tr),
                               TextButton(
                                 onPressed: () async {
                                   Navigator.push(
@@ -1183,7 +1171,7 @@ class _SignupState extends State<Signup> {
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.blue,
                                 ),
-                                child: const Text("Sign in"),
+                                child:  Text("signin".tr),
                               ),
                             ],
                           ),

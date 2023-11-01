@@ -25,6 +25,7 @@ class TodayAppoinments extends StatefulWidget {
 }
 
 class _TodayAppoinmentsState extends State<TodayAppoinments> {
+  // ignore: unused_field
   late Future<List<User>> _appointmentsFuture;
   List<User> _appointments = [];
   bool isLoadingData = false;
@@ -32,11 +33,16 @@ class _TodayAppoinmentsState extends State<TodayAppoinments> {
   String selectedStatusFilter = "";
 
   int start = 0;
+  // ignore: non_constant_identifier_names
   int TotalRecordsData = 0;
+  // ignore: non_constant_identifier_names
   int Selectedoption = 0;
+  // ignore: non_constant_identifier_names
   String Status = "";
   final ScrollController _scrollController = ScrollController();
+  // ignore: non_constant_identifier_names
   String EndDate = "";
+  // ignore: non_constant_identifier_names
   String StartDate = "";
 
 callvback()async
@@ -72,7 +78,9 @@ callvback();
           _scrollController.position.maxScrollExtent) {
         var isCallToFetchData = SetStartToFetchNextData();
         if (isCallToFetchData == true) {
+          // ignore: non_constant_identifier_names
           String StartDate = formatDate(DateTime.now());
+          // ignore: non_constant_identifier_names
           String EndDate = formatDate(DateTime.now());
           _appointmentsFuture = getappointments(widget.empId, StartDate,
               EndDate, AppConstants.maximumDataTobeFetched, start);
@@ -88,6 +96,7 @@ callvback();
     _appointments.clear();
   }
 
+  // ignore: non_constant_identifier_names
   SetStartToFetchNextData() {
     if ((start + AppConstants.maximumDataTobeFetched) < TotalRecordsData) {
       start = start + AppConstants.maximumDataTobeFetched;
@@ -97,7 +106,9 @@ callvback();
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<List<User>> getappointments(String empId, String StartDate,
+      // ignore: non_constant_identifier_names
       String EndDate, int length, int start) async {
     if (start == 0) {
       isLoadingData = true;
@@ -121,11 +132,13 @@ callvback();
     };
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(requestBody));
+    // ignore: avoid_print
     print("Response: ${response.body}");
 
     if (response.statusCode == 200) {
       try {
         var data = jsonDecode(response.body);
+        // ignore: avoid_print
         print("Response data: $data");
         List<User> ulist = [];
         if (data['TotalRecord'] != null) {
@@ -141,6 +154,7 @@ callvback();
             _appointments.add(element);
           }
                 }
+        // ignore: avoid_print
         print(ulist);
 
         isLoadingData = false;
@@ -171,7 +185,6 @@ callvback();
   @override
   void dispose() {
     _scrollController.dispose();
-    // TODO: implement dispose
     super.dispose();
   }
 
@@ -181,7 +194,7 @@ callvback();
         inAsyncCall: isLoadingData,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
-          color: Color(0xfff1272d3),
+          color: Color(0xFF1272d3),
           size: 60,
         ),
         dismissible: false,
@@ -225,6 +238,7 @@ callvback();
             actions: [
               InkWell(
                 onTap: () {
+                  // ignore: avoid_print
                   print('Image tapped');
                 },
                 child: PopupMenuButton<int>(
@@ -647,6 +661,7 @@ callvback();
                                     ),
                                   );
                                 } else {
+                                  // ignore: avoid_unnecessary_containers
                                   Container(
                                     child: const Text("Not Data Found"),
                                   );
@@ -668,7 +683,7 @@ callvback();
                         ? const Padding(
                             padding: EdgeInsets.only(top: 8, bottom: 8),
                             child: SpinKitSpinningLines(
-                              color: Color(0xfff1272d3),
+                              color: Color(0xFF1272d3),
                               size: 60,
                             ),
                           )

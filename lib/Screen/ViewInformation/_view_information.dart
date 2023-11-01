@@ -1040,7 +1040,7 @@ class _ViewInformationState extends State<ViewInformation> {
                 children: [
                   Text(
                     'ridestatus'.tr,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -1100,6 +1100,7 @@ class _ViewInformationState extends State<ViewInformation> {
                       ElevatedButton(
                         onPressed: () {
                           // User tapped on No
+                         
 
                           Navigator.pop(context);
                         },
@@ -1136,7 +1137,7 @@ class _ViewInformationState extends State<ViewInformation> {
                 children: [
                   Text(
                     'ridestatus'.tr,
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
@@ -2298,7 +2299,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                 "Success"
                                             ?  Text(
                                                 "discount".tr,
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.white),
                                               )
                                             : const Text(""),
@@ -2320,7 +2321,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     children: [
                                                        Text(
                                                         'yes'.tr,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             color:
                                                                 Colors.white),
                                                       ),
@@ -2356,7 +2357,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                             children: [
                                                                Text(
                                                                 'no'.tr,
-                                                                style: TextStyle(
+                                                                style: const TextStyle(
                                                                     color: Colors
                                                                         .white),
                                                               ),
@@ -2377,6 +2378,11 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                               .white),
                                                                   onChanged:
                                                                       (value) {
+                                                                         discount=TextEditingController();
+                                                                         dsct="0.0";
+                                                                         setState(() {
+                                                                           
+                                                                         });
                                                                     _selectedOption
                                                                             .value =
                                                                         value!;
@@ -2432,7 +2438,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 value: items,
                                                                 child: Center(
                                                                   child: Text(
-                                                                   "  "+ items,
+                                                                   "  $items",
                                                                   //  textAlign: AlignmentDirectional.topCenter,
                                                                   ),
                                                                 ),
