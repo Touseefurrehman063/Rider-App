@@ -741,7 +741,7 @@ class _SignupState extends State<Signup> {
                               value: selectedVehicle,
                               hint:  Text(
                                 "vehicletype".tr,
-                                style: TextStyle(
+                                style: const TextStyle(
                                     color: Colors.grey, fontSize: 10),
                               ),
                               items: vehicles.map<DropdownMenuItem<String>>(

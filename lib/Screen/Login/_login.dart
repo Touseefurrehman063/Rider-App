@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
-import 'package:flutter_riderapp/Models/changepassword.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,7 +28,7 @@ class _LoginState extends State<Login> {
   bool passwordVisible = true;
   bool isLoading = false;
   User? user;
-  bool _obscureText = true;
+  final bool _obscureText = true;
 
   Future<Map<String, dynamic>> login(String userName, String password) async {
     var url = '$ip/api/account';
@@ -240,7 +239,7 @@ class _LoginState extends State<Login> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       SnackBar(
                                         content: Text('invalid'.tr),
-                                        duration: Duration(seconds: 5),
+                                        duration: const Duration(seconds: 5),
                                       ),
                                     );
                                   }
@@ -256,7 +255,7 @@ class _LoginState extends State<Login> {
                             child: Center(
                               child: Text(
                                 'login'.tr,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.white,

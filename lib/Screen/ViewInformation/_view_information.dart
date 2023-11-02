@@ -1721,7 +1721,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   child: Text(
                                                     "cancel".tr,
                                                     style: GoogleFonts.poppins(
-                                                        fontSize: 14,
+                                                        fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.white),
@@ -1761,7 +1761,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                       "arrived".tr,
                                                       style:
                                                           GoogleFonts.poppins(
-                                                              fontSize: 14,
+                                                              fontSize: 16,
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
@@ -1895,7 +1895,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   child: Text(
                                                     "cancel".tr,
                                                     style: GoogleFonts.poppins(
-                                                        fontSize: 14,
+                                                        fontSize: 16,
                                                         fontWeight:
                                                             FontWeight.bold,
                                                         color: Colors.white),
@@ -2075,7 +2075,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                 child: Text(
                                                   "cancel".tr,
                                                   style: GoogleFonts.poppins(
-                                                      fontSize: 14,
+                                                      fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                       color: Colors.white),
