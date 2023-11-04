@@ -854,9 +854,10 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                 ),
                               );
                             } else {
-                              Container();
+                             const SizedBox.shrink();
                             }
-                            return null;
+                           const SizedBox.shrink();
+                           return null;
                           },
                         ),
                       )

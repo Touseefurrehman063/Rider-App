@@ -63,6 +63,7 @@ class _ViewInformationState extends State<ViewInformation> {
   List<PatientServicelist> lst1 = [];
   double distance = 0.0;
   double time = 0.0;
+  bool ispaymentselected=false;
 
   List<String> paymentNameArray = ['Select Vehicle'];
   List<String> labsNameArray = ['selectlab'.tr];
@@ -1531,18 +1532,16 @@ class _ViewInformationState extends State<ViewInformation> {
                                     if (widget.user.status == "Pending")
                                       Center(
                                         child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
-                                            Padding(
-                                              padding: const EdgeInsets.only(left:100.0),
-                                              child: Text(
-                                                "order".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                            Text(
+                                              "order".tr,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 10,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white,
                                               ),
+                                              textAlign: TextAlign.center,
                                             ),
                                             Text(
                                               "${widget.user.LabNo ?? " #0001"} ",
@@ -1568,17 +1567,15 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   .width *
                                               1,
                                           child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(left:100.0),
-                                                child: Text(
-                                                  "paymentstatus".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.center,
+                                              Text(
+                                                "paymentstatus".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
                                                 ),
+                                                textAlign: TextAlign.center,
                                               ),
                                               Text(
                                                 "${widget.user.paymentstatusname ?? " Unpaid"} ",
@@ -1653,7 +1650,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                   const BorderRadius
                                                                       .all(
                                                                       Radius.circular(
-                                                                          20.0)),
+                                                                          5.0)),
                                                               child:  Text(
                                                                 'ok'.tr,
                                                               ),
@@ -1836,7 +1833,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                   const BorderRadius
                                                                       .all(
                                                                       Radius.circular(
-                                                                          20.0)),
+                                                                          5.0)),
                                                               child:  Text(
                                                                 'ok'.tr,
                                                               ),
@@ -1910,6 +1907,9 @@ class _ViewInformationState extends State<ViewInformation> {
                                                 "Ride Arrived")
                                               ElevatedButton(
                                                   onPressed: () async {
+                                                    if(ispaymentselected==true ||(widget.user.paymentstatusvalue=="1" && ispaymentselected==false))
+                                                    {
+                                                      
                                                     ischeckin = true;
                                                     distance = 0.0;
                                                     time = 0.0;
@@ -1936,6 +1936,13 @@ class _ViewInformationState extends State<ViewInformation> {
                                                       setState(() {
                                                         // message='Checkin Successfully';
                                                       });
+                                                    }
+                                                    }else{
+                                                     ScaffoldMessenger.of(
+                                                                        context)
+                                                                    .showSnackBar( SnackBar(
+                                                                        content:
+                                                                            Text("pleaseselectpaymentmethod".tr)));
                                                     }
                                                   },
                                                   style:
@@ -2018,7 +2025,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 const BorderRadius
                                                                     .all(
                                                                     Radius.circular(
-                                                                        20.0)),
+                                                                        5.0)),
                                                             child:  Text(
                                                                'ok'.tr,
                                                             ),
@@ -2142,24 +2149,50 @@ class _ViewInformationState extends State<ViewInformation> {
                                             
                                         ],
                                       ),
-                                      SizedBox(height: Get.height*0.05,),
+                                       SizedBox(height: Get.height*0.05,),
+                                      if (widget.user.status == "Booked")
+                                      SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              1,
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                "paymentstatus".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                              Text(
+                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ],
+                                          )),
+                                      // SizedBox(height: Get.height*0.05,),
                                       if (
                                         widget.user.status == "Booked")
                                       Center(
                                         child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
                                           children: [
-                                             Padding(
-                                                padding:  EdgeInsets.only(left:Get.width*0.51),
-                                               child: Text(
-                                                  "totalamount".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.right,
+                                             Text(
+                                                "totalamount".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
                                                 ),
-                                             ),
+                                                textAlign: TextAlign.right,
+                                              ),
                                               Text(
                                                 "$totalAppointmentPrice ",
                                                 style: GoogleFonts.poppins(
@@ -2172,35 +2205,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           ],
                                         ),
                                       ),
-                                       if (widget.user.status == "Booked")
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(left:100.0),
-                                                child: Text(
-                                                  "paymentstatus".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                ),
-                                              ),
-                                              Text(
-                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          )),
+                                       
 
                                     //checked in
                                    
@@ -2233,8 +2238,8 @@ class _ViewInformationState extends State<ViewInformation> {
                                                         .width *
                                                     0.05),
                                             child: widget.user
-                                                        .paymentstatusname !=
-                                                    "Success"
+                                                        .paymentstatusvalue !=
+                                                    "1"
                                                 ? Container(
                                                     decoration: BoxDecoration(
                                                       border: Border.all(
@@ -2282,6 +2287,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                         setState(() {
                                                           Selectpayment =
                                                               newValue;
+                                                              ispaymentselected=true;
                                                           print(newValue);
                                                         });
                                                       },
@@ -2289,20 +2295,20 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           Alignment.center,
                                                     ),
                                                   )
-                                                : const SizedBox(),
+                                                : const SizedBox.shrink(),
                                           ),
                                         ),
                                       ),
                                     if (widget.user.status == "Ride Arrived")
                                       SizedBox(
-                                        child: widget.user.paymentstatusname !=
-                                                "Success"
+                                        child: widget.user.paymentstatusvalue !=
+                                                "1"
                                             ?  Text(
                                                 "discount".tr,
                                                 style: const TextStyle(
                                                     color: Colors.white),
                                               )
-                                            : const Text(""),
+                                            : const SizedBox.shrink()
                                       ),
                                     if (widget.user.status == "Ride Arrived")
                                       SizedBox(
@@ -2313,8 +2319,8 @@ class _ViewInformationState extends State<ViewInformation> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            widget.user.paymentstatusname !=
-                                                    "Success"
+                                            widget.user.paymentstatusvalue !=
+                                                    "1"
                                                 ? Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.start,
@@ -2332,7 +2338,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                     .width *
                                                                 0.07,
                                                             child: Radio(
-                                                              // Use Obx widget to observe changes in _selectedOption
+                                                             
                                                               value: 'yes'.tr,
                                                               groupValue:
                                                                   _selectedOption
@@ -2393,7 +2399,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           )),
                                                     ],
                                                   )
-                                                : const SizedBox(),
+                                                : const SizedBox.shrink(),
                                             Obx(
                                               () => _selectedOption == 'yes'.tr
                                                   ? Row(
@@ -2688,24 +2694,48 @@ class _ViewInformationState extends State<ViewInformation> {
                                           ),
                                         ),
                                       ),
-                                      SizedBox(height: Get.height*0.01,),
+                                      SizedBox(height: Get.height*0.05,),
+                                       if (widget.user.status ==
+                                        "Sample Collected")
+                                         Center(
+                                           child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                             children: [
+                                                Text(
+                                                "paymentstatus".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                                                                            ),
+                                              Text(
+                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
+                                                ),
+                                                textAlign: TextAlign.center,
+                                              ),
+                                             ],
+                                           ),
+                                         ),
                                         if (widget.user.status ==
                                         "Sample Collected")
                                          Center(
                                            child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
+                                      
                                              children: [
-                                               Padding(
-                                                  padding:  EdgeInsets.only(left:Get.width*0.51),
-                                                 child: Text(
-                                                    "totalamount".tr,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 12,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.center,
+                                               Text(
+                                                  "totalamount".tr,
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white,
                                                   ),
-                                               ),
+                                                  textAlign: TextAlign.center,
+                                                ),
                                                 Text(
                                                   "$totalAppointmentPrice",
                                                   style: GoogleFonts.poppins(
@@ -2718,34 +2748,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                              ],
                                            ),
                                          ),
-                                          SizedBox(height: Get.height*0.01,),
-                                        if (widget.user.status ==
-                                        "Sample Collected")
-                                         Center(
-                                           child: Row(
-                                             children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.only(left:100.0),
-                                                  child: Text(
-                                                  "paymentstatus".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.center,
-                                                                                              ),
-                                                ),
-                                              Text(
-                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                             ],
-                                           ),
-                                         ),
+                                         
                                         
 
                                     if (widget.user.status == "In Route")
@@ -2757,6 +2760,9 @@ class _ViewInformationState extends State<ViewInformation> {
                                             setState(() {});
                                             try {
                                               _polylines.clear();
+                                              setState(() {
+                                                
+                                              });
 
                                               distance = 0.0;
                                               time = 0.0;
@@ -2869,7 +2875,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           const BorderRadius
                                                               .all(
                                                               Radius.circular(
-                                                                  20.0)),
+                                                                  5.0)),
                                                       child:  Text(
                                                         'backhome'.tr,
                                                       ),
@@ -2982,17 +2988,15 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   .width *
                                               1,
                                           child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
-                                              Padding(
-                                                padding: const EdgeInsets.only(left:100.0),
-                                                child: Text(
-                                                  "paymentstatus".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.center,
+                                              Text(
+                                                "paymentstatus".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  color: Colors.white,
                                                 ),
+                                                textAlign: TextAlign.center,
                                               ),
                                               Text(
                                                 "${widget.user.paymentstatusname ?? " Unpaid"} ",
@@ -3012,18 +3016,16 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   .width *
                                               1,
                                           child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Padding(
-                                                padding:  EdgeInsets.only(left:Get.width*0.62),
-                                                child: Text(
-                                                  "discount".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.right,
+                                              Text(
+                                                "discount".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
                                                 ),
+                                                textAlign: TextAlign.right,
                                               ),
                                               Text(
                                                 "${dsct ?? 0.0} ",
@@ -3043,18 +3045,16 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   .width *
                                               1,
                                           child: Row(
+                                                 mainAxisAlignment: MainAxisAlignment.end,
                                             children: [
-                                              Padding(
-                                                 padding:  EdgeInsets.only(left:Get.width*0.51),
-                                                child: Text(
-                                                  "totalamount".tr,
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white,
-                                                  ),
-                                                  textAlign: TextAlign.right,
+                                              Text(
+                                                "totalamount".tr,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white,
                                                 ),
+                                                textAlign: TextAlign.right,
                                               ),
                                               Text(
                                                 "$totalAppointmentPrice ",

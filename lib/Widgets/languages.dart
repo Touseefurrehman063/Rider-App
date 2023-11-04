@@ -119,6 +119,27 @@ class Localization extends Translations {
           'enterusername':'Please Enter Your Username' ,
           'invalid':'Invalid Username and Password', 
           'dontaccount':'Don`t Have An Account?',  
+          //labinvestigation
+          'labinvestigation':'Lab Investigation',
+          'selecttest':'Select Test',
+          'pleaseselectpaymentmethod':'Please Select Payment Method',
+
+          //terms&condition
+          'disclaimer': 'Disclaimer',
+          'consentTitle': 'Consent',
+            'consent':'By using our website, services and products, you hereby consent to our Privacy Policy and agree to its terms. If you are a doctor or medical professional registering for this Application, by registering for or using this Service, you hereby confirm that use is at your own risk, and you release and agree to release the Service Providers, Developers and Publishers from liability for adverse consequences. , including but not limited to claims, actions or legal proceedings by third parties or loss or breach of any private data and/or damages suffered as a result thereof',
+          'informationWeCollect': 'Information we collect',
+           'information1':'Our system and applications mainly target healthcare and medical care. We collect certain other information and permissions in our apps to improve user experience and app functionality. The information we collect is processed temporarily, that is, it is only used to start certain services or functions within the application and is not used after they have been stopped. Some important matters are mentioned below along with salient disclosure/reasons for aggregation',
+          'information2':'Location: To show nearby doctors, the app needs to get this permission from the user. By enabling location-based services on your device, you agree and acknowledge that (a) the device data collected from you is directly relevant to your use of the application, (b) we may provide location-based services that relate to and are based on your then-current location, and (c) ) We may use any information collected in connection with providing the Application. To make video calls between doctor and patient. To make voice calls between doctor and patient (a) User/patient can upload profile picture (b) User/patient can upload health records and files for doctor to check (c) User/patient can download and view reports etc.',
+         'usageTitle': 'The Use',
+          'usage':'We use the information we collect in various ways, including: (a) providing, operating, and maintaining our Services and Products (b) understanding and analyzing how you use our Services and Products (c) developing new product and Services features and functionality (d) communicating with you, either directly or Through one of our partners, including for customer service, to provide you with updates and other information relating to the site, and for marketing and promotional purposes (e) send you emails (f) detect and prevent fraud', 
+          'disclosureTitle': 'Disclosure',
+           'disclosure':'We may disclose personal information to anyone who provides audit, legal, operational or other services to us. We will use information that does not identify an individual for these activities whenever reasonably possible. Under the CCPA, Among other rights, California consumers have the right to request that a business that collects personal data disclose the categories and specific pieces of personal data that a business has collected about consumers, to request that the business delete any personal data, and not to sell it. Personal data of consumers. If you submit a request, we have one month to respond to you. If you wish to exercise any of these rights, please contact us via Customer Support Under your data protection rights under the General Data Protection Regulation (GDPR), Every user has the right to request copies of your personal data. We may charge you a small fee for the Service, the right to request that we correct any information that you believe is inaccurate, the right to request that we erase your personal data, restrict its processing, object to our processing of your personal data, transfer the data we have collected to another organization or directly to you under certain circumstances. If you submit a request, we have one month to respond to you. If you wish to exercise any of these rights, please contact us via Customer Support',
+          'iHaveRead': 'I have read and understood',
+          'theTermsAndCondition': 'Terms and Conditions',
+          'labqeue':'Lab Queue',
+          'samplecollection':'Sample Collection'
+          
 
 
 
@@ -205,6 +226,8 @@ class Localization extends Translations {
           'order':'طلب:',
           'ridestarted':'بدأت الرحلة بنجاح!',
           'pleaseselect':"الرجاء اختيار المختبر",
+           'labqeue':'قائمة انتظار المختب',
+          
 
           //Registration
           'registernow':'سجل الان',
@@ -240,6 +263,25 @@ class Localization extends Translations {
           'enterusername':'الرجاء إدخال اسم المستخدم' ,
           'invalid':'اسم المستخدم وكلمة المرور غير صالحة', 
           'dontaccount':'ليس لديك حساب؟',  
+           //labinvestigation
+          'labinvestigation':'التحقيق المختبري',
+          'selecttest':'حدد الاختبار',
+           'pleaseselectpaymentmethod':'الرجاء تحديد طريقة الدفع',
+           'pleaseenterremarks':"الرجاء إدخال الملاحظات",
+               //terms&condition
+            'disclaimer': 'تنصل',
+          'consentTitle': 'موافقة',
+            'consent':'باستخدام موقعنا وخدماتنا ومنتجاتنا، فإنك توافق بموجبه على سياسة الخصوصية الخاصة بنا وتوافق على شروطها. إذا كنت طبيبًا أو متخصصًا طبيًا تقوم بالتسجيل في هذا التطبيق، فمن خلال التسجيل في هذه الخدمة أو استخدامها، فإنك تؤكد بموجب هذا أن الاستخدام يقع على مسؤوليتك الخاصة، كما أنك تحرر وتوافق على إعفاء مقدمي الخدمة والمطورين والناشرين من المسؤولية عن العواقب الضارة. ، بما في ذلك على سبيل المثال لا الحصر المطالبات أو الإجراءات أو الإجراءات القانونية من قبل أطراف ثالثة أو فقدان أو خرق أي بيانات خاصة و/أو الأضرار التي لحقت نتيجة لذلك',
+          'informationWeCollect': 'المعلومات التي نجمعها',
+           'information1':'يستهدف نظامنا وتطبيقاتنا بشكل أساسي الرعاية الصحية والطبية. نقوم بجمع بعض المعلومات والأذونات الأخرى في تطبيقاتنا لتحسين تجربة المستخدم ووظائف التطبيق. تتم معالجة المعلومات التي نجمعها بشكل مؤقت، أي أنها تستخدم فقط لبدء بعض الخدمات أو الوظائف الموجودة داخل التطبيق ولا يتم استخدامها بعد إيقافها. تم ذكر بعض الأمور المهمة أدناه مع الإفصاح/أسباب التجميع البارزة',
+          'information2':'الموقع: لإظهار الأطباء القريبين، يحتاج التطبيق إلى الحصول على هذا الإذن من المستخدم. من خلال تمكين الخدمات المستندة إلى الموقع على جهازك، فإنك توافق وتقر بأن (أ) بيانات الجهاز التي يتم جمعها منك ذات صلة مباشرة باستخدامك للتطبيق، (ب) قد نقدم خدمات تعتمد على الموقع تتعلق وتستند إلى موقعك الحالي في ذلك الوقت، و (ج) يجوز لنا استخدام أي معلومات تم جمعها فيما يتعلق بتوفير التطبيق. لإجراء مكالمات فيديو بين الطبيب والمريض. لإجراء مكالمات صوتية بين الطبيب والمريض (أ) يمكن للمستخدم/المريض تحميل صورة الملف الشخصي (ب) يمكن للمستخدم/المريض تحميل السجلات والملفات الصحية ليقوم الطبيب بفحصها (ج) يمكن للمستخدم/المريض تنزيل وعرض التقارير وما إلى ذلك.',
+         'usageTitle': 'الاستخدام',
+          'usage':'نحن نستخدم المعلومات التي نجمعها بطرق مختلفة، بما في ذلك: (أ) توفير خدماتنا ومنتجاتنا وتشغيلها وصيانتها (ب) فهم وتحليل كيفية استخدامك لخدماتنا ومنتجاتنا (ج) تطوير منتج جديد وميزات الخدمات و الوظيفة (د) التواصل معك، إما بشكل مباشر أو من خلال أحد شركائنا، بما في ذلك خدمة العملاء، لتزويدك بالتحديثات والمعلومات الأخرى المتعلقة بالموقع، ولأغراض تسويقية وترويجية (هـ) إرسال رسائل البريد الإلكتروني الخاصة بك (و) البحث عن الاحتيال ومنعه',
+         'disclosureTitle': 'إفشاء',
+           'disclosure':'يجوز لنا الكشف عن المعلومات الشخصية لأي شخص يقوم بتقديم خدمات التدقيق أو الخدمات القانونية أو التشغيلية أو غيرها من الخدمات لنا. سوف نستخدم المعلومات التي لا تحدد هوية الفرد لهذه الأنشطة كلما كان ذلك ممكنًا بشكل معقول. بموجب قانون CCPA، من بين حقوق أخرى، يحق للمستهلكين في كاليفورنيا أن يطلبوا من الشركة التي تجمع البيانات الشخصية الكشف عن فئات وأجزاء محددة من البيانات الشخصية التي جمعتها الشركة عن المستهلكين، ومطالبة الشركة بحذف أي بيانات شخصية، وعدم بيعها. البيانات الشخصية للمستهلكين. إذا قمت بتقديم طلب، لدينا شهر واحد للرد عليك. إذا كنت ترغب في ممارسة أي من هذه الحقوق، فيرجى الاتصال بنا عبر دعم العملاء بموجب حقوق حماية البيانات الخاصة باللائحة العامة لحماية البيانات (GDPR)، يحق لكل مستخدم طلب نسخ من بياناتك الشخصية. قد نفرض عليك رسومًا صغيرة مقابل الخدمة، والحق في طلب تصحيح أي معلومات تعتقد أنها غير دقيقة، والحق في طلب مسح بياناتك الشخصية، وتقييد معالجتها، والاعتراض على معالجتنا لبياناتك الشخصية، ونقل البيانات التي لقد قمنا بجمع البيانات إلى منظمة أخرى أو إليك مباشرة في ظل ظروف معينة. إذا قمت بتقديم طلب، لدينا شهر واحد للرد عليك. إذا كنت ترغب في ممارسة أي من هذه الحقوق، يرجى الاتصال بنا عبر دعم العملاء',
+          'iHaveRead': 'لقد قرأت وفهمت',
+          'theTermsAndCondition': 'الشروط والأحكام',
+          'samplecollection':'جمع العينات'
         },
         "ur_PK": {
           //drawer
@@ -355,7 +397,29 @@ class Localization extends Translations {
           'username':'صارف نام',
           'enterusername':'براہ کرم اپنا صارف نام درج کریں',
           'invalid':' صارف نام اور پاس ورڈغلط ہیں', 
-          'dontaccount':'کیا آپ کا اکاؤنٹ نہیں ہے؟',  
+          'dontaccount':'کیا آپ کا اکاؤنٹ نہیں ہے؟', 
+           //labinvestigation
+          'labinvestigation':'لیبارٹری تحقیقات' ,
+          'selecttest':'ٹیسٹ کا انتخاب کریں',
+           'pleaseselectpaymentmethod':'براہ کرم ادائیگی کا طریقہ منتخب کریں',
+           'pleaseenterremarks':"براہ کرم ریمارکس درج کریں",
+            //terms&condition
+            
+          'disclaimer': 'ڈس کلیمر',
+          'consentTitle': 'رضامندی',
+            'consent':'ہماری ویب سائٹ، خدمات اور مصنوعات کا استعمال کرتے ہوئے، آپ اس کے ذریعے ہماری پرائیویسی پالیسی سے اتفاق کرتے ہیں اور اس کی شرائط سے اتفاق کرتے ہیں۔ اگر آپ اس درخواست کے لیے رجسٹر کرنے والے ڈاکٹر یا طبی پیشہ ور ہیں، تو اس سروس کے لیے رجسٹر ہو کر یا اس کا استعمال کرتے ہوئے، آپ اس بات کی تصدیق کرتے ہیں کہ استعمال آپ کے اپنے خطرے پر ہے، اور آپ سروس فراہم کرنے والوں، ڈویلپرز اور پبلشرز کو منفی ذمہ داری سے رہائی دیتے اور رضامند کرتے ہیں۔ نتائج جس میں فریقین ثالث کے دعووں، کارروائیوں یا قانونی کارروائیوں یا کسی بھی نجی ڈیٹا کے نقصان یا خلاف ورزی اور/یا اس کے نتیجے میں ہونے والے نقصانات سمیت لیکن ان تک محدود نہیں',
+          'informationWeCollect': 'معلومات ہم جمع کرتے ہیں',
+           'information1':'ہمارا سسٹم اور ایپلیکیشنز بنیادی طور پر صحت کی دیکھ بھال اور طبی دیکھ بھال کو نشانہ بناتے ہیں۔ ہم صارف کے تجربے اور ایپ کی فعالیت کو بہتر بنانے کے لیے اپنی ایپس میں کچھ دیگر معلومات اور اجازتیں جمع کرتے ہیں۔ ہم جو معلومات اکٹھا کرتے ہیں اس پر عارضی طور پر کارروائی کی جاتی ہے، یعنی یہ صرف ایپلی کیشن کے اندر مخصوص سروسز یا فنکشنز کو شروع کرنے کے لیے استعمال ہوتی ہے اور انہیں روکنے کے بعد استعمال نہیں کیا جاتا ہے۔ کچھ اہم معاملات کا ذکر ذیل میں نمایاں انکشاف/ جمع کی وجوہات کے ساتھ کیا گیا ہے',
+          'information2':'مقام: قریبی ڈاکٹروں کو دکھانے کے لیے ایپ کو صارف سے یہ اجازت لینا ہوگی۔ اپنے آلے پر مقام پر مبنی خدمات کو فعال کر کے، آپ اس بات سے اتفاق کرتے ہیں اور تسلیم کرتے ہیں کہ (a) آپ سے جمع کردہ آلہ کا ڈیٹا براہ راست آپ کے ایپلیکیشن کے استعمال سے متعلق ہے، (b) ہم مقام پر مبنی خدمات فراہم کر سکتے ہیں جو ان سے متعلق ہیں اور اس پر مبنی ہیں۔ آپ کے اس وقت کے موجودہ مقام پر، اور (c) ) ہم درخواست فراہم کرنے کے سلسلے میں جمع کی گئی کوئی بھی معلومات استعمال کر سکتے ہیں۔ ڈاکٹر اور مریض کے درمیان ویڈیو کال کرنا۔ ڈاکٹر اور مریض کے درمیان صوتی کال کرنے کے لیے (a) صارف/مریض پروفائل تصویر اپ لوڈ کر سکتے ہیں (b) صارف/مریض ڈاکٹر کو چیک کرنے کے لیے ہیلتھ ریکارڈ اور فائلیں اپ لوڈ کر سکتے ہیں (c) صارف/مریض رپورٹس وغیرہ ڈاؤن لوڈ اور دیکھ سکتے ہیں۔',
+         'usageTitle': 'استعمال',
+          'usage':'ہم جو معلومات جمع کرتے ہیں اسے ہم مختلف طریقوں سے استعمال کرتے ہیں، بشمول: (a) ہماری سروسز اور پروڈکٹس کو فراہم کرنا، آپریٹ کرنا، اور برقرار رکھنا (b) یہ سمجھنا اور تجزیہ کرنا کہ آپ ہماری سروسز اور پروڈکٹس کو کس طرح استعمال کرتے ہیں (c) نئی مصنوعات اور خدمات کی خصوصیات اور فعالیت کو تیار کرنا ( d) آپ کے ساتھ براہ راست یا ہمارے کسی شراکت دار کے ذریعے، بشمول کسٹمر سروس، آپ کو سائٹ سے متعلق اپ ڈیٹس اور دیگر معلومات فراہم کرنے کے لیے، اور مارکیٹنگ اور پروموشنل مقاصد کے لیے (e) آپ کو ای میلز بھیجنا (f) پتہ لگانا اور دھوکہ دہی کی روک تھام',
+          'disclosureTitle': 'انکشاف',
+           'disclosure':'ہم کسی بھی شخص کو ذاتی معلومات کا انکشاف کر سکتے ہیں جو ہمیں آڈٹ، قانونی، آپریشنل یا دیگر خدمات فراہم کرتا ہے۔ جب بھی معقول حد تک ممکن ہو ہم معلومات استعمال کریں گے جو ان سرگرمیوں کے لیے کسی فرد کی شناخت نہیں کرتی ہے۔ CCPA کے تحت، دیگر حقوق کے علاوہ، کیلیفورنیا کے صارفین کو یہ حق حاصل ہے کہ وہ کاروبار جو ذاتی ڈیٹا اکٹھا کرتا ہے وہ ان زمروں اور ذاتی ڈیٹا کے مخصوص ٹکڑوں کو ظاہر کرے جو کسی کاروبار نے صارفین کے بارے میں جمع کیے ہیں، اور یہ درخواست کرنے کے لیے کہ کاروبار کسی بھی ذاتی ڈیٹا کو حذف کر دے۔ اسے فروخت کرنے کے لئے نہیں. صارفین کا ذاتی ڈیٹا۔ اگر آپ کوئی درخواست جمع کراتے ہیں، تو ہمارے پاس آپ کا جواب دینے کے لیے ایک مہینہ ہے۔ اگر آپ ان حقوق میں سے کسی کو استعمال کرنا چاہتے ہیں، تو براہ کرم ہم سے کسٹمر سپورٹ کے ذریعے رابطہ کریں اپنے ڈیٹا پروٹیکشن کے حقوق کے تحت جنرل ڈیٹا پروٹیکشن ریگولیشن (GDPR) کے تحت، ہر صارف کو آپ کے ذاتی ڈیٹا کی کاپیوں کی درخواست کرنے کا حق ہے۔ ہم آپ سے سروس کے لیے ایک چھوٹی سی فیس وصول کر سکتے ہیں، یہ درخواست کرنے کا حق کہ ہم کسی بھی ایسی معلومات کو درست کریں جو آپ کے خیال میں غلط ہے، یہ درخواست کرنے کا حق کہ ہم آپ کے ذاتی ڈیٹا کو مٹا دیں، اس کی کارروائی کو محدود کریں، آپ کے ذاتی ڈیٹا کی ہماری پروسیسنگ پر اعتراض کریں، ہم نے جو ڈیٹا اکٹھا کیا ہے اسے کسی دوسری تنظیم یا براہ راست آپ کو مخصوص حالات میں منتقل کریں۔ اگر آپ کوئی درخواست جمع کراتے ہیں، تو ہمارے پاس آپ کا جواب دینے کے لیے ایک مہینہ ہے۔ اگر آپ ان حقوق میں سے کسی کو استعمال کرنا چاہتے ہیں، تو براہ کرم کسٹمر سپورٹ کے ذریعے ہم سے رابطہ کریں۔',
+          'iHaveRead': 'میں نے پڑھا اور سمجھا',
+          'theTermsAndCondition': 'شرائط و ضوابط',
+          'labqeue':'لیب کی قطار',
+          'samplecollection':'نمونہ جمع'
+         
         
         }
       };

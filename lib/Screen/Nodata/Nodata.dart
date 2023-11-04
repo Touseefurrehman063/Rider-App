@@ -13,7 +13,7 @@ class NoDataFound extends StatelessWidget {
         }, icon: const Icon(Icons.arrow_back_ios)),
       ),
       body: const Center(
-        child: Text('Coming Soon'),
+        child: Text('No Data Found'),
       ),
     );
   }

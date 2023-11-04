@@ -169,11 +169,11 @@ class _FirstViewState extends State<FirstView> {
                                           height: Get.height * 0.20,
                                         ),
                                         Positioned(
-                                          top: 70.0,
+                                          top: Get.height*0.12,
                                           child: Text(
                                             'todayappointments'.tr,
                                             style: GoogleFonts.raleway(
-                                              fontSize: 13,
+                                              fontSize: 15,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -209,11 +209,11 @@ class _FirstViewState extends State<FirstView> {
                                           height: Get.height * 0.20,
                                         ),
                                         Positioned(
-                                          top: 70.0,
+                                          top:  Get.height*0.12,
                                           child: Text(
                                             'appointmenthistory'.tr,
                                             style: GoogleFonts.raleway(
-                                              fontSize: 13,
+                                              fontSize: 15,
                                               color: Colors.white,
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -267,11 +267,11 @@ class _FirstViewState extends State<FirstView> {
                                         height: Get.height * 0.20,
                                       ),
                                       Positioned(
-                                        top: 70.0,
+                                        top:  Get.height*0.12,
                                         child: Text(
                                           'registrationordering'.tr,
                                           style: GoogleFonts.raleway(
-                                            fontSize: 13,
+                                            fontSize: 15,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),
@@ -321,12 +321,12 @@ class _FirstViewState extends State<FirstView> {
                                       ),
                                        Positioned(
                                         top:
-                                            40.0, 
+                                             Get.height*0.08, 
                                         child: Text(
                                           'comingsoon'.tr,
                                           style: const TextStyle(
                                             fontSize:
-                                                13, 
+                                                15, 
                                             color: Colors
                                                 .white, 
                                             fontWeight: FontWeight.bold,

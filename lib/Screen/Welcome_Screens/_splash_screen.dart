@@ -111,14 +111,14 @@ instance() async
   @override
   void initState() {
     super.initState();
-    instance();
+    // instance();
     // instance();
     checkFirstTime();
     
 
    
     _animationController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: const Duration(seconds: 5),
       vsync: this,
       
      
@@ -161,7 +161,7 @@ instance() async
           SlideTransition(
             position: _animation,
             child: Center(
-              child: Image.asset('assets/help.png',),
+              child: Image.asset('assets/help.png',height: 30,),
             ),
           ),
         ],
