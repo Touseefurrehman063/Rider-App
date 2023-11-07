@@ -15,6 +15,7 @@ import 'package:flutter_riderapp/Models/sample_delivered.dart';
 import 'package:flutter_riderapp/Models/samplebody.dart';
 import 'package:flutter_riderapp/Models/samplecollectedmodel.dart';
 import 'package:flutter_riderapp/Models/samplecollectionresponse.dart';
+import 'package:flutter_riderapp/Screen/Contacts_Screens/rider_chat.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_riderapp/Widgets/Customdropdown.dart';
@@ -3100,59 +3101,57 @@ class _ViewInformationState extends State<ViewInformation> {
 
                                     // child: Text("Payment Status: Paid Online ",style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white,),textAlign: TextAlign.center,)),
 
-                                    Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 2.0, horizontal: 5),
-                                      child: Row(
-                                        children: [
-                                          CustomButton(
-                                            onPressed: () {
-                                              FlutterPhoneDirectCaller
-                                                  .callNumber(widget
-                                                      .user.cellNumber
-                                                      .toString());
-                                            },
-                                            title: "call".tr,
-                                            radius: 20,
-                                            style: GoogleFonts.poppins(
-                                                color: Colors.white,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold),
-                                            primcolor: Colors.blue,
-                                             width: Get.width*0.4,
-                                          height: Get.height*0.088,
-                                          ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.05,
-                                          ),
-                                          CustomButton(
-                                            onPressed: () async {
-                                              final Uri smsLaunchUri = Uri(
-                                                scheme: 'sms',
-                                                path: widget.user.cellNumber,
-                                              );
-                                              urllauncher
-                                                  .launchUrl(smsLaunchUri);
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        CustomButton(
+                                          onPressed: () {
+                                            FlutterPhoneDirectCaller
+                                                .callNumber(widget
+                                                    .user.cellNumber
+                                                    .toString());
+                                          },
+                                          title: "call".tr,
+                                          radius: 20,
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                          primcolor: Colors.blue,
+                                        //    width: Get.width*0.4,
+                                        // height: Get.height*0.088,
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.04,
+                                        ),
+                                        CustomButton(
+                                          onPressed: () async {
+                                            final Uri smsLaunchUri = Uri(
+                                              scheme: 'sms',
+                                              path: widget.user.cellNumber,
+                                            );
+                                            urllauncher
+                                                .launchUrl(smsLaunchUri);
 
-                                              setState(() {});
-                                              // whatsapp();
-                                            },
-                                            title: "message".tr,
-                                            radius: 20,
-                                            style: GoogleFonts.poppins(
-                                                color: Colors.blue,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold),
-                                            primcolor: Colors.white,
-                                            width: Get.width*0.4,
-                                            height: Get.height*0.088,
-                                            
-                                          ),
-                                        ],
-                                      ),
+                                            setState(() {});
+                                            // whatsapp();
+                                          //  Get.to(RiderChat());
+                                          },
+                                          title: "message".tr,
+                                          radius: 20,
+                                          style: GoogleFonts.poppins(
+                                              color: Colors.blue,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.bold),
+                                          primcolor: Colors.white,
+                                          // width: Get.width*0.4,
+                                          // height: Get.height*0.088,
+                                          
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),

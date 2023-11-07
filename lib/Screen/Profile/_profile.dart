@@ -117,24 +117,23 @@ class _ProfileState extends State<Profile> {
   child: Stack(
     alignment: Alignment.center,
     children: [
-      Image.asset("assets/pp.jpg"),
-      if (userprofile?.imagePath != null)
-     Container(
-    height: 150,
-    width: 150,
-    decoration: const BoxDecoration(
-      shape: BoxShape.circle,
-      
-    ),
-    child: CachedNetworkImage(
-      imageUrl: userprofile?.imagePath ?? '', 
-      fit: BoxFit.cover,
-      errorWidget: (context, url, error) => Image.asset(
-        "assets/pp.jpg",
-        fit: BoxFit.contain,
-      ),
-    ),
-  ),
+       CircleAvatar(
+                  radius: 35,
+                  backgroundColor: const Color(0xFFFEF4F7),
+                  child: userprofile?.imagePath == null
+                      ? const CircleAvatar(
+                          backgroundImage: AssetImage("assets/pp.jpg"),
+                          radius: 25,
+                        )
+                      : Hero(
+                          tag: 'profile',
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage('${ip+userprofile!.imagePath!}'),
+                            radius: 25,
+                          ),
+                        ),
+                ),
     ]
   ),
                     

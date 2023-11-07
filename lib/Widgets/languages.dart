@@ -139,7 +139,7 @@ class Localization extends Translations {
           'theTermsAndCondition': 'Terms and Conditions',
           'labqeue':'Lab Queue',
           'samplecollection':'Sample Collection',
-          'call':'Call',
+          'call':'  Call   ',
           'message':'Message'
           
 

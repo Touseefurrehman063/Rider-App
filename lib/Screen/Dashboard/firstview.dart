@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Utilities.dart';
@@ -75,10 +76,27 @@ class _FirstViewState extends State<FirstView> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Image.asset(
-                            "assets/pp.jpg",
-                            height: MediaQuery.of(context).size.height * 0.1,
+                          // Image.asset(
+                          //   "assets/pp.jpg",
+                          //   height: MediaQuery.of(context).size.height * 0.1,
+                          // ),
+                          CircleAvatar(
+                  radius: 28,
+                  backgroundColor: const Color(0xFFFEF4F7),
+                  child: userprofile?.imagePath == null
+                      ? const CircleAvatar(
+                          backgroundImage: AssetImage("assets/pp.jpg"),
+                          radius: 25,
+                        )
+                      : Hero(
+                          tag: 'profile',
+                          child: CircleAvatar(
+                            backgroundImage:
+                                NetworkImage('${ip+userprofile!.imagePath!}'),
+                            radius: 25,
                           ),
+                        ),
+                ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -169,7 +187,7 @@ class _FirstViewState extends State<FirstView> {
                                           height: Get.height * 0.20,
                                         ),
                                         Positioned(
-                                          top: Get.height*0.12,
+                                          top: Get.height * 0.12,
                                           child: Text(
                                             'todayappointments'.tr,
                                             style: GoogleFonts.raleway(
@@ -209,7 +227,7 @@ class _FirstViewState extends State<FirstView> {
                                           height: Get.height * 0.20,
                                         ),
                                         Positioned(
-                                          top:  Get.height*0.12,
+                                          top: Get.height * 0.12,
                                           child: Text(
                                             'appointmenthistory'.tr,
                                             style: GoogleFonts.raleway(
@@ -241,7 +259,7 @@ class _FirstViewState extends State<FirstView> {
                                 //         top: constraints.maxHeight / 3.8),
                                 //     child: Image.asset(
                                 //       'assets/cont2.jpg',
-                                
+
                                 //       height: Get.height * 0.20,
                                 //     ),
                                 //   ),
@@ -267,7 +285,7 @@ class _FirstViewState extends State<FirstView> {
                                         height: Get.height * 0.20,
                                       ),
                                       Positioned(
-                                        top:  Get.height*0.12,
+                                        top: Get.height * 0.12,
                                         child: Text(
                                           'registrationordering'.tr,
                                           style: GoogleFonts.raleway(
@@ -319,16 +337,13 @@ class _FirstViewState extends State<FirstView> {
                                         'assets/cont4.png',
                                         height: Get.height * 0.20,
                                       ),
-                                       Positioned(
-                                        top:
-                                             Get.height*0.08, 
+                                      Positioned(
+                                        top: Get.height * 0.08,
                                         child: Text(
                                           'comingsoon'.tr,
                                           style: const TextStyle(
-                                            fontSize:
-                                                15, 
-                                            color: Colors
-                                                .white, 
+                                            fontSize: 15,
+                                            color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),
                                           textAlign: TextAlign.center,

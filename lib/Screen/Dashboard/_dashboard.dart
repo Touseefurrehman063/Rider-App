@@ -211,7 +211,7 @@ class _DrawerContentState extends State<DrawerContent> {
                           tag: 'profile',
                           child: CircleAvatar(
                             backgroundImage:
-                                NetworkImage('${userprofile?.imagePath}'),
+                                NetworkImage('${ip+userprofile!.imagePath!}'),
                             radius: 25,
                           ),
                         ),

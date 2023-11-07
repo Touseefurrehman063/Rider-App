@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomButton extends StatelessWidget {
 final Function()? onPressed;
@@ -14,25 +15,25 @@ final double radius;
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-
-width: width ,   
-height: height,  
- child: ElevatedButton(
-        onPressed: onPressed,
-       style: ElevatedButton.styleFrom(
-              foregroundColor: Colors.white, backgroundColor: primcolor, padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30), // Text color
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8), // Rounded corners
-                side: const BorderSide(color: Colors.white), )
-                ),
-        child: Text(title,style: style,),
-       
-        
-       
-        
-        
-        ),
-    );
+    return ElevatedButton(
+           onPressed: onPressed,
+          style: ElevatedButton.styleFrom(
+                 foregroundColor: Colors.white, backgroundColor: primcolor, padding:  EdgeInsets.symmetric(vertical: Get.height*0.020, horizontal: Get.width*0.12), 
+                 shape: RoundedRectangleBorder(
+                   borderRadius: BorderRadius.circular(8), 
+                   side: const BorderSide(color: Colors.white),
+                   
+                   
+                    )
+                   
+                   ),
+                   
+           child: Text(title,style: style,),
+          
+           
+          
+           
+           
+           );
   }
 }
