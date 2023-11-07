@@ -2731,7 +2731,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   "totalamount".tr,
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 12,
-                                                    fontWeight: FontWeight.bold,
+                                                    fontWeight: FontWeight.bold, 
                                                     color: Colors.white,
                                                   ),
                                                   textAlign: TextAlign.center,
@@ -3105,30 +3105,22 @@ class _ViewInformationState extends State<ViewInformation> {
                                           vertical: 2.0, horizontal: 5),
                                       child: Row(
                                         children: [
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.075,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            child: CustomButton(
-                                              onPressed: () {
-                                                FlutterPhoneDirectCaller
-                                                    .callNumber(widget
-                                                        .user.cellNumber
-                                                        .toString());
-                                              },
-                                              title: "Call",
-                                              radius: 20,
-                                              style: GoogleFonts.poppins(
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                              primcolor: Colors.blue,
-                                            ),
+                                          CustomButton(
+                                            onPressed: () {
+                                              FlutterPhoneDirectCaller
+                                                  .callNumber(widget
+                                                      .user.cellNumber
+                                                      .toString());
+                                            },
+                                            title: "call".tr,
+                                            radius: 20,
+                                            style: GoogleFonts.poppins(
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold),
+                                            primcolor: Colors.blue,
+                                             width: Get.width*0.4,
+                                          height: Get.height*0.088,
                                           ),
                                           SizedBox(
                                             width: MediaQuery.of(context)
@@ -3136,35 +3128,28 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     .width *
                                                 0.05,
                                           ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.075,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.4,
-                                            child: CustomButton(
-                                              onPressed: () async {
-                                                final Uri smsLaunchUri = Uri(
-                                                  scheme: 'sms',
-                                                  path: widget.user.cellNumber,
-                                                );
-                                                urllauncher
-                                                    .launchUrl(smsLaunchUri);
+                                          CustomButton(
+                                            onPressed: () async {
+                                              final Uri smsLaunchUri = Uri(
+                                                scheme: 'sms',
+                                                path: widget.user.cellNumber,
+                                              );
+                                              urllauncher
+                                                  .launchUrl(smsLaunchUri);
 
-                                                setState(() {});
-                                                // whatsapp();
-                                              },
-                                              title: "Message",
-                                              radius: 20,
-                                              style: GoogleFonts.poppins(
-                                                  color: Colors.blue,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.bold),
-                                              primcolor: Colors.white,
-                                            ),
+                                              setState(() {});
+                                              // whatsapp();
+                                            },
+                                            title: "message".tr,
+                                            radius: 20,
+                                            style: GoogleFonts.poppins(
+                                                color: Colors.blue,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.bold),
+                                            primcolor: Colors.white,
+                                            width: Get.width*0.4,
+                                            height: Get.height*0.088,
+                                            
                                           ),
                                         ],
                                       ),
