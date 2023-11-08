@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/appointmentdetail.dart';
 import 'package:flutter_riderapp/Models/checkinresponse.dart';
 import 'package:flutter_riderapp/Models/checkintry.dart';
-import 'package:flutter_riderapp/Models/directions_model.dart';
 import 'package:flutter_riderapp/Models/in_routeModel.dart';
 import 'package:flutter_riderapp/Models/labsmodel.dart';
 import 'package:flutter_riderapp/Models/payment_method.dart';
@@ -15,7 +14,6 @@ import 'package:flutter_riderapp/Models/sample_delivered.dart';
 import 'package:flutter_riderapp/Models/samplebody.dart';
 import 'package:flutter_riderapp/Models/samplecollectedmodel.dart';
 import 'package:flutter_riderapp/Models/samplecollectionresponse.dart';
-import 'package:flutter_riderapp/Screen/Contacts_Screens/rider_chat.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_riderapp/Widgets/Customdropdown.dart';
@@ -34,7 +32,6 @@ import '../../Utilities.dart';
 import 'package:location/location.dart';
 import 'package:flutter_phone_direct_caller/flutter_phone_direct_caller.dart';
 import 'package:url_launcher/url_launcher.dart' as urllauncher;
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 
 // ignore: must_be_immutable
 class ViewInformation extends StatefulWidget {

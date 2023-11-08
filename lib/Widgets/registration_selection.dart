@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Screen/Families_screen/_patient_registration.dart';
 import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
-import 'package:flutter_riderapp/Screen/register_patient/register_patient.dart';
 import 'package:flutter_riderapp/Widgets/appimages.dart';
 import 'package:get/get_utils/get_utils.dart';
 import 'package:google_fonts/google_fonts.dart';

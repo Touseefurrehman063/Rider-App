@@ -6,7 +6,6 @@ import 'package:flutter_riderapp/AppConstants.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
 import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
-import 'package:flutter_riderapp/Screen/labqueue/collected_labqueue.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';

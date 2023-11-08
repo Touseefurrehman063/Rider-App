@@ -12,7 +12,7 @@ class RiderChat extends StatefulWidget {
 }
 
 class _RiderChatState extends State<RiderChat> {
-   List<types.Message> _messages = [];
+   final List<types.Message> _messages = [];
   final _user = const types.User(
     id: '82091008-a484-4a89-ae75-a22bf8d6f3ac',
   );

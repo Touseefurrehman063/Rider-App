@@ -211,7 +211,7 @@ class _DrawerContentState extends State<DrawerContent> {
                           tag: 'profile',
                           child: CircleAvatar(
                             backgroundImage:
-                                NetworkImage('${ip+userprofile!.imagePath!}'),
+                                NetworkImage(ip+userprofile!.imagePath!),
                             radius: 25,
                           ),
                         ),
@@ -236,17 +236,18 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(right: 80.0),
+                padding:  EdgeInsets.only(right:Get.width*0.09),
                 child: Text(
-                 userprofile?.employeeNumber !=null
-                 ? "MRN: ${userprofile?.employeeNumber}"
+                 userprofile?.cNICNumber !=null
+                 ? "MRN: ${userprofile?.cNICNumber}"
                   :"",
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      fontSize: 14),
+                      fontSize: 12),
                 ),
               ),
+              SizedBox(height: Get.height*0.02,),
 
               // customListTile(context, onTap: () {
               //   Get.to(() => const NoDataFound());
@@ -274,6 +275,55 @@ class _DrawerContentState extends State<DrawerContent> {
                 context,
                 onTap: () async {
                   bool auth = await Authentication.authentication();
+                   if (auth) {
+                        authentication = await _authenticate();
+                        if (authentication) {
+                          if (userprofile?.id == null) {
+                            fingerprint = authentication;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('You are already Logged in')));
+                            // Utils().toastmessage(“You are already Logged in”);
+                            fingerprint = true;
+                          }
+                          setState(() {});
+                        } else {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //         content: Text(
+                          //             “You declined the biometric login.“)));
+                        }
+                        if (fingerprint) {
+                          if (authentication) {
+                            if (userprofile?.id != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('You are already Logged in')));
+                              setState(() {
+                                fingerprint = true;
+                              });
+                            }
+                            setState(() {
+                              userprofile;
+                            });
+                          } else {
+                            setState(() {
+                              fingerprint = true;
+                            });
+                          }
+                         
+                        }
+                        
+                      } else {
+                       
+                        setState(() {
+                          fingerprint = false;
+                         
+                        });
+                      }
                   print("Authenticate:$auth");
                 },
                 isIcon: true,
@@ -731,7 +781,7 @@ class _DrawerContentState extends State<DrawerContent> {
     bool isImageThere = false,
   }) {
     return ListTile(
-      visualDensity: VisualDensity(vertical: -1),
+      visualDensity: const VisualDensity(vertical: -1),
       onTap: onTap,
       minLeadingWidth: 10,
       dense: true,
@@ -803,7 +853,7 @@ Future<bool> _authenticate() async {
 
   () => _authorized = authenticated ? "Authorized" : "Not Authorized";
   return authenticated;
-}
+}         
 
 bool fingerprint = false;
 

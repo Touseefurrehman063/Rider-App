@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
 
@@ -47,13 +48,13 @@ body: Container(
                 SizedBox(height: MediaQuery.of(context).size.height*0.23,),
                 SizedBox(
                   
-                  child: Text("Registered",style: GoogleFonts.poppins(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.blue,),)),
+                  child: Text("registered".tr,style: GoogleFonts.poppins(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.blue,),)),
                 SizedBox(
                   
-                  child: Text("Your request has been registered",style: GoogleFonts.poppins(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black,),)),
+                  child: Text("requestregister".tr,style: GoogleFonts.poppins(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black,),)),
                   SizedBox(
                   
-                  child: Text("Our Support Team will contact shortly ",style: GoogleFonts.poppins(fontSize: 12,color: Colors.black,),)),
+                  child: Text("supportteam".tr,style: GoogleFonts.poppins(fontSize: 12,color: Colors.black,),)),
                 SizedBox(height: MediaQuery.of(context).size.height*0.01,),
                 CupertinoButton(
 
@@ -72,7 +73,7 @@ body: Container(
             borderRadius: BorderRadius.circular(8),
 
                   
-                  child: Text("LOGIN",style: GoogleFonts.poppins(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 15),), ),
+                  child: Text("login".tr,style: GoogleFonts.poppins(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 15),), ),
                 
               ],
             )

@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/Models/User.dart';
+import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:local_auth/local_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:flutter_riderapp/Models/userprofile.dart';
@@ -23,6 +26,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool passwordVisible = true;
@@ -82,8 +86,102 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
+    // call();
     instance();
     super.initState();
+  }
+
+bool isBiometric = false;
+
+final LocalAuthentication auth = LocalAuthentication();
+List<BiometricType>? _availableBiometrics;
+String _authorized = "Not Authorized";
+bool _isAuthenticating = false;
+bool authentication = false;
+
+  Future<bool> _authenticate() async {
+  bool authenticated = false;
+
+  try {
+    _isAuthenticating = true;
+    _authorized = "Authenticating";
+
+    authenticated = await auth.authenticate(
+      localizedReason: "Let OS determine authentication method",
+      options: const AuthenticationOptions(
+        stickyAuth: true,
+      ),
+    );
+
+    _isAuthenticating = false;
+  } on PlatformException catch (e) {
+    _isAuthenticating = false;
+    _authorized = "Error - ${e.message}";
+    print(e.message.toString());
+
+    return authenticated;
+  }
+
+  () => _authorized = authenticated ? "Authorized" : "Not Authorized";
+  return authenticated;
+}         
+
+  call()
+  async {
+    
+    if(true)
+    {
+       bool auth = await Authentication.authentication();
+                   if (auth) {
+                        authentication = await _authenticate();
+                        if (authentication) {
+                          if (userprofile?.id == null) {
+                            fingerprint = authentication;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('You are already Logged in')));
+                            // Utils().toastmessage(“You are already Logged in”);
+                            fingerprint = true;
+                          }
+                          setState(() {});
+                        } else {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //         content: Text(
+                          //             “You declined the biometric login.“)));
+                        }
+                        if (fingerprint) {
+                          if (authentication) {
+                            if (userprofile?.id != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('You are already Logged in')));
+                              setState(() {
+                                fingerprint = true;
+                              });
+                            }
+                            setState(() {
+                              userprofile;
+                            });
+                          } else {
+                            setState(() {
+                              fingerprint = true;
+                            });
+                          }
+                         
+                        }
+                        
+                      } else {
+                       
+                        setState(() {
+                          fingerprint = false;
+                         
+                        });
+                      }
+    }
   }
 
   instance() async {
@@ -265,7 +363,7 @@ class _LoginState extends State<Login> {
                           ),
                         ),
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.05,
+                          height: MediaQuery.of(context).size.height * 0.2,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,

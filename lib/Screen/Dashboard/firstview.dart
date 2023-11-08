@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Utilities.dart';
@@ -81,8 +80,8 @@ class _FirstViewState extends State<FirstView> {
                           //   height: MediaQuery.of(context).size.height * 0.1,
                           // ),
                           CircleAvatar(
-                  radius: 28,
-                  backgroundColor: const Color(0xFFFEF4F7),
+                  radius: 27,
+                  backgroundColor:  Colors.blue,
                   child: userprofile?.imagePath == null
                       ? const CircleAvatar(
                           backgroundImage: AssetImage("assets/pp.jpg"),
@@ -92,7 +91,7 @@ class _FirstViewState extends State<FirstView> {
                           tag: 'profile',
                           child: CircleAvatar(
                             backgroundImage:
-                                NetworkImage('${ip+userprofile!.imagePath!}'),
+                                NetworkImage(ip+userprofile!.imagePath!),
                             radius: 25,
                           ),
                         ),

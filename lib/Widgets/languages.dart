@@ -4,6 +4,7 @@ class Localization extends Translations {
   @override
   Map<String, Map<String, String>> get keys => {
         "en_US": {
+          'selectLanguage':'Select Language',
           //drawer
           'changepassword': 'Change Password',
           'biometric': 'Biometric',
@@ -111,14 +112,18 @@ class Localization extends Translations {
           'passnotmatch':'Passwords do not match!',
           'entervaliddata':'Please Enter Valid Data',
           'register':'Register',
+          'registered':'Registered',
           'alreadyhaveacount':'Already have an account?',
           'signin':'Sign In',
+          'requestregister':'Your request has been registered',
+          'supportteam':'Our Support Team will contact shortly ',
           //Login
           'login':'LOGIN',
           'username':'Username',
           'enterusername':'Please Enter Your Username' ,
           'invalid':'Invalid Username and Password', 
           'dontaccount':'Don`t Have An Account?',  
+
           //labinvestigation
           'labinvestigation':'Lab Investigation',
           'selecttest':'Select Test',
@@ -149,6 +154,7 @@ class Localization extends Translations {
           
         },
         "ar_SA": {
+           'selectLanguage':'اختار اللغة',
           //drawer
           'changepassword': 'تغيير كلمة المرور',
           'biometric': 'بصمات',
@@ -259,6 +265,9 @@ class Localization extends Translations {
           'alreadyhaveacount':'لديك حساب بالفعل؟',
           'signin':'تسجيل الدخول',
           'entervaliddata':'الرجاء إدخال بيانات صحيحة',
+          'registered':'مسجل',
+          'requestregister':'لقد تم تسجيل طلبك',
+          'supportteam':'سيتصل فريق الدعم الخاص بنا قريبًا',
           //Login
           'login':'تسجيل الدخول',
           'username':'اسم المستخدم',
@@ -284,12 +293,13 @@ class Localization extends Translations {
           'iHaveRead': 'لقد قرأت وفهمت',
           'theTermsAndCondition': 'الشروط والأحكام',
           'samplecollection':'جمع العينات',
-          'call':'يتصل',
-           'message':'رسالة'
+          'call':'       يتصل',
+           'message':'      رسالة'
         },
         "ur_PK": {
+             'selectLanguage':'زبان منتخب کریں',
           //drawer
-          'changepassword': 'تغيير كلمة المرور',
+          'changepassword': 'پاس ورڈ تبدیل کریں',
           'biometric': 'بائیو میٹرک',
           'languages': 'زبانیں',
           'privacyPolicy': 'رازداری اور پالیسی',
@@ -396,6 +406,9 @@ class Localization extends Translations {
           'alreadyhaveacount':'پہلے سے اکاؤنٹ ہے؟',
           'signin':'سائن ان',
           'entervaliddata':'براہ کرم درست ڈیٹا درج کریں',
+          'registered':'رجسٹرڈ',
+          'requestregister':'آپ کی درخواست درج کر لی گئی ہے',
+          'supportteam':'ہماری سپورٹ ٹیم جلد ہی رابطہ کرے گی',
            //Login
           'login':'لاگ ان کریں',
           'username':'صارف نام',
@@ -423,8 +436,8 @@ class Localization extends Translations {
           'theTermsAndCondition': 'شرائط و ضوابط',
           'labqeue':'لیب کی قطار',
           'samplecollection':'نمونہ جمع',
-          'call':'کال',
-           'message':'پیغام'
+          'call':'     کال',
+          'message':'     پیغام'
          
         
         }

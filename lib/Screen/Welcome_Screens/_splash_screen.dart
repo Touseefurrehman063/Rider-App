@@ -32,7 +32,7 @@ class SplashscreenState extends State<Splashscreen>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     username = prefs.getString('username');
     password = prefs.getString('pass');
-
+    
     String? value = prefs.getString('firstapp');
 
     if (value == null || value == "") {

@@ -1,4 +1,3 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
@@ -118,8 +117,8 @@ class _ProfileState extends State<Profile> {
     alignment: Alignment.center,
     children: [
        CircleAvatar(
-                  radius: 35,
-                  backgroundColor: const Color(0xFFFEF4F7),
+                  radius: 27,
+                  backgroundColor: Colors.blue,
                   child: userprofile?.imagePath == null
                       ? const CircleAvatar(
                           backgroundImage: AssetImage("assets/pp.jpg"),
@@ -129,7 +128,7 @@ class _ProfileState extends State<Profile> {
                           tag: 'profile',
                           child: CircleAvatar(
                             backgroundImage:
-                                NetworkImage('${ip+userprofile!.imagePath!}'),
+                                NetworkImage(ip+userprofile!.imagePath!),
                             radius: 25,
                           ),
                         ),
