@@ -13,18 +13,18 @@ class NotificationRepository{
   bool isLoadingData = false;
   bool isLoadingmoreData = false;
 
- String formatLastMonthDate() {
-  final now = DateTime.now();
-  final lastMonth = DateTime(now.year, now.month - 1, now.day);
+    String formatLastMonthDate() {
+      final now = DateTime.now();
+      final lastMonth = DateTime(now.year, now.month - 5, now.day);
 
-  final formatter = DateFormat('yyyy-MM-dd');
-  return formatter.format(lastMonth);
-}
-
-  
+      final formatter = DateFormat('yyyy-MM-dd');
+      return formatter.format(lastMonth);
+    }
 
   
-getnotifications(String empId, String StartDate,
+
+  
+  getnotifications(String empId, String StartDate,
       String EndDate, int length, int start) async {
   
     var url = '$ip/api/account/GetUserNotifications';

@@ -54,10 +54,10 @@ class _FirstViewState extends State<FirstView> {
               children: [
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 25.0, horizontal: 10),
+                      vertical: 20.0, horizontal: 12),
                   child: Image.asset(
                     'assets/main.png',
-                    fit: BoxFit.fitWidth,
+                    fit: BoxFit.cover,
                     height: Get.height * 0.35,
                   ),
                 ),
@@ -67,22 +67,22 @@ class _FirstViewState extends State<FirstView> {
                   children: [
                     SizedBox(
                       width: double.infinity,
-                      height: constraints.maxHeight / 16,
+                      height: Get.height*0.015
                     ),
-                    SizedBox(
-                      height: constraints.maxHeight / 9,
-                      width: constraints.maxWidth / 1.3,
+                    Padding(
+                      padding:  EdgeInsets.only(right:Get.width*0.23),
                       child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // Image.asset(
                           //   "assets/pp.jpg",
                           //   height: MediaQuery.of(context).size.height * 0.1,
                           // ),
                           CircleAvatar(
-                  radius: 27,
-                  backgroundColor:  Colors.blue,
-                  child: userprofile?.imagePath == null
+                                      radius: 27,
+                                      backgroundColor:  Colors.blue,
+                                      child: userprofile?.imagePath == null
                       ? const CircleAvatar(
                           backgroundImage: AssetImage("assets/pp.jpg"),
                           radius: 25,
@@ -95,7 +95,7 @@ class _FirstViewState extends State<FirstView> {
                             radius: 25,
                           ),
                         ),
-                ),
+                                    ),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -120,7 +120,7 @@ class _FirstViewState extends State<FirstView> {
                                       ),
                                       TextSpan(
                                         text:
-                                            ' ${(userprofile?.fullName ?? "Helpful Rider").length > 10 ? '${(userprofile?.fullName ?? "Helpful Rider").substring(0, 10)}...' : (userprofile?.fullName ?? "Helpful Rider")}',
+                                            ' ${(userprofile?.firstName ?? "Helpful Rider").length > 10 ? '${(userprofile?.firstName ?? "Helpful Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Helpful Rider")}',
                                         style: GoogleFonts.raleway(
                                           fontSize: constraints.maxWidth / 15,
                                           fontWeight: FontWeight.w800,
@@ -177,7 +177,7 @@ class _FirstViewState extends State<FirstView> {
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                        top: constraints.maxHeight / 3.8),
+                                        top: Get.height*0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -217,7 +217,7 @@ class _FirstViewState extends State<FirstView> {
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                        top: constraints.maxHeight / 3.8),
+                                        top: Get.height*0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -266,7 +266,7 @@ class _FirstViewState extends State<FirstView> {
                               ],
                             ),
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.03,
+                              height: MediaQuery.of(context).size.height * 0.04,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

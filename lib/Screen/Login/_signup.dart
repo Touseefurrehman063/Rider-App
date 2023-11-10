@@ -477,10 +477,10 @@ class _SignupState extends State<Signup> {
                             height: Get.height * 0.02,
                           ),
                           SizedBox(
-                            height: Get.height * 0.075,
+                            height: Get.height * 0.1,
                             child: IntlPhoneField(
                               controller: mobile_number,
-                              disableLengthCheck: true,
+                              disableLengthCheck: false,
                               initialCountryCode: 'SA',
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(

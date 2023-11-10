@@ -125,12 +125,8 @@ class _DashboardState extends State<Dashboard> {
                   shadowColor: Colors.white,
                   backgroundColor: Colors.white,
                   elevation: 0.0,
-                  title: SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.4,
-                    height: MediaQuery.of(context).size.width * 0.4,
-                    child: Image.asset(
-                        "assets/Helpful.png"), // Replace with your image
-                  ),
+                  title: Image.asset(
+                      "assets/Helpful.png",height: Get.height*0.08,alignment: Alignment.center,),
                   leading: Builder(
                     builder: (BuildContext context) {
                       return IconButton(
@@ -248,17 +244,6 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
               ),
               SizedBox(height: Get.height*0.02,),
-
-              // customListTile(context, onTap: () {
-              //   Get.to(() => const NoDataFound());
-              // },
-              //     isIcon: true,
-              //     icon: const Icon(
-              //       Icons.history,
-              //       size: 30,
-              //       color: Colors.white,
-              //     ),
-              //     title: 'History'.tr),
               customListTile(context, onTap: () async {
                 Get.to(() => const ChangePassword());
               },
@@ -268,7 +253,7 @@ class _DrawerContentState extends State<DrawerContent> {
                   //   color: Colors.white,
                   // ),
                   imagePath: Images.lock,
-                  imageHeight: 10,
+                  // imageHeight: 2,
                   title: 'changepassword'.tr,
                   textColor: ColorManager.kWhiteColor),
               customListTile(
@@ -781,7 +766,7 @@ class _DrawerContentState extends State<DrawerContent> {
     bool isImageThere = false,
   }) {
     return ListTile(
-      visualDensity: const VisualDensity(vertical: -1),
+      visualDensity: const VisualDensity(vertical: -1,horizontal: 2),
       onTap: onTap,
       minLeadingWidth: 10,
       dense: true,
@@ -798,7 +783,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 )
               : const SizedBox.shrink()
           : icon ??
-              const Icon(
+              const Icon( 
                 Icons.delete,
                 color: ColorManager.kRedColor,
                 size: 30,

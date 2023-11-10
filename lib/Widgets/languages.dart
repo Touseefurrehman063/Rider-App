@@ -73,10 +73,10 @@ class Localization extends Translations {
           'checkin':'Check In',
           'paymentmethod':'   Payment Method',
           'discount':'Discount:',
-          'paymentstatus':'Payment Status:',
+          'paymentstatus':'Payment Status : ',
           'totalamount':'Total Amount:',
           'percentage':"Percentage",
-          'amount':'Amount',
+          'amount':'Amount:',
           'samplecollected':'Sample Collected',
           'inroutelab':'In Route to Lab',
           'selectlab':'Select Lab',
@@ -84,7 +84,7 @@ class Localization extends Translations {
           'ridecompleted':'Ride Completed',
           'thankyou':'Thank You',
           'backhome':'BACK HOME',
-          'order':'Order:',
+          'order':'Order:  #',
 
           //Registration
           'registernow':'Register Now',

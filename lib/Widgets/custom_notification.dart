@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/Notification_Model/notification_model.dart';
+import 'package:flutter_riderapp/Models/User.dart';
+import 'package:flutter_riderapp/Repositeries/Notificationrepo/notification_repo.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
+import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/controllers/Notification/notification_controller.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 // Import intl for date formatting
 
 class CustomNotification extends StatefulWidget {
@@ -12,9 +17,31 @@ class CustomNotification extends StatefulWidget {
 }
 
 class _CustomNotificationState extends State<CustomNotification> {
+    User? user;
+  String endDate = "";
+  String startDate = "";
+  int start = 0;
+  int length = 10;
   @override
   void initState() {
     super.initState();
+  }
+
+  String formatLastMonthDate() {
+    final now = DateTime.now();
+    final lastMonth = DateTime(now.year, now.month - 5, now.day);
+
+    final formatter = DateFormat('yyyy-MM-dd');
+    return formatter.format(lastMonth);
+  }
+   Future<void> _refreshNotifications() async {
+    await NotificationRepository().getnotifications(
+      userprofile!.id.toString(),
+      formatLastMonthDate().toString(),
+      formatDate(DateTime.now()).toString(),
+      length,
+      start,
+    );
   }
 
   @override
@@ -23,17 +50,21 @@ class _CustomNotificationState extends State<CustomNotification> {
       builder: (cont) {
         return Column(
           children: [
-            ListView.builder(
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: notificationscontroller.j.notifications.length,
-              itemBuilder: (context, index) {
-                final data = notificationscontroller.j.notifications[index];
-                return Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: customListTile(context, data),
-                );
-              },
+            RefreshIndicator(
+              onRefresh: _refreshNotifications,
+              child: ListView.builder(
+                
+                physics: const AlwaysScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: notificationscontroller.j.notifications.length,
+                itemBuilder: (context, index) {
+                  final data = notificationscontroller.j.notifications[index];
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: customListTile(context, data),
+                  );
+                },
+              ),
             ),
           ],
         );

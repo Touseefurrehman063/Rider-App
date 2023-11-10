@@ -45,7 +45,6 @@ class _ProfileState extends State<Profile> {
       return 'goodNight'.tr;
     }
   }
-  
 
   final items = [
     const Icon(Icons.notifications, size: 30, color: Colors.white),
@@ -111,33 +110,26 @@ class _ProfileState extends State<Profile> {
                       const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
                   child: Row(
                     children: [
-                     SizedBox(
-  width: MediaQuery.of(context).size.width * 0.25,
-  child: Stack(
-    alignment: Alignment.center,
-    children: [
-       CircleAvatar(
-                  radius: 27,
-                  backgroundColor: Colors.blue,
-                  child: userprofile?.imagePath == null
-                      ? const CircleAvatar(
-                          backgroundImage: AssetImage("assets/pp.jpg"),
-                          radius: 25,
-                        )
-                      : Hero(
-                          tag: 'profile',
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(ip+userprofile!.imagePath!),
-                            radius: 25,
-                          ),
+                      Stack(alignment: Alignment.center, children: [
+                        CircleAvatar(
+                          radius: 27,
+                          backgroundColor: Colors.blue,
+                          child: userprofile?.imagePath == null
+                              ? const CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage("assets/pp.jpg"),
+                                  radius: 25,
+                                )
+                              : Hero(
+                                  tag: 'profile',
+                                  child: CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        ip + userprofile!.imagePath!),
+                                    radius: 25,
+                                  ),
+                                ),
                         ),
-                ),
-    ]
-  ),
-                    
-),
-
+                      ]),
                       Container(
                         child: RichText(
                           text: TextSpan(
@@ -150,7 +142,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               TextSpan(
                                 text:
-                                    'Hi, ${(userprofile?.fullName ?? "Tabib Rider").length > 10 ? '${(userprofile?.fullName ?? "Tabib Rider").substring(0, 10)}...' : (userprofile?.fullName ?? "Tabib Rider")}',
+                                    'Hi, ${(userprofile?.firstName ?? "Tabib Rider").length > 15 ? '${(userprofile?.firstName ?? "Tabib Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
                                 style: GoogleFonts.raleway(
                                   fontSize: 23,
                                   fontWeight: FontWeight.w800,
@@ -186,9 +178,9 @@ class _ProfileState extends State<Profile> {
               SingleChildScrollView(
                 child: Container(
                   alignment: Alignment.topCenter,
-                  width: Get.width,
-                  height: Get.height * 0.51,
-                  padding: EdgeInsets.symmetric(vertical: Get.height * 0.05),
+                  // width: Get.width,
+                  // height: Get.height,
+                  padding: EdgeInsets.symmetric(vertical: Get.height * 0.14),
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
@@ -220,15 +212,10 @@ class _ProfileState extends State<Profile> {
                         ),
                         RecordWidget(
                           title: "dob".tr,
-                          name:
-                                            userprofile?.dateofBirth != null
-                                                ? DateFormat('dd MMMM yyyy')
-                                                    .format(DateTime.parse(
-                                                        userprofile!
-                                                            .dateofBirth!))
-                                                : '_',
-                                           
-                                          
+                          name: userprofile?.dateofBirth != null
+                              ? DateFormat('dd MMMM yyyy').format(
+                                  DateTime.parse(userprofile!.dateofBirth!))
+                              : '_',
                         ),
                         SizedBox(
                           height: Get.height * 0.03,
@@ -259,7 +246,7 @@ class _ProfileState extends State<Profile> {
                         //   style: GoogleFonts.poppins(
                         //       color: Colors.blue,
                         //       fontSize: 16,
-                              
+
                         //       fontWeight: FontWeight.bold),
                         //   primcolor: Colors.white,
                         // ),

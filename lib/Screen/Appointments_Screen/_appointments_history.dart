@@ -590,8 +590,8 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                           itemBuilder: (context, index) {
                             User user = _appointments[index];
 
-                            if (user.status.toString() ==
-                                selectedStatusFilter.toString()) {
+                            if (user.status.toString().toLowerCase() ==
+                                selectedStatusFilter.toString().toLowerCase()) {
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     top: 10, right: 15, left: 15),
@@ -722,7 +722,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                   // ),
                                 ),
                               );
-                            } else if (selectedStatusFilter.toString() == "") {
+                            } else if (selectedStatusFilter.toString().toLowerCase() == "") {
                               return Padding(
                                 padding: const EdgeInsets.only(
                                     top: 10, right: 15, left: 15),
