@@ -359,7 +359,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
               ),
               SizedBox(
-                height: Get.height * 0.02,
+                height: Get.height * 0.03,
               ),
               Padding(
                 padding: const EdgeInsets.only(right: 45.0),
