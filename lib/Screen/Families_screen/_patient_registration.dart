@@ -16,7 +16,6 @@ import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_riderapp/Models/Register.dart';
 import 'package:flutter_riderapp/Models/city.dart';
 import 'package:flutter_riderapp/Models/gender.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
@@ -955,7 +954,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                         const SnackBar(
                                             content: Text(
                                                 'Patient Register Succesfully')));
-                                    Get.to(RegisterPatient());
+                                    Get.to(const RegisterPatient());
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(

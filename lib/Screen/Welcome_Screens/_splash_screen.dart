@@ -1,10 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Screen/Welcome_Screens/welcome_1.dart';
-import 'package:get/get.dart';
 // import 'package:flutter_riderapp/Utilities.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
@@ -22,8 +20,8 @@ class Splashscreen extends StatefulWidget {
 }
 class SplashscreenState extends State<Splashscreen>
     with SingleTickerProviderStateMixin {
-  // late AnimationController _animationController;
-  // late Animation<Offset> _animation;
+  late AnimationController _animationController;
+  late Animation<Offset> _animation;
 
   static const String KEYLOGIN = "login";
 
@@ -110,7 +108,6 @@ instance() async
     // }
 }
 
-
   @override
   void initState() {
     super.initState();
@@ -120,63 +117,56 @@ instance() async
     
 
    
-    // _animationController = AnimationController(
-    //   duration: const Duration(seconds: 5),
-    //   vsync: this,
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 5),
+      vsync: this,
       
      
     
-    // );
+    );
 
-    // _animation = Tween<Offset>(
-    //   begin: const Offset(-1.0, 0.0),
-    //   end: const Offset(1.0, 0.0),
-    // ).animate(_animationController);
+    _animation = Tween<Offset>(
+      begin: const Offset(-1.0, 0.0),
+      end: const Offset(1.0, 0.0),
+    ).animate(_animationController);
 
     // Start the logo animation after a delay
-    // Future.delayed(const Duration(seconds: 5), () {
-    //   _animationController.forward();
-    // });
+    Future.delayed(const Duration(seconds: 5), () {
+      _animationController.forward();
+    });
 
-    // _animationController.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     WheretoGo(context);
-    //   }
-    // }
-    
-    // );
+    _animationController.addStatusListener((status) {
+      if (status == AnimationStatus.completed) {
+        WheretoGo(context);
+      }
+    });
   }
-  
 
   @override
   void dispose() {
-    // _animationController.dispose();
+    _animationController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Stack(
-      children: [
-        Positioned(
-          top: 100,
-          right: 0,
-          child: Container(
-            height: Get.height * 0.8,
-            width: Get.width,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            'assets/helpbackgraound.png',
             alignment: Alignment.centerLeft,
-            child: Image.asset(
-              Images.logoBackground,
-              fit: BoxFit.cover,
+          ),
+          SlideTransition(
+            position: _animation,
+            child: Center(
+              child: Image.asset('assets/help.png',height: 30,),
             ),
           ),
-        ),
-        SlideTransitions(
-          image: Center(child: Image.asset(Images.logo,height: Get.height*0.1,)),
-        )
-      ],
-    ));
+        ],
+      ),
+    );
   }
 }
 
@@ -215,33 +205,4 @@ Future<int?> getIsOnboarding() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     return preferences.getInt('initScreen');
   }
-  class SlideTransitions extends StatefulWidget {
-  final Widget? image;
-  const SlideTransitions({super.key, this.image});
-
-  @override
-  State<SlideTransitions> createState() => _SlideTransitionsState();
-}
-
-class _SlideTransitionsState extends State<SlideTransitions>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 1),
-    vsync: this,
-  )..repeat(reverse: true);
-  late final Animation<Offset> _offsetAnimation = Tween<Offset>(
-    begin: Offset.zero,
-    end: const Offset(1.5, 0.0),
-  ).animate(CurvedAnimation(
-    parent: _controller,
-    curve: Curves.easeIn,
-  ));
-  
-  @override
-  Widget build(BuildContext context) {
- return SlideTransition(
-      position: _offsetAnimation,
-      child: Padding(padding: const EdgeInsets.all(8.0), child: widget.image),
-    );
-  }}
 
