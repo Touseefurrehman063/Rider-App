@@ -51,22 +51,22 @@ class PatientRegister {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['FirstName'] = firstName;
-    data['CNICNumber'] = cNICNumber;
-    data['DateOfBirth'] = dateOfBirth;
-    data['Address'] = address;
-    data['CellNumber'] = cellNumber;
-    data['TelephoneNumber'] = telephoneNumber;
-    data['Email'] = email;
-    data['GenderId'] = genderId;
-    data['CountryId'] = countryId;
-    data['StateOrProvinceId'] = stateOrProvinceId;
-    data['CityId'] = cityId;
-    data['RelationshipTypeId'] = relationshipTypeId;
-    data['IdentityRelation'] = identityRelation;
-    data['Password'] = password;
-    data['ConfirmPassword'] = confirmPassword;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['FirstName'] = this.firstName;
+    data['CNICNumber'] = this.cNICNumber;
+    data['DateOfBirth'] = this.dateOfBirth;
+    data['Address'] = this.address;
+    data['CellNumber'] = this.cellNumber;
+    data['TelephoneNumber'] = this.telephoneNumber;
+    data['Email'] = this.email;
+    data['GenderId'] = this.genderId;
+    data['CountryId'] = this.countryId;
+    data['StateOrProvinceId'] = this.stateOrProvinceId;
+    data['CityId'] = this.cityId;
+    data['RelationshipTypeId'] = this.relationshipTypeId;
+    data['IdentityRelation'] = this.identityRelation;
+    data['Password'] = this.password;
+    data['ConfirmPassword'] = this.confirmPassword;
     return data;
   }
 }

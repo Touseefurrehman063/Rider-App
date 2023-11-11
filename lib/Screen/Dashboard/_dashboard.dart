@@ -109,9 +109,9 @@ class _DashboardState extends State<Dashboard> {
       controller: zoomController,
       // style: DrawerStyle.style3,
       dragOffset: 40,
-
+      
       showShadow: true,
-
+      
       shadowLayer2Color: const Color(0xFF2157B2),
       menuBackgroundColor: const Color(0xFF2157B2),
       angle: 0,
@@ -126,10 +126,7 @@ class _DashboardState extends State<Dashboard> {
                   backgroundColor: Colors.white,
                   elevation: 0.0,
                   title: Image.asset(
-                    "assets/Helpful.png",
-                    height: Get.height * 0.06,
-                    alignment: Alignment.center,
-                  ),
+                      "assets/Helpful.png",height: Get.height*0.06,alignment: Alignment.center,),
                   leading: Builder(
                     builder: (BuildContext context) {
                       return IconButton(
@@ -169,7 +166,7 @@ class _DashboardState extends State<Dashboard> {
         ),
       ),
       borderRadius: 24.0,
-
+      
       // showShadow: true,
     );
   }
@@ -210,7 +207,7 @@ class _DrawerContentState extends State<DrawerContent> {
                           tag: 'profile',
                           child: CircleAvatar(
                             backgroundImage:
-                                NetworkImage(ip + userprofile!.imagePath!),
+                                NetworkImage(ip+userprofile!.imagePath!),
                             radius: 25,
                           ),
                         ),
@@ -235,20 +232,18 @@ class _DrawerContentState extends State<DrawerContent> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.only(right: Get.width * 0.09),
+                padding:  EdgeInsets.only(right:Get.width*0.09),
                 child: Text(
-                  userprofile?.cNICNumber != null
-                      ? "MRN: ${userprofile?.cNICNumber}"
-                      : "",
+                 userprofile?.cNICNumber !=null
+                 ? "MRN: ${userprofile?.cNICNumber}"
+                  :"",
                   style: const TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 12),
                 ),
               ),
-              SizedBox(
-                height: Get.height * 0.02,
-              ),
+              SizedBox(height: Get.height*0.02,),
               customListTile(context, onTap: () async {
                 Get.to(() => const ChangePassword());
               },
@@ -265,51 +260,56 @@ class _DrawerContentState extends State<DrawerContent> {
                 context,
                 onTap: () async {
                   bool auth = await Authentication.authentication();
-                  if (auth) {
-                    authentication = await _authenticate();
-                    if (authentication) {
-                      if (userprofile?.id == null) {
-                        fingerprint = authentication;
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('You are already Logged in')));
-                        // Utils().toastmessage(“You are already Logged in”);
-                        fingerprint = true;
-                      }
-                      setState(() {});
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("You declined the biometric login.")));
-                    }
-                    if (fingerprint) {
-                      if (authentication) {
-                        if (userprofile?.id != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('You are already Logged in')));
-                          LocalDB().savefingerprint(true);
-                          setState(() {
+                   if (auth) {
+                        authentication = await _authenticate();
+                        if (authentication) {
+                          if (userprofile?.id == null) {
+                            fingerprint = authentication;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content:
+                                        Text('You are already Logged in')));
+                            // Utils().toastmessage(“You are already Logged in”);
                             fingerprint = true;
-                          });
+                          }
+                          setState(() {});
+                        } else {
+                          // ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(
+                          //         content: Text(
+                          //             “You declined the biometric login.“)));
                         }
-                        setState(() {
-                          userprofile;
-                        });
+                        if (fingerprint) {
+                          if (authentication) {
+                            if (userprofile?.id != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text('You are already Logged in')));
+                              setState(() {
+                                fingerprint = true;
+                              });
+                            }
+                            setState(() {
+                              userprofile;
+                            });
+                          } else {
+                            setState(() {
+                              fingerprint = true;
+                            });
+                          }
+                         
+                        }
+                        
                       } else {
+                       
                         setState(() {
-                          LocalDB().savefingerprint(true);
-                          fingerprint = true;
+                          fingerprint = false;
+                         
                         });
                       }
-                    }
-                  } else {
-                    setState(() {
-                      LocalDB().savefingerprint(false);
-                      fingerprint = false;
-                    });
-                  }
-                  // print("Authenticate:$auth");
+                  print("Authenticate:$auth");
                 },
                 isIcon: true,
                 icon: const Icon(
@@ -319,6 +319,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 title: 'biometric'.tr,
                 togglebutton: false,
               ),
+             
 
               customListTile(
                 context,
@@ -348,8 +349,10 @@ class _DrawerContentState extends State<DrawerContent> {
               Padding(
                 padding: const EdgeInsets.only(right: 80.0),
                 child: InkWell(
-                  onTap: () {},
-                  child: Text(
+                  onTap: () {
+                    
+                  },
+                  child:  Text(
                     'privacyPolicy'.tr,
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                   ),
@@ -363,241 +366,276 @@ class _DrawerContentState extends State<DrawerContent> {
                 child: InkWell(
                   onTap: () {
                     showDialog(
-                        context: Get.context!,
-                        builder: (context) {
-                          return StatefulBuilder(builder: (context, setstate) {
-                            return Scaffold(
-                              backgroundColor: Colors.transparent,
-                              body: Material(
-                                color: Colors.transparent,
-                                child: AlertDialog(
-                                  scrollable: true,
-                                  title: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'theTermsAndCondition'.tr,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium!
-                                            .copyWith(
-                                                color: ColorManager.kblackColor,
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w900),
-                                      ),
-                                      const Divider(
-                                        color: ColorManager.kblackColor,
-                                      ),
-                                    ],
-                                  ),
-                                  backgroundColor: Colors.white,
-                                  content: SizedBox(
-                                    width: Get.width,
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: Get.height * 0.5,
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  'consentTitle'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          color: ColorManager
-                                                              .kblackColor,
-                                                          fontSize: 13,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                ),
-                                                Text(
-                                                  'consent'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 12,
-                                                          color: ColorManager
-                                                              .kblackColor),
-                                                ),
-                                                Text(
-                                                  'informationWeCollect'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 13,
-                                                          color: ColorManager
-                                                              .kblackColor,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                ),
-                                                SizedBox(
-                                                  height: Get.height * 0.01,
-                                                ),
-                                                Text(
-                                                  'information1'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 12,
-                                                          color: ColorManager
-                                                              .kblackColor),
-                                                ),
-                                                SizedBox(
-                                                  height: Get.height * 0.02,
-                                                ),
-                                                Text(
-                                                  'information2'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 12,
-                                                          color: ColorManager
-                                                              .kblackColor),
-                                                ),
-                                                SizedBox(
-                                                  height: Get.height * 0.02,
-                                                ),
-                                                Text(
-                                                  'usageTitle'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 13,
-                                                          color: ColorManager
-                                                              .kblackColor,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                ),
-                                                SizedBox(
-                                                  height: Get.height * 0.02,
-                                                ),
-                                                Text(
-                                                  'usage'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 12,
-                                                          color: ColorManager
-                                                              .kblackColor),
-                                                ),
-                                                Text(
-                                                  'disclosureTitle'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 13,
-                                                          color: ColorManager
-                                                              .kblackColor,
-                                                          fontWeight:
-                                                              FontWeight.w900),
-                                                ),
-                                                Text(
-                                                  'disclosure'.tr,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodyMedium!
-                                                      .copyWith(
-                                                          fontSize: 12,
-                                                          color: ColorManager
-                                                              .kblackColor),
-                                                ),
-                                                SizedBox(
-                                                  height: Get.height * 0.02,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: Get.height * 0.03,
-                                        ),
-                                        SizedBox(
-                                          height: Get.height * 0.06,
-                                          width: Get.width,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Expanded(
-                                                child: RichText(
-                                                  text: TextSpan(
-                                                    children: <TextSpan>[
-                                                      TextSpan(
-                                                        children: <InlineSpan>[
-                                                          WidgetSpan(
-                                                            child: SizedBox(
-                                                                width:
-                                                                    Get.width *
-                                                                        0.01),
-                                                          ),
-                                                        ],
-                                                        style: Theme.of(context)
-                                                            .textTheme
-                                                            .titleMedium
-                                                            ?.copyWith(
-                                                                color: ColorManager
-                                                                    .kblackColor,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12),
-                                                        // text: 'theTermsAndCondition'
-                                                        //     .tr,
-                                                      ),
-                                                    ],
+                                    context: Get.context!,
+                                    builder: (context) {
+                                      return StatefulBuilder(
+                                          builder: (context, setstate) {
+                                        return Scaffold(
+                                          backgroundColor: Colors.transparent,
+                                          body: Material(
+                                            color: Colors.transparent,
+                                            child: AlertDialog(
+                                              scrollable: true,
+                                              title: Column(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text(
+                                                    'theTermsAndCondition'.tr,
+                                                                       
+                                                    style: Theme.of(context)
+                                                        .textTheme
+                                                        .bodyMedium!
+                                                        .copyWith(
+                                                            color: ColorManager
+                                                                .kblackColor,
+                                                            fontSize: 13,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w900),
                                                   ),
+                                                  const Divider(
+                                                    color: ColorManager
+                                                        .kblackColor,
+                                                  ),
+                                                ],
+                                              ),
+                                              backgroundColor: Colors.white,
+                                              content: SizedBox(
+                                                width: Get.width,
+                                                child: Column(
+                                                  children: [
+                                                    SizedBox(
+                                                      height: Get.height * 0.5,
+                                                      child:
+                                                          SingleChildScrollView(
+                                                        child: Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Text(
+                                                              'consentTitle'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      color: ColorManager
+                                                                          .kblackColor,
+                                                                      fontSize:
+                                                                          13,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                            ),
+                                                            Text(
+                                                              'consent'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: ColorManager
+                                                                          .kblackColor),
+                                                            ),
+                                                            Text(
+                                                              'informationWeCollect'
+                                                                  .tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: ColorManager
+                                                                          .kblackColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.01,
+                                                            ),
+                                                            Text(
+                                                              'information1'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: ColorManager
+                                                                          .kblackColor),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02,
+                                                            ),
+                                                            Text(
+                                                              'information2'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: ColorManager
+                                                                          .kblackColor),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02,
+                                                            ),
+                                                            Text(
+                                                              'usageTitle'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: ColorManager
+                                                                          .kblackColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02,
+                                                            ),
+                                                            Text(
+                                                              'usage'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: ColorManager
+                                                                          .kblackColor),
+                                                            ),
+                                                            Text(
+                                                              'disclosureTitle'
+                                                                  .tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          13,
+                                                                      color: ColorManager
+                                                                          .kblackColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w900),
+                                                            ),
+                                                            Text(
+                                                              'disclosure'.tr,
+                                                              style: Theme.of(
+                                                                      context)
+                                                                  .textTheme
+                                                                  .bodyMedium!
+                                                                  .copyWith(
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: ColorManager
+                                                                          .kblackColor),
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                      height: Get.height * 0.03,
+                                                    ),
+                                                  
+                                                       SizedBox(
+                                                        height:
+                                                            Get.height * 0.06,
+                                                        width: Get.width,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                           
+                                                            Expanded(
+                                                              child: RichText(
+                                                                text: TextSpan(
+                                                                  children: <TextSpan>[
+                                                                    
+                                                                    TextSpan(
+                                                                      children: <InlineSpan>[
+                                                                        WidgetSpan(
+                                                                          child:
+                                                                              SizedBox(width: Get.width * 0.01),
+                                                                        ),
+                                                                      ],
+                                                                      style: Theme.of(
+                                                                              context)
+                                                                          .textTheme
+                                                                          .titleMedium
+                                                                          ?.copyWith(
+                                                                              color: ColorManager.kblackColor,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              fontSize: 12),
+                                                                      // text: 'theTermsAndCondition'
+                                                                      //     .tr,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                  Row(
+                                                    children: [
+                                                      Padding(
+                                                        padding:  EdgeInsets.only(left:Get.width*0.05),
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton.styleFrom(
+                                                              padding: const EdgeInsets.symmetric(horizontal: 100, vertical: 20), backgroundColor: Colors.blue,
+                                                              shape: RoundedRectangleBorder(
+                                                                borderRadius: BorderRadius.circular(10)
+                                                              )
+                                                          ),
+                                                          onPressed: (){
+                                                          Get.back();
+                                                      
+                                                        }, child: const Text("Ok")),
+                                                      )
+                                                    ],
+                                                  )
+                                                  ],
                                                 ),
                                               ),
-                                            ],
+                                            ),
                                           ),
-                                        ),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: Get.width * 0.05),
-                                              child: ElevatedButton(
-                                                  style: ElevatedButton.styleFrom(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 100,
-                                                          vertical: 20),
-                                                      backgroundColor:
-                                                          Colors.blue,
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10))),
-                                                  onPressed: () {
-                                                    Get.back();
-                                                  },
-                                                  child: const Text("Ok")),
-                                            )
-                                          ],
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            );
-                          });
-                        });
+                                        );
+                                      });
+                                    });
                   },
-                  child: Text(
+                  child:  Text(
                     'termsAndConditions'.tr,
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                   ),
@@ -626,8 +664,8 @@ class _DrawerContentState extends State<DrawerContent> {
                 //   Icons.logout,
                 //   color: Colors.white,
                 // ),
-                imagePath: Images.logout,
-                // imageHeight: 10,
+                 imagePath: Images.logout,
+                  // imageHeight: 10,
                 imageHeight: Get.height * 0.025,
                 title: 'logout'.tr,
                 onTap: () async {
@@ -729,7 +767,7 @@ class _DrawerContentState extends State<DrawerContent> {
     bool isImageThere = false,
   }) {
     return ListTile(
-      visualDensity: const VisualDensity(vertical: -1, horizontal: 2),
+      visualDensity: const VisualDensity(vertical: -1,horizontal: 2),
       onTap: onTap,
       minLeadingWidth: 10,
       dense: true,
@@ -746,7 +784,7 @@ class _DrawerContentState extends State<DrawerContent> {
                 )
               : const SizedBox.shrink()
           : icon ??
-              const Icon(
+              const Icon( 
                 Icons.delete,
                 color: ColorManager.kRedColor,
                 size: 30,
@@ -801,7 +839,7 @@ Future<bool> _authenticate() async {
 
   () => _authorized = authenticated ? "Authorized" : "Not Authorized";
   return authenticated;
-}
+}         
 
 bool fingerprint = false;
 
