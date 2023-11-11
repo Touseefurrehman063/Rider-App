@@ -476,39 +476,36 @@ class _SignupState extends State<Signup> {
                           SizedBox(
                             height: Get.height * 0.02,
                           ),
-                          SizedBox(
-                            height: Get.height * 0.075,
-                            child: IntlPhoneField(
-                              controller: mobile_number,
-                              disableLengthCheck: false,
-                              initialCountryCode: 'SA',
-                              keyboardType: TextInputType.number,
-                              decoration: InputDecoration(
-                                disabledBorder: const OutlineInputBorder(),
-                                enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide:
-                                        const BorderSide(color: Colors.grey)),
-                                border: const OutlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.grey)),
-                              ),
-                              languageCode: "en",
-                              onSaved: (newValue) {},
-                              onSubmitted: (p0) {
-                                mobile_number.text = p0;
-                              },
-                              onCountryChanged: (country) {
-                                setState(() {
-                                  countryCode = country.dialCode;
-                                });
-                              },
-                              validator: (value) {
-                                if (!value!.isValidNumber()) {
-                                  return 'entervalidno'.tr;
-                                }
-                                return null;
-                              },
+                          IntlPhoneField(
+                            controller: mobile_number,
+                            disableLengthCheck: false,
+                            initialCountryCode: 'SA',
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              disabledBorder: const OutlineInputBorder(),
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide:
+                                      const BorderSide(color: Colors.grey)),
+                              border: const OutlineInputBorder(
+                                  borderSide: BorderSide(color: Colors.grey)),
                             ),
+                            languageCode: "en",
+                            onSaved: (newValue) {},
+                            onSubmitted: (p0) {
+                              mobile_number.text = p0;
+                            },
+                            onCountryChanged: (country) {
+                              setState(() {
+                                countryCode = country.dialCode;
+                              });
+                            },
+                            validator: (value) {
+                              if (!value!.isValidNumber()) {
+                                return 'entervalidno'.tr;
+                              }
+                              return null;
+                            },
                           ),
 
                           SizedBox(

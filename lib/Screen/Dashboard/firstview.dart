@@ -178,7 +178,7 @@ class _FirstViewState extends State<FirstView> {
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                        top: Get.height*0.25),
+                                        top: Get.height*0.28),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -218,7 +218,7 @@ class _FirstViewState extends State<FirstView> {
                                   },
                                   child: Padding(
                                     padding: EdgeInsets.only(
-                                        top: Get.height*0.25),
+                                        top: Get.height*0.28),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [

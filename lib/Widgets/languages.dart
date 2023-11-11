@@ -145,8 +145,15 @@ class Localization extends Translations {
           'labqeue':'Lab Queue',
           'samplecollection':'Sample Collection',
           'call':'  Call   ',
-          'message':'Message'
-          
+          'message':'Message',
+          'termsofuse':'TERMS OF USE',
+          'link':'The iHealthCure website located at https://ihealthcure.com/ is a copyrighted work belonging to iHealthCure. Certain features of the Site may be subject to additional guidelines, terms, or rules, which will be posted on the Site in connection with such features.',
+          'access':'ACCESS TO THE SITE',
+          'accessinformation':'Subject to these Terms. Company grants you a non-transferable, non-exclusive, revocable, limited license to access the Site solely for your own personal, noncommercial use.\n \n Certain Restrictions. The rights approved to you in these Terms are subject to the following restrictions: (a) you shall not sell, rent, lease, transfer, assign, distribute, host, or otherwise commercially exploit the Site; (b) you shall not change, make derivative works of, disassemble, reverse compile or reverse engineer any part of the Site; (c) you shall not access the Site in order to build a similar or competitive website; and (d) except as expressly stated herein, no part of the Site may be copied, reproduced, distributed, republished, downloaded, displayed, posted or transmitted in any form or by any means unless otherwise indicated, any future release, update, or other addition to functionality of the Site shall be subject to these Terms. All copyright and other proprietary notices on the Site must be retained on all copies thereof',
+'disclaimer1':'The site is provided on an "as-is" and "as available" basis, and company and our suppliers expressly disclaim any and all warranties and conditions of any kind, whether express, implied, or statutory, including all warranties or conditions of merchantability, fitness for a particular purpose, title, quiet enjoyment, accuracy, or non-infringement. We and our suppliers make not guarantee that the site will meet your requirements, will be available on an uninterrupted, timely, secure, or error-free basis, or will be accurate, reliable, free of viruses or other harmful code, complete, legal, or safe. If applicable law requires any warranties with respect to the site, all such warranties are limited in duration to ninety (90) days from the date of first use.',
+'disclaimertitle':'DISCLAIMERS',
+'contactinfo':'CONTACT INFORMATION',
+'contactinfodetail':'Address: Office # 3, 2nd Floor Gul Arcade Main Commercial Area Chaklala Scheme-3 Rawalpindi (Pakistan)\n\nEmail: info@iHealthCure.com'
 
 
 

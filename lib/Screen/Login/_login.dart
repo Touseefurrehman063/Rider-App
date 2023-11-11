@@ -263,6 +263,7 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
+                  SizedBox(height: Get.height*0.03,),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
