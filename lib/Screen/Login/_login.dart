@@ -26,7 +26,6 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-
   TextEditingController userNameController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool passwordVisible = true;
@@ -86,101 +85,114 @@ class _LoginState extends State<Login> {
 
   @override
   void initState() {
-    // call();
+    call();
     instance();
     super.initState();
   }
 
-bool isBiometric = false;
+  bool isBiometric = false;
 
-final LocalAuthentication auth = LocalAuthentication();
-List<BiometricType>? _availableBiometrics;
-String _authorized = "Not Authorized";
-bool _isAuthenticating = false;
-bool authentication = false;
+  final LocalAuthentication auth = LocalAuthentication();
+  List<BiometricType>? _availableBiometrics;
+  String _authorized = "Not Authorized";
+  bool _isAuthenticating = false;
+  bool authentication = false;
 
   Future<bool> _authenticate() async {
-  bool authenticated = false;
+    bool authenticated = false;
 
-  try {
-    _isAuthenticating = true;
-    _authorized = "Authenticating";
+    try {
+      _isAuthenticating = true;
+      _authorized = "Authenticating";
 
-    authenticated = await auth.authenticate(
-      localizedReason: "Let OS determine authentication method",
-      options: const AuthenticationOptions(
-        stickyAuth: true,
-      ),
-    );
+      authenticated = await auth.authenticate(
+        localizedReason: "Let OS determine authentication method",
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+        ),
+      );
 
-    _isAuthenticating = false;
-  } on PlatformException catch (e) {
-    _isAuthenticating = false;
-    _authorized = "Error - ${e.message}";
-    print(e.message.toString());
+      _isAuthenticating = false;
+    } on PlatformException catch (e) {
+      _isAuthenticating = false;
+      _authorized = "Error - ${e.message}";
+      print(e.message.toString());
 
+      return authenticated;
+    }
+
+    () => _authorized = authenticated ? "Authorized" : "Not Authorized";
     return authenticated;
   }
 
-  () => _authorized = authenticated ? "Authorized" : "Not Authorized";
-  return authenticated;
-}         
+  call() async {
+    SharedPreferences sharedpref = await SharedPreferences.getInstance();
+    String? username = sharedpref.getString(
+      'riderusername',
+    );
+    String? riderpassword = sharedpref.getString(
+      'riderpassword',
+    );
 
-  call()
-  async {
-    
-    if(true)
-    {
-       bool auth = await Authentication.authentication();
-                   if (auth) {
-                        authentication = await _authenticate();
-                        if (authentication) {
-                          if (userprofile?.id == null) {
-                            fingerprint = authentication;
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content:
-                                        Text('You are already Logged in')));
-                            // Utils().toastmessage(“You are already Logged in”);
-                            fingerprint = true;
-                          }
-                          setState(() {});
-                        } else {
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //     const SnackBar(
-                          //         content: Text(
-                          //             “You declined the biometric login.“)));
-                        }
-                        if (fingerprint) {
-                          if (authentication) {
-                            if (userprofile?.id != null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content:
-                                          Text('You are already Logged in')));
-                              setState(() {
-                                fingerprint = true;
-                              });
-                            }
-                            setState(() {
-                              userprofile;
-                            });
-                          } else {
-                            setState(() {
-                              fingerprint = true;
-                            });
-                          }
-                         
-                        }
-                        
-                      } else {
-                       
-                        setState(() {
-                          fingerprint = false;
-                         
-                        });
-                      }
+    if (username != null && riderpassword != null) {
+      bool auth = await Authentication.authentication();
+      if (auth) {
+        authentication = await _authenticate();
+        if (authentication) {
+          fingerprint = authentication;
+          //   } else {
+          //     ScaffoldMessenger.of(context).showSnackBar(
+          //         const SnackBar(content: Text('You are already Logged in')));
+          //     // Utils().toastmessage(“You are already Logged in”);
+          //     fingerprint = true;
+          //   }
+          //   setState(() {});
+          // } else {
+          // ScaffoldMessenger.of(context).showSnackBar(
+          //     const SnackBar(
+          //         content: Text(
+          //             “You declined the biometric login.“)));
+        }
+        if (fingerprint) {
+          if (authentication) {
+            if (userprofile?.id != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('You are already Logged in')));
+              setState(() {
+                fingerprint = true;
+              });
+            }
+            setState(() {
+              userprofile;
+            });
+          } else {
+            // login(username,riderpassword);
+            var loginResult = await login(
+              username,
+              riderpassword,
+            );
+
+            bool isLoggedIn = loginResult['isLoggedIn'];
+
+            if (isLoggedIn) {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Dashboard(
+                          userName: userNameController.text,
+                          empId: loginResult['empId'],
+                          user: user,
+                        )),
+              );
+            }
+            setState(() {});
+          }
+        }
+      } else {
+        setState(() {
+          fingerprint = false;
+        });
+      }
     }
   }
 
@@ -214,8 +226,7 @@ bool authentication = false;
                 children: [
                   Image.asset(
                     'assets/Helpful.png',
-                    width: Get.width*0.4,
-                   
+                    width: Get.width * 0.4,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.2,
@@ -317,10 +328,14 @@ bool authentication = false;
                                         userNameController.text.toString());
                                     sharedpref.setString('password',
                                         passwordController.text.toString());
-            
+
                                     bool isLoggedIn = loginResult['isLoggedIn'];
-            
+
                                     if (isLoggedIn) {
+                                      sharedpref.setString('riderusername',
+                                          userNameController.text.toString());
+                                      sharedpref.setString('riderpassword',
+                                          passwordController.text.toString());
                                       Navigator.pushReplacement(
                                         context,
                                         MaterialPageRoute(
@@ -332,7 +347,8 @@ bool authentication = false;
                                                 )),
                                       );
                                     } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
                                           content: Text('invalid'.tr),
                                           duration: const Duration(seconds: 5),
@@ -346,7 +362,6 @@ bool authentication = false;
                                           content: Text("entervaliddata".tr)));
                                 }
                               },
-                              
                               borderRadius: BorderRadius.circular(8),
                               child: Center(
                                 child: Text(
