@@ -477,7 +477,7 @@ class _SignupState extends State<Signup> {
                             height: Get.height * 0.02,
                           ),
                           SizedBox(
-                            height: Get.height * 0.1,
+                            height: Get.height * 0.075,
                             child: IntlPhoneField(
                               controller: mobile_number,
                               disableLengthCheck: false,

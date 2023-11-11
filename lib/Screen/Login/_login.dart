@@ -208,184 +208,183 @@ bool authentication = false;
                 alignment: Alignment.centerLeft,
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 40, horizontal: 120),
-                  child: Image.asset(
+            child: SafeArea(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
                     'assets/Helpful.png',
-                    width: MediaQuery.of(context).size.width / 2,
+                    width: Get.width*0.4,
+                   
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.07,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'welcometo'.tr,
-                          style: GoogleFonts.raleway(
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 40,
-                              color: Color(0xFF1272D3),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.2,
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.07,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'welcometo'.tr,
+                            style: GoogleFonts.raleway(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 40,
+                                color: Color(0xFF1272D3),
+                              ),
                             ),
                           ),
-                        ),
-                        Text(
-                          'helpful'.tr,
-                          style: GoogleFonts.raleway(
-                            textStyle: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 24,
-                              color: Color(0xFF1272D3),
+                          Text(
+                            'helpful'.tr,
+                            style: GoogleFonts.raleway(
+                              textStyle: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 24,
+                                color: Color(0xFF1272D3),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        AuthTextField(
-                          validator: (p0) {
-                            if (p0!.isEmpty) {
-                              return 'enterusername'.tr;
-                            }
-                            return null;
-                          },
-                          controller: userNameController,
-                          hintText: 'username'.tr,
-                        ),
-                        const SizedBox(height: 10),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 1),
-                          child: AuthTextField(
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return 'Please enter a password'; // You can replace this message with a translated string if needed.
+                        ],
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          AuthTextField(
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return 'enterusername'.tr;
                               }
                               return null;
                             },
-                            hintText: 'password'.tr,
-                            keyboardType: TextInputType.text,
-                            controller: passwordController,
-                            obscureText: passwordVisible,
-                            suffixIcon: IconButton(
-                              icon: Icon(passwordVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  passwordVisible = !passwordVisible;
-                                });
+                            controller: userNameController,
+                            hintText: 'username'.tr,
+                          ),
+                          const SizedBox(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 1),
+                            child: AuthTextField(
+                              validator: (value) {
+                                if (value!.isEmpty) {
+                                  return 'Please enter a password'; // You can replace this message with a translated string if needed.
+                                }
+                                return null;
                               },
+                              hintText: 'password'.tr,
+                              keyboardType: TextInputType.text,
+                              controller: passwordController,
+                              obscureText: passwordVisible,
+                              suffixIcon: IconButton(
+                                icon: Icon(passwordVisible
+                                    ? Icons.visibility
+                                    : Icons.visibility_off),
+                                onPressed: () {
+                                  setState(() {
+                                    passwordVisible = !passwordVisible;
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 20),
-                          child: CupertinoButton(
-                            color: CupertinoColors.activeBlue,
-                            onPressed: () async {
-                              if (formkey.currentState!.validate()) {
-                                var sharedpref =
-                                    await SharedPreferences.getInstance();
-                                sharedpref.setBool(
-                                    SplashscreenState.KEYLOGIN, true);
-                                if (userNameController.text
-                                        .toString()
-                                        .isNotEmpty &&
-                                    passwordController.text
-                                        .toString()
-                                        .isNotEmpty) {
-                                  var loginResult = await login(
-                                    userNameController.text,
-                                    passwordController.text,
-                                  );
-                                  sharedpref.setString('username',
-                                      userNameController.text.toString());
-                                  sharedpref.setString('password',
-                                      passwordController.text.toString());
-
-                                  bool isLoggedIn = loginResult['isLoggedIn'];
-
-                                  if (isLoggedIn) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => Dashboard(
-                                                userName:
-                                                    userNameController.text,
-                                                empId: loginResult['empId'],
-                                                user: user,
-                                              )),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 20, vertical: 20),
+                            child: CupertinoButton(
+                              color: CupertinoColors.activeBlue,
+                              onPressed: () async {
+                                if (formkey.currentState!.validate()) {
+                                  var sharedpref =
+                                      await SharedPreferences.getInstance();
+                                  sharedpref.setBool(
+                                      SplashscreenState.KEYLOGIN, true);
+                                  if (userNameController.text
+                                          .toString()
+                                          .isNotEmpty &&
+                                      passwordController.text
+                                          .toString()
+                                          .isNotEmpty) {
+                                    var loginResult = await login(
+                                      userNameController.text,
+                                      passwordController.text,
                                     );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text('invalid'.tr),
-                                        duration: const Duration(seconds: 5),
-                                      ),
-                                    );
+                                    sharedpref.setString('username',
+                                        userNameController.text.toString());
+                                    sharedpref.setString('password',
+                                        passwordController.text.toString());
+            
+                                    bool isLoggedIn = loginResult['isLoggedIn'];
+            
+                                    if (isLoggedIn) {
+                                      Navigator.pushReplacement(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Dashboard(
+                                                  userName:
+                                                      userNameController.text,
+                                                  empId: loginResult['empId'],
+                                                  user: user,
+                                                )),
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('invalid'.tr),
+                                          duration: const Duration(seconds: 5),
+                                        ),
+                                      );
+                                    }
                                   }
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text("entervaliddata".tr)));
                                 }
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(
-                                        content: Text("entervaliddata".tr)));
-                              }
-                            },
-                            
-                            borderRadius: BorderRadius.circular(8),
-                            child: Center(
-                              child: Text(
-                                'login'.tr,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                              },
+                              
+                              borderRadius: BorderRadius.circular(8),
+                              child: Center(
+                                child: Text(
+                                  'login'.tr,
+                                  style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.2,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Text("dontaccount".tr),
-                            TextButton(
-                              onPressed: () async {
-                                Get.to(const Signup());
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor: Colors.blue,
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.2,
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Text("dontaccount".tr),
+                              TextButton(
+                                onPressed: () async {
+                                  Get.to(const Signup());
+                                },
+                                style: TextButton.styleFrom(
+                                  foregroundColor: Colors.blue,
+                                ),
+                                child: Text("register".tr),
                               ),
-                              child: Text("register".tr),
-                            ),
-                          ],
-                        ),
-                      ],
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

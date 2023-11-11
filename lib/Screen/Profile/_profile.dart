@@ -130,6 +130,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                         ),
                       ]),
+                        SizedBox(width: Get.width*0.02,),
                       Container(
                         child: RichText(
                           text: TextSpan(

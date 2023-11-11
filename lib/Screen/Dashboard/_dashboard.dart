@@ -126,7 +126,7 @@ class _DashboardState extends State<Dashboard> {
                   backgroundColor: Colors.white,
                   elevation: 0.0,
                   title: Image.asset(
-                      "assets/Helpful.png",height: Get.height*0.08,alignment: Alignment.center,),
+                      "assets/Helpful.png",height: Get.height*0.06,alignment: Alignment.center,),
                   leading: Builder(
                     builder: (BuildContext context) {
                       return IconButton(
@@ -380,7 +380,8 @@ class _DrawerContentState extends State<DrawerContent> {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
                                                   Text(
-                                                    'disclaimer'.tr,
+                                                    'theTermsAndCondition'.tr,
+                                                                       
                                                     style: Theme.of(context)
                                                         .textTheme
                                                         .bodyMedium!
@@ -597,8 +598,8 @@ class _DrawerContentState extends State<DrawerContent> {
                                                                               color: ColorManager.kblackColor,
                                                                               fontWeight: FontWeight.bold,
                                                                               fontSize: 12),
-                                                                      text: 'theTermsAndCondition'
-                                                                          .tr,
+                                                                      // text: 'theTermsAndCondition'
+                                                                      //     .tr,
                                                                     ),
                                                                   ],
                                                                 ),

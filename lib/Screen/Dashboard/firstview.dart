@@ -96,6 +96,7 @@ class _FirstViewState extends State<FirstView> {
                           ),
                         ),
                                     ),
+                                    SizedBox(width: Get.width*0.02,),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -266,7 +267,7 @@ class _FirstViewState extends State<FirstView> {
                               ],
                             ),
                             SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.04,
+                              height: MediaQuery.of(context).size.height * 0.02,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
