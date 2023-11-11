@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:flutter_riderapp/Screen/Welcome_Screens/_welcome_5.dart';
 import 'package:flutter_riderapp/main.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:google_fonts/google_fonts.dart';
 class Welcome4 extends StatefulWidget {
   const Welcome4({super.key});
@@ -24,7 +26,7 @@ class _Welcome4State extends State<Welcome4> {
             alignment: Alignment.topRight,
             child: Padding(
               padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+                   EdgeInsets.symmetric(horizontal: 10.0, vertical: Get.height*0.045),
               child: TextButton(
                 onPressed: () {
                   print("button pressed");
@@ -44,16 +46,16 @@ class _Welcome4State extends State<Welcome4> {
             ),
           ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                        left: MediaQuery.of(context).size.width * 0.07),
+                        left: MediaQuery.of(context).size.width * 0.01),
                     child: Text(
-                      'Arrived',
+                      'Arrived &',
                       style: GoogleFonts.poppins(
                         textStyle: const TextStyle(
                           color: Colors.white,
@@ -80,20 +82,24 @@ class _Welcome4State extends State<Welcome4> {
                 ],
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.09,
+                height: MediaQuery.of(context).size.height * 0.14,
               ),
-              Image.asset('assets/Frame3.png'),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.09,
-                child: InkWell(
-                  onTap: () {
-                    log(initScreen.toString());
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Welcome5()),
-                    );
-                  },
-                  child: Image.asset('assets/arrow.png'),
+              Image.asset('assets/Frame3.png',height: Get.height*0.28),
+              SizedBox(height: Get.height*0.08,),
+              Padding(
+                 padding:  EdgeInsets.only(bottom:Get.height*0.06),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                  child: InkWell(
+                    onTap: () {
+                      log(initScreen.toString());
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Welcome5()),
+                      );
+                    },
+                    child: Image.asset('assets/arrow.png'),
+                  ),
                 ),
               ),
             ],

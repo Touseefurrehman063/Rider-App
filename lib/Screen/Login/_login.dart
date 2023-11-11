@@ -263,6 +263,7 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
+                  SizedBox(height: Get.height*0.02,),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(
@@ -376,7 +377,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.2,
+                            height: MediaQuery.of(context).size.height * 0.18,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
