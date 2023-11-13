@@ -3,12 +3,12 @@ import 'dart:developer';
 import 'package:shared_preferences/shared_preferences.dart';
 class LocalDB
 {
-    savefingerprint(bool val) async {
+   static savefingerprint(bool val) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('fingerprint', val);
   }
 
-  getfingerprint(bool val) async {
+  static getfingerprint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool returnvalue = prefs.getBool('fingerprint') ?? false;
     return returnvalue;

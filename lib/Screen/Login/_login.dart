@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riderapp/LocalDb/localDB.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
@@ -34,6 +35,8 @@ class _LoginState extends State<Login> {
   final bool _obscureText = true;
 
   Future<Map<String, dynamic>> login(String userName, String password) async {
+    SharedPreferences sharedpref= await SharedPreferences.getInstance();
+   
     var url = '$ip/api/account';
     var headers = {
       'Content-Type': 'application/json',
@@ -67,13 +70,16 @@ class _LoginState extends State<Login> {
 
       if (status != -5) {
         // ignore: use_build_context_synchronously
-
+  sharedpref.setString('username',userName);
+    sharedpref.setString('pass',password);
         var empId = responseData['Id'];
+         sharedpref.setString('userId',empId).toString();
+    sharedpref.setString('username',userName).toString();
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', true);
         prefs.setString('userId', empId);
-        prefs.setString('pass', passwordController.text.toString());
+        prefs.setString('pass', password.toString());
         return {'isLoggedIn': true, 'empId': empId};
       } else if (status == -5) {
         return {'isLoggedIn': false, 'empId': null};
@@ -130,16 +136,17 @@ class _LoginState extends State<Login> {
     String? username = sharedpref.getString(
       'riderusername',
     );
+
     String? riderpassword = sharedpref.getString(
       'riderpassword',
     );
-
-    if (username != null && riderpassword != null) {
+    bool fingerprint =await LocalDB.getfingerprint();
+    if (username != null && riderpassword != null && fingerprint) {
       bool auth = await Authentication.authentication();
       if (auth) {
-        authentication = await _authenticate();
-        if (authentication) {
-          fingerprint = authentication;
+        // authentication = await _authenticate();
+        if (auth) {
+          fingerprint = auth;
           //   } else {
           //     ScaffoldMessenger.of(context).showSnackBar(
           //         const SnackBar(content: Text('You are already Logged in')));
@@ -154,24 +161,19 @@ class _LoginState extends State<Login> {
           //             “You declined the biometric login.“)));
         }
         if (fingerprint) {
-          if (authentication) {
+          if (auth) {
             if (userprofile?.id != null) {
               ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('You are already Logged in')));
               setState(() {
                 fingerprint = true;
               });
-            }
-            setState(() {
-              userprofile;
-            });
-          } else {
-            // login(username,riderpassword);
-            var loginResult = await login(
+            }else
+            {
+              var loginResult = await login(
               username,
               riderpassword,
             );
-
             bool isLoggedIn = loginResult['isLoggedIn'];
 
             if (isLoggedIn) {
@@ -185,7 +187,10 @@ class _LoginState extends State<Login> {
                         )),
               );
             }
-            setState(() {});
+            setState(() {
+              userprofile;
+            });
+          }
           }
         }
       } else {
@@ -263,7 +268,9 @@ class _LoginState extends State<Login> {
                       ),
                     ],
                   ),
-                  SizedBox(height: Get.height*0.03,),
+                  SizedBox(
+                    height: Get.height * 0.03,
+                  ),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Column(

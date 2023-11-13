@@ -476,36 +476,39 @@ class _SignupState extends State<Signup> {
                           SizedBox(
                             height: Get.height * 0.02,
                           ),
-                          IntlPhoneField(
-                            controller: mobile_number,
-                            disableLengthCheck: false,
-                            initialCountryCode: 'SA',
-                            keyboardType: TextInputType.number,
-                            decoration: InputDecoration(
-                              disabledBorder: const OutlineInputBorder(),
-                              enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                  borderSide:
-                                      const BorderSide(color: Colors.grey)),
-                              border: const OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey)),
+                          SizedBox(
+                            height: Get.height*0.075,
+                            child: IntlPhoneField(
+                              controller: mobile_number,
+                              disableLengthCheck: true,
+                              initialCountryCode: 'SA',
+                              keyboardType: TextInputType.number,
+                              decoration: InputDecoration(
+                                disabledBorder: const OutlineInputBorder(),
+                                enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                    borderSide:
+                                        const BorderSide(color: Colors.grey)),
+                                border: const OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey)),
+                              ),
+                              languageCode: "en",
+                              onSaved: (newValue) {},
+                              onSubmitted: (p0) {
+                                mobile_number.text = p0;
+                              },
+                              onCountryChanged: (country) {
+                                setState(() {
+                                  countryCode = country.dialCode;
+                                });
+                              },
+                              validator: (value) {
+                                if (!value!.isValidNumber()) {
+                                  return 'entervalidno'.tr;
+                                }
+                                return null;
+                              },
                             ),
-                            languageCode: "en",
-                            onSaved: (newValue) {},
-                            onSubmitted: (p0) {
-                              mobile_number.text = p0;
-                            },
-                            onCountryChanged: (country) {
-                              setState(() {
-                                countryCode = country.dialCode;
-                              });
-                            },
-                            validator: (value) {
-                              if (!value!.isValidNumber()) {
-                                return 'entervalidno'.tr;
-                              }
-                              return null;
-                            },
                           ),
 
                           SizedBox(
@@ -757,7 +760,7 @@ class _SignupState extends State<Signup> {
                               },
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return 'selectgender'.tr;
+                                  return 'selectvehicletype'.tr;
                                 } else {
                                   return null;
                                 }
@@ -801,6 +804,12 @@ class _SignupState extends State<Signup> {
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 1),
                             child: AuthTextField(
+                              validator: (value) {
+      if (value!.isEmpty) {
+        return 'enterpassword'.tr;
+      }
+      return null;
+    },
                               hintText: 'password'.tr,
                               keyboardType: TextInputType.text,
                               controller: Password,
@@ -822,6 +831,12 @@ class _SignupState extends State<Signup> {
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
+    //                            validator: (value) {
+    //   if (value!.isEmpty) {
+    //     return 'enterpassword'.tr;
+    //   }
+    //   return null;
+    // },
                             hintText: 'repassword'.tr,
                             keyboardType: TextInputType.text,
                             controller: Re_Password,
@@ -1054,6 +1069,7 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
+                          
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,

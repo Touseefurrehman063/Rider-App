@@ -178,6 +178,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   labelText: 'oldpassword'.tr,
+                                  labelStyle: const TextStyle(color: Colors.grey),
                                   suffixIcon: IconButton(
                                     icon: Icon(_Password_Visible
                                         ? Icons.visibility
@@ -208,6 +209,8 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 labelText: 'newpassword'.tr,
+                                labelStyle: const TextStyle(color: Colors.grey),
+                                
                                 suffixIcon: IconButton(
                                   icon: Icon(PasswordVisible
                                       ? Icons.visibility
@@ -240,6 +243,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                 border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10)),
                                 labelText: 'confirmpassword'.tr,
+                                labelStyle: const TextStyle(color: Colors.grey),
                                 suffixIcon: IconButton(
                                   icon: Icon(_PasswordVisible
                                       ? Icons.visibility

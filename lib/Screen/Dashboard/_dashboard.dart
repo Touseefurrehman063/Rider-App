@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/AppConstants.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
+import 'package:flutter_riderapp/LocalDb/localDB.dart';
 import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Widgets/Utils/languages_dialogue.dart';
@@ -52,9 +53,13 @@ class _DashboardState extends State<Dashboard> {
 
   instance() async {
     if (userprofile != userProfile()) {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      login(
-          prefs.getString('username') ?? "", prefs.getString('password') ?? "");
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
+      fingerprint= await LocalDB.getfingerprint();
+      setState(() {
+        
+      });
+      // login(
+      //     prefs.getString('username') ?? "", prefs.getString('password') ?? "");
     }
   }
 
@@ -264,64 +269,87 @@ class _DrawerContentState extends State<DrawerContent> {
                   // imageHeight: 2,
                   title: 'changepassword'.tr,
                   textColor: ColorManager.kWhiteColor),
-              customListTile(
-                context,
-                onTap: () async {
-                  bool auth = await Authentication.authentication();
-                  if (auth) {
-                    authentication = await _authenticate();
-                    if (authentication) {
-                      if (userprofile?.id == null) {
-                        fingerprint = authentication;
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('You are already Logged in')));
-                        // Utils().toastmessage(“You are already Logged in”);
-                        fingerprint = true;
-                      }
-                      setState(() {});
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("You declined the biometric login.")));
-                    }
-                    if (fingerprint) {
-                      if (authentication) {
-                        if (userprofile?.id != null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text('You are already Logged in')));
-                          LocalDB().savefingerprint(true);
-                          setState(() {
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                    SizedBox(width: Get.width*0.05,),
+                  const Icon(Icons.fingerprint,color: Colors.white,),
+                  SizedBox(width: Get.width*0.04,),
+                  Text("Biometric", style:
+            Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.white),),
+            SizedBox(width: Get.width*0.1,),
+                  Switch(value: fingerprint, onChanged:(val) async { 
+                      bool auth = await Authentication.authentication();
+                      if(val==true){
+                      if (auth) {
+                        // authentication = await _authenticate();
+                        if (auth) {
+                          if (userprofile?.id == null) {
+                            fingerprint = auth;
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text('You are already Logged in')));
+                                     LocalDB.savefingerprint(true);
+                            // Utils().toastmessage(“You are already Logged in”);
                             fingerprint = true;
-                          });
+                          }
+                          setState(() {});
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                              content: Text("You declined the biometric login.")));
                         }
-                        setState(() {
-                          userprofile;
-                        });
+                        if (fingerprint) {
+                          if (auth) {
+                            if (userprofile?.id != null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('You are already Logged in')));
+                              LocalDB.savefingerprint(true);
+                              setState(() {
+                                fingerprint = true;
+                              });
+                            }
+                            setState(() {
+                              userprofile;
+                            });
+                          } else {
+                            setState(() {
+                              LocalDB.savefingerprint(true);
+                              fingerprint = true;
+                            });
+                          }
+                        }
                       } else {
                         setState(() {
-                          LocalDB().savefingerprint(true);
-                          fingerprint = true;
+                          LocalDB.savefingerprint(false);
+                          fingerprint = false;
                         });
                       }
-                    }
-                  } else {
-                    setState(() {
-                      LocalDB().savefingerprint(false);
-                      fingerprint = false;
-                    });
-                  }
-                  // print("Authenticate:$auth");
-                },
-                isIcon: true,
-                icon: const Icon(
-                  Icons.fingerprint,
-                  color: Colors.white,
-                ),
-                title: 'biometric'.tr,
-                togglebutton: false,
+                      }
+                      else
+                      {
+                        fingerprint=val;
+                        setState(() {
+                          
+                        });
+                      }
+                  }),
+                ],
               ),
+              //   context,
+              //   onTap: 
+                
+              //     // print("Authenticate:$auth");
+              //   },
+              //   isIcon: true,
+              //   icon: const Icon(
+              //     Icons.fingerprint,
+              //     color: Colors.white,
+              //   ),
+              //   title: 'biometric'.tr,
+              //   togglebutton: false,
+              // ),
 
               customListTile(
                 context,
@@ -1062,7 +1090,10 @@ bool fingerprint = false;
 void logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool(SplashscreenState.KEYLOGIN, false);
-  prefs.clear();
+  // prefs.clear();
+  userprofile=userProfile();
+prefs.setString('userId','').toString();
+  prefs.setString('username','').toString();
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => const Login()),

@@ -864,8 +864,8 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                     : Expanded(
                         child: SizedBox(
                           height: MediaQuery.of(context).size.height * 0.7,
-                          child: const Center(
-                            child: Text('No Record Found'),
+                          child:  Center(
+                            child: Text('appointmentsnotfound'.tr),
                           ),
                         ),
                       ),

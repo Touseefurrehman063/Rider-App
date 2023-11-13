@@ -674,8 +674,8 @@ callvback();
                         : Expanded(
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,
-                              child: const Center(
-                                child: Text('No Record Found'),
+                              child:  Center(
+                                child: Text('todayappointmentsnotfound'.tr),
                               ),
                             ),
                           ),
