@@ -140,6 +140,7 @@ class NotificationsRepo {
       importance: Importance.high,
       priority: Priority.high,
       ticker: 'Ticker',
+      icon: '@mipmap/ic_launcher',
     );
 
     DarwinNotificationDetails darwin = const DarwinNotificationDetails(

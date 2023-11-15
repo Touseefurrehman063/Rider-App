@@ -273,6 +273,7 @@ class _LoginState extends State<Login> {
                   ),
                   Expanded(
                     child: SingleChildScrollView(
+                      physics: const NeverScrollableScrollPhysics(),
                       child: Column(
                         children: [
                           AuthTextField(
@@ -384,7 +385,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.2,
+                            height: MediaQuery.of(context).size.height * 0.17,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -393,7 +394,7 @@ class _LoginState extends State<Login> {
                               Text("dontaccount".tr),
                               TextButton(
                                 onPressed: () async {
-                                  Get.to(const Signup());
+                                  Get.to(()=> Signup(fromlogin: true,));
                                 },
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.blue,

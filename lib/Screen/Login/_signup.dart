@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -25,7 +26,8 @@ import 'package:image/image.dart' as img;
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 class Signup extends StatefulWidget {
-  const Signup({super.key});
+  bool fromlogin;
+  Signup({super.key, required this.fromlogin});
 
   @override
   State<Signup> createState() => _SignupState();
@@ -94,6 +96,7 @@ class _SignupState extends State<Signup> {
   // bool passwordVisible=false;
   // ignore: unused_field
   bool _isBottomSheetVisible = false;
+  bool chk = false;
   void _showBottomSheet() {
     setState(() {
       _isBottomSheetVisible = true;
@@ -477,7 +480,7 @@ class _SignupState extends State<Signup> {
                             height: Get.height * 0.02,
                           ),
                           SizedBox(
-                            height: Get.height*0.075,
+                            height: Get.height * 0.075,
                             child: IntlPhoneField(
                               controller: mobile_number,
                               disableLengthCheck: true,
@@ -510,6 +513,26 @@ class _SignupState extends State<Signup> {
                               },
                             ),
                           ),
+                          // mobile_number.text.isEmpty &&
+                          //         chk == true &&
+                          //         widget.fromlogin == false
+                          //     ? Row(
+                          //         children: [
+                          //           Padding(
+                          //             padding: EdgeInsets.symmetric(
+                          //                 horizontal: Get.width * 0.05),
+                          //             child: Text(
+                          //               "entervalidno".tr,
+                          //               style: TextStyle(
+                          //                 color: Colors.red,
+                          //                 fontSize: Get.height * 0.018,
+                          //                 // fontWeight: FontWeight.w500,
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       )
+                          //     : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -532,10 +555,13 @@ class _SignupState extends State<Signup> {
                           AuthTextField(
                             readOnly: true,
                             controller: datetimecontroller,
-                            validator: (value) {
+                            validator: (p0) {
+                              if (p0!.isEmpty) {
+                                return 'selectdob'.tr;
+                              }
                               return null;
                             },
-                            hintText: selectedDate == null
+                            hintText: datetimecontroller.text.isEmpty
                                 ? "dob".tr
                                 : DateFormat('dd-M-yyyy').format(selectedDate),
                             suffixIcon: IconButton(
@@ -644,8 +670,7 @@ class _SignupState extends State<Signup> {
                                                   color: Colors.black)),
                                           contentPadding:
                                               const EdgeInsets.symmetric(
-                                                  horizontal: 12,
-                                                  vertical: 10),
+                                                  horizontal: 12, vertical: 10),
                                         )
                                       : InputDecoration(
                                           border: OutlineInputBorder(
@@ -656,20 +681,17 @@ class _SignupState extends State<Signup> {
                                                   color: Colors.black)),
                                           contentPadding:
                                               const EdgeInsets.symmetric(
-                                                  horizontal: 14,
-                                                  vertical: 10),
+                                                  horizontal: 14, vertical: 10),
                                         ),
                                   value: selectedGender,
-                                  hint:  Text(
+                                  hint: Text(
                                     'gender'.tr,
                                     style: const TextStyle(
                                         color: Colors.grey, fontSize: 10),
                                   ),
-                                  items: gender
-                                      .map<DropdownMenuItem<String>>(
-                                          (Gender val) {
+                                  items: gender.map<DropdownMenuItem<String>>(
+                                      (Gender val) {
                                     return DropdownMenuItem<String>(
-                                      
                                       value: val.id,
                                       child: Text(val.name.toString()),
                                     );
@@ -739,13 +761,13 @@ class _SignupState extends State<Signup> {
                                         horizontal: 14, vertical: 10),
                               ),
                               value: selectedVehicle,
-                              hint:  Text(
+                              hint: Text(
                                 "vehicletype".tr,
                                 style: const TextStyle(
-                                    color: Colors.grey, fontSize: 10),
+                                    color: Colors.grey, fontSize: 12),
                               ),
-                              items: vehicles.map<DropdownMenuItem<String>>(
-                                  (vehicle val) {
+                              items: vehicles
+                                  .map<DropdownMenuItem<String>>((vehicle val) {
                                 return DropdownMenuItem<String>(
                                   value: val.id,
                                   child: Text(val.name.toString()),
@@ -805,11 +827,11 @@ class _SignupState extends State<Signup> {
                             padding: const EdgeInsets.symmetric(horizontal: 1),
                             child: AuthTextField(
                               validator: (value) {
-      if (value!.isEmpty) {
-        return 'enterpassword'.tr;
-      }
-      return null;
-    },
+                                if (value!.isEmpty) {
+                                  return 'enterpassword'.tr;
+                                }
+                                return null;
+                              },
                               hintText: 'password'.tr,
                               keyboardType: TextInputType.text,
                               controller: Password,
@@ -831,12 +853,12 @@ class _SignupState extends State<Signup> {
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
-    //                            validator: (value) {
-    //   if (value!.isEmpty) {
-    //     return 'enterpassword'.tr;
-    //   }
-    //   return null;
-    // },
+                            //                            validator: (value) {
+                            //   if (value!.isEmpty) {
+                            //     return 'enterpassword'.tr;
+                            //   }
+                            //   return null;
+                            // },
                             hintText: 'repassword'.tr,
                             keyboardType: TextInputType.text,
                             controller: Re_Password,
@@ -852,8 +874,10 @@ class _SignupState extends State<Signup> {
                               },
                             ),
                             validator: (value) {
-                              if (Re_Password.text == value) {
-                                return null;
+                              if (Re_Password.text.isEmpty) {
+                                return 'enterpassword'.tr;
+                              } else if (Re_Password.text == value) {
+                                return null; 
                               } else {
                                 return 'passnotmatch'.tr;
                               }
@@ -895,15 +919,15 @@ class _SignupState extends State<Signup> {
                                       MediaQuery.of(context).size.height *
                                           0.001),
                               child: Container(
-                                
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.grey, width: 0.8),
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: Colors.transparent,
                                 ),
-                                 width: MediaQuery.of(context).size.width * 0.9,
-                              height:MediaQuery.of(context).size.height * 0.07,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.07,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -929,13 +953,32 @@ class _SignupState extends State<Signup> {
                                             ? Colors.black
                                             : Colors.black,
                                       )
-                                      
                                     ],
                                   ),
                                 ),
                               ),
                             ),
                           ),
+                          selectedCountries == null &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: Text(
+                                        "selectcountry".tr,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Get.height * 0.018,
+                                          // fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -971,8 +1014,9 @@ class _SignupState extends State<Signup> {
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: Colors.transparent,
                                 ),
-                                    width: MediaQuery.of(context).size.width * 0.9,
-                              height:MediaQuery.of(context).size.height * 0.065,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -1004,6 +1048,26 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
+                          SelectedState == null &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: Text(
+                                        "selectstate".tr,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Get.height * 0.018,
+                                          // fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -1036,8 +1100,9 @@ class _SignupState extends State<Signup> {
                                   borderRadius: BorderRadius.circular(10.0),
                                   color: Colors.transparent,
                                 ),
-                                  width: MediaQuery.of(context).size.width * 0.9,
-                              height:MediaQuery.of(context).size.height * 0.065,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal:
@@ -1069,7 +1134,26 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
-                          
+                          selectedCity == null &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? Row(
+                                  children: [
+                                    Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: Get.width * 0.05),
+                                      child: Text(
+                                        "selectcity".tr,
+                                        style: TextStyle(
+                                          color: Colors.red,
+                                          fontSize: Get.height * 0.018,
+                                          // fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -1098,6 +1182,9 @@ class _SignupState extends State<Signup> {
                                 if (_imageFile != null) {
                                   str = await uploadPicture(_imageFile!);
                                 }
+                                widget.fromlogin = false;
+                                chk = true;
+                                setState(() {});
 
                                 if (formkey.currentState!.validate()) {
                                   if (Password.text.toString() ==
@@ -1140,9 +1227,8 @@ class _SignupState extends State<Signup> {
                                     );
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                         SnackBar(
-                                            content: Text(
-                                                "passnotmatch".tr)));
+                                        SnackBar(
+                                            content: Text("passnotmatch".tr)));
                                   }
 
                                   checkval = true;
@@ -1150,10 +1236,9 @@ class _SignupState extends State<Signup> {
                                 } else {
                                   checkval = false;
                                   setState(() {});
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                       SnackBar(
-                                          content: Text(
-                                              "entervaliddata".tr)));
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //     SnackBar(
+                                  //         content: Text("entervaliddata".tr)));
                                 }
                               },
                               child: Text(
@@ -1171,7 +1256,7 @@ class _SignupState extends State<Signup> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                                Text("alreadyhaveacount".tr),
+                              Text("alreadyhaveacount".tr),
                               TextButton(
                                 onPressed: () async {
                                   Navigator.push(
@@ -1184,7 +1269,7 @@ class _SignupState extends State<Signup> {
                                 style: TextButton.styleFrom(
                                   foregroundColor: Colors.blue,
                                 ),
-                                child:  Text("signin".tr),
+                                child: Text("signin".tr),
                               ),
                             ],
                           ),

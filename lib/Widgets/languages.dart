@@ -121,6 +121,10 @@ class Localization extends Translations {
           'supportteam': 'Our Support Team will contact shortly ',
           'selectvehicletype':'Please select vehicle Type',
           'enterpassword':'Please Enter Password',
+           'selectcountry':'Please Select a Country',
+           'selectstate':'Please Select State',
+           'selectcity':'Please Select a City',
+           'selectdob':'Please Select Date of Birth',
           //Login
           'login': 'LOGIN',
           'username': 'Username',
@@ -286,6 +290,10 @@ class Localization extends Translations {
           'supportteam': 'سيتصل فريق الدعم الخاص بنا قريبًا',
            'selectvehicletype':'الرجاء تحديد نوع السيارة',
            'enterpassword':'الرجاء إدخال كلمة المرور',
+           'selectcountry':'رجاء قم بإختيار دوله',
+           'selectstate':'الرجاء تحديد الولاية',
+           'selectcity':'الرجاء اختيار المدينة',
+           'selectdob':'الرجاء تحديد تاريخ الميلاد',
           //Login
           'login': 'تسجيل الدخول',
           'username': 'اسم المستخدم',
@@ -448,6 +456,10 @@ class Localization extends Translations {
           'supportteam': 'ہماری سپورٹ ٹیم جلد ہی رابطہ کرے گی',
           'selectvehicletype':'براہ کرم گاڑی کی قسم منتخب کریں',
            'enterpassword':'براہ کرم پاس ورڈ درج کریں',
+           'selectcountry':'براہ کرم ایک ملک منتخب کریں',
+           'selectstate':'براہ کرم ایک ریاست منتخب کریں',
+           'selectcity':'براہ کرم ایک شہر منتخب کریں',
+             'selectdob':'براہ کرم تاریخ پیدائش منتخب کریں',
           //Login
           'login': 'لاگ ان کریں',
           'username': 'صارف نام',

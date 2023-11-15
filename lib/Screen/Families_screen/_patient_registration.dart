@@ -446,10 +446,10 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               height: Get.height * 0.02,
                             ),
                             SizedBox(
-                              height: Get.height * 0.1,
+                              height: Get.height * 0.07,
                               child: IntlPhoneField(
                                 controller: mobile_number,
-                                disableLengthCheck: false,
+                                disableLengthCheck: true,
                                 initialCountryCode: 'SA',
                                 keyboardType: TextInputType.number,
                                 decoration: InputDecoration(
@@ -955,7 +955,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                         const SnackBar(
                                             content: Text(
                                                 'Patient Register Succesfully')));
-                                    Get.to(RegisterPatient());
+                                    Get.to(const RegisterPatient());
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                         const SnackBar(
