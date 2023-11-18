@@ -145,7 +145,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                       ),
                     ),
                     Text(
-                      'helpful'.tr,
+                      'aria'.tr,
                       style: GoogleFonts.raleway(
                         textStyle: const TextStyle(
                           fontWeight: FontWeight.bold,

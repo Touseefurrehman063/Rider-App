@@ -131,10 +131,10 @@ class _DashboardState extends State<Dashboard> {
                   backgroundColor: Colors.white,
                   elevation: 0.0,
                   title: Padding(
-                    padding:  EdgeInsets.only(left:Get.width*0.10),
+                    padding:  EdgeInsets.only(left:Get.width*0.01),
                     child: Image.asset(
-                      "assets/Helpful.png",
-                      height: Get.height * 0.06,
+                       Images.logo,
+                      height: Get.height * 0.09,
                       alignment: Alignment.center,
                     ),
                   ),

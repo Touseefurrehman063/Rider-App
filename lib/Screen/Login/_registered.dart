@@ -1,6 +1,7 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
@@ -33,7 +34,7 @@ body: Container(
           children: [
             Padding(
               padding:  EdgeInsets.symmetric(vertical:MediaQuery.of(context).size.height*0.04),
-              child: Image.asset("assets/help.png",
+              child: Image.asset(  Images.logo,
               height: MediaQuery.of(context).size.height*0.07,
               width: 180,
               

@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/countrymodel.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
@@ -406,12 +407,9 @@ class _SignupState extends State<Signup> {
             ),
           ],
         ),
-        title: SizedBox(
-          height: MediaQuery.of(context).size.height * 0.065,
-          child: Image.asset(
-            'assets/Helpful.png',
-            width: MediaQuery.of(context).size.width / 2,
-          ),
+        title: Image.asset(
+            Images.logo,
+         width: Get.width*0.18,
         ),
         centerTitle: true,
       ),

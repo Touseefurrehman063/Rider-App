@@ -4,4 +4,5 @@ class AppImages {
   static String RegistrationPatientWithImage = 'assets/RegistrationPatientWithImage.png';
   static String RegistrationIcon = 'assets/RegistrationIcon.png';
   static String RegistrationPatientIcon = 'assets/RegistrationPatientIcon.png';
+  
 }

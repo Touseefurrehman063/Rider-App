@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/LocalDb/localDB.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/authentication.dart';
@@ -230,8 +231,8 @@ class _LoginState extends State<Login> {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Image.asset(
-                    'assets/Helpful.png',
-                    width: Get.width * 0.4,
+                    Images.logo,
+                    width: Get.width * 0.25,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.2,
@@ -255,7 +256,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           Text(
-                            'helpful'.tr,
+                            'aria'.tr,
                             style: GoogleFonts.raleway(
                               textStyle: const TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -385,7 +386,7 @@ class _LoginState extends State<Login> {
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.17,
+                            height: MediaQuery.of(context).size.height * 0.09,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

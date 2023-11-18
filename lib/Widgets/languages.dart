@@ -35,6 +35,7 @@ class Localization extends Translations {
           //changepassword
           'welcometo': 'Welcome To',
           'helpful': 'Helpful.',
+          'aria':'Aria.',
           'oldpassword': 'Enter Old Password',
           'newpassword': 'Enter New Password',
           'confirmpassword': 'Confirm New Password',

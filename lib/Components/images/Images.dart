@@ -7,5 +7,6 @@ class Images {
   static const String mastercard = '$path/mastercard.png';
 
   static const String logoBackground = '$path/helpbackgraound.png';
-  static const String logo='$path/help.png';
+  // static const String logo='$path/help.png';
+   static const String logo='$path/logoaria.png';
 }

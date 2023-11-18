@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/appointmentdetail.dart';
 import 'package:flutter_riderapp/Models/checkinresponse.dart';
 import 'package:flutter_riderapp/Models/checkintry.dart';
@@ -1341,10 +1342,12 @@ class _ViewInformationState extends State<ViewInformation> {
                         ),
                         Positioned(
                           top: MediaQuery.of(context).size.height * 0.03,
-                          left: MediaQuery.of(context).size.width * 0.33,
-                          child: Image.asset(
-                            "assets/Helpful.png",
-                            height: MediaQuery.of(context).size.height * 0.065,
+                          left: MediaQuery.of(context).size.width * 0.45,
+                          child: Center(
+                            child: Image.asset(
+                             Images.logo,
+                              height: MediaQuery.of(context).size.height * 0.075,
+                            ),
                           ),
                         ),
                       ],
