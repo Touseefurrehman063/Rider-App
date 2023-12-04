@@ -7,6 +7,10 @@ class LocalDB
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setBool('fingerprint', val);
   }
+    static saveFaceId(bool val) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('faceid', val);
+  }
 
   static getfingerprint() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();

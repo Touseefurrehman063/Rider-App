@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -8,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/countrymodel.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -385,48 +385,38 @@ class _SignupState extends State<Signup> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
-        leading: Row(
-          children: [
-            InkWell(
-              onTap: () {
-                Get.back();
-              },
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Image.asset(
-                  "assets/back.png",
-                  height: Get.height * 0.1,
-                  width: Get.width * 0.08,
-
-                  // color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
+        leading: InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Color(0xff0F64C6),
+            )),
         title: Image.asset(
-            Images.logo,
-         width: Get.width*0.18,
+          Images.logo,
+          height: Get.height * 0.07,
         ),
         centerTitle: true,
       ),
       body: LayoutBuilder(builder: (context, constraints) {
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Form(
-            key: formkey,
-            child: Container(
-              // height: MediaQuery.of(context).size.height,
-              // width: MediaQuery.of(context).size.width,
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/helpbackgraound.png'),
-                  alignment: Alignment.centerLeft,
-                ),
+        return Form(
+          key: formkey,
+          child: Container(
+            // height: MediaQuery.of(context).size.height,
+            // width: MediaQuery.of(context).size.width,
+            decoration: const BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/helpbackgraound.png'),
+                alignment: Alignment.centerLeft,
               ),
+            ),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: Get.width * 0.05),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -478,13 +468,19 @@ class _SignupState extends State<Signup> {
                             height: Get.height * 0.02,
                           ),
                           SizedBox(
-                            height: Get.height * 0.075,
+                            height: Get.height * 0.07,
                             child: IntlPhoneField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(12)
+                              ],
                               controller: mobile_number,
                               disableLengthCheck: true,
                               initialCountryCode: 'SA',
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
+                                hintStyle: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                                hintText: "Please Enter Your Number",
                                 disabledBorder: const OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -494,6 +490,10 @@ class _SignupState extends State<Signup> {
                                     borderSide: BorderSide(color: Colors.grey)),
                               ),
                               languageCode: "en",
+                              onChanged: mobile_number.text.length > 10
+                                  ? (val) {}
+                                  : (val) {},
+                              invalidNumberMessage: 'Enter valid Number',
                               onSaved: (newValue) {},
                               onSubmitted: (p0) {
                                 mobile_number.text = p0;
@@ -504,33 +504,42 @@ class _SignupState extends State<Signup> {
                                 });
                               },
                               validator: (value) {
-                                if (!value!.isValidNumber()) {
+                                if (!value!.isValidNumber() ||
+                                    mobile_number.text.isEmpty) {
                                   return 'entervalidno'.tr;
                                 }
                                 return null;
                               },
                             ),
                           ),
-                          // mobile_number.text.isEmpty &&
-                          //         chk == true &&
-                          //         widget.fromlogin == false
-                          //     ? Row(
-                          //         children: [
-                          //           Padding(
-                          //             padding: EdgeInsets.symmetric(
-                          //                 horizontal: Get.width * 0.05),
-                          //             child: Text(
-                          //               "entervalidno".tr,
-                          //               style: TextStyle(
-                          //                 color: Colors.red,
-                          //                 fontSize: Get.height * 0.018,
-                          //                 // fontWeight: FontWeight.w500,
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ],
-                          //       )
-                          //     : const SizedBox.shrink(),
+
+                          mobile_number.text.isEmpty &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? SizedBox(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: Get.height * 0.01),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: Get.width * 0.05),
+                                            child: Text(
+                                              "entervalidno".tr,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                // fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -550,45 +559,62 @@ class _SignupState extends State<Signup> {
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
 
-                          AuthTextField(
-                            readOnly: true,
-                            controller: datetimecontroller,
-                            validator: (p0) {
-                              if (p0!.isEmpty) {
-                                return 'selectdob'.tr;
+                          InkWell(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: selectedDate ?? DateTime.now(),
+                                firstDate: DateTime(1900),
+                                lastDate: DateTime.now(),
+                              );
+
+                              if (pickedDate != null &&
+                                  pickedDate != selectedDate) {
+                                setState(() {
+                                  selectedDate = pickedDate;
+                                  datetimecontroller.text =
+                                      DateFormat('dd-M-yyyy')
+                                          .format(pickedDate);
+                                });
                               }
-                              return null;
                             },
-                            hintText: datetimecontroller.text.isEmpty
-                                ? "dob".tr
-                                : DateFormat('dd-M-yyyy').format(selectedDate),
-                            suffixIcon: IconButton(
-                              onPressed: () async {
-                                showCupertinoModalPopup(
-                                  context: context,
-                                  builder: (BuildContext context) => Center(
-                                    child: SizedBox(
-                                      height: 200,
-                                      child: CupertinoDatePicker(
-                                        backgroundColor: Colors.white,
-                                        initialDateTime:
-                                            selectedDate ?? DateTime.now(),
-                                        onDateTimeChanged: (DateTime newTime) {
-                                          setState(() {
-                                            selectedDate = newTime;
-                                            datetimecontroller.text =
-                                                DateFormat('dd-M-yyyy')
-                                                    .format(newTime);
-                                          });
-                                        },
-                                        use24hFormat: true,
-                                        mode: CupertinoDatePickerMode.date,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                              icon: const Icon(Icons.calendar_month),
+                            child: SizedBox(
+                              child: AuthTextField(
+                                readOnly: false,
+                                controller: datetimecontroller,
+                                validator: (p0) {
+                                  if (p0!.isEmpty) {
+                                    return 'selectdob'.tr;
+                                  }
+                                  return null;
+                                },
+                                hintText: datetimecontroller.text.isEmpty
+                                    ? "dob".tr
+                                    : DateFormat('dd-M-yyyy')
+                                        .format(selectedDate),
+                                suffixIcon: IconButton(
+                                  onPressed: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate:
+                                          selectedDate ?? DateTime.now(),
+                                      firstDate: DateTime(1900),
+                                      lastDate: DateTime.now(),
+                                    );
+
+                                    if (pickedDate != null &&
+                                        pickedDate != selectedDate) {
+                                      setState(() {
+                                        selectedDate = pickedDate;
+                                        datetimecontroller.text =
+                                            DateFormat('dd-M-yyyy')
+                                                .format(pickedDate);
+                                      });
+                                    }
+                                  },
+                                  icon: const Icon(Icons.calendar_month),
+                                ),
+                              ),
                             ),
                           ),
 
@@ -653,63 +679,99 @@ class _SignupState extends State<Signup> {
                               gender.clear();
                               await genderapi();
                               setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, gender);
+                              if (generic != null && generic != '') {
+                                setState(() {
+                                  selectedGender = generic.id;
+                                });
+                              }
                             },
                             child: Padding(
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 1),
-                              child: DropdownButtonFormField(
-                                  decoration: checkval
-                                      ? InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                  width: 1,
-                                                  color: Colors.black)),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 12, vertical: 10),
-                                        )
-                                      : InputDecoration(
-                                          border: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              borderSide: const BorderSide(
-                                                  width: 1,
-                                                  color: Colors.black)),
-                                          contentPadding:
-                                              const EdgeInsets.symmetric(
-                                                  horizontal: 14, vertical: 10),
+                              child: Container(
+                                decoration: checkval
+                                    ? BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey, width: 0.8),
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.transparent,
+                                      )
+                                    : BoxDecoration(
+                                        border: Border.all(
+                                            color: Colors.grey, width: 0.8),
+                                        borderRadius: BorderRadius.circular(10),
+                                        color: Colors.transparent,
+                                      ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal:
+                                          MediaQuery.of(context).size.width *
+                                              0.04),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        selectedGender != null
+                                            ? gender
+                                                .firstWhere((element) =>
+                                                    element.id ==
+                                                    selectedGender)
+                                                .name
+                                                .toString()
+                                            : 'gender'.tr,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: selectedGender != null
+                                              ? Colors.black
+                                              : Colors.grey,
                                         ),
-                                  value: selectedGender,
-                                  hint: Text(
-                                    'gender'.tr,
-                                    style: const TextStyle(
-                                        color: Colors.grey, fontSize: 10),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: selectedGender != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
                                   ),
-                                  items: gender.map<DropdownMenuItem<String>>(
-                                      (Gender val) {
-                                    return DropdownMenuItem<String>(
-                                      value: val.id,
-                                      child: Text(val.name.toString()),
-                                    );
-                                  }).toList(),
-                                  style: const TextStyle(
-                                      color: Colors.black, fontSize: 14),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      selectedGender = newValue;
-                                    });
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'selectgender'.tr;
-                                    } else {
-                                      return null;
-                                    }
-                                  }),
+                                ),
+                              ),
                             ),
                           ),
+                          selectedGender == null &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? SizedBox(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: Get.height * 0.01),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: Get.width * 0.05),
+                                            child: Text(
+                                              "selectgender".tr,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                // fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
@@ -745,49 +807,88 @@ class _SignupState extends State<Signup> {
                               vehicles.clear();
                               await vehicleapi();
                               setState(() {});
-                            },
-                            child: DropdownButtonFormField(
-                              decoration: InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: const BorderSide(
-                                        width: 1, color: Colors.black)),
-                                contentPadding: checkval
-                                    ? const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 12)
-                                    : const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 10),
-                              ),
-                              value: selectedVehicle,
-                              hint: Text(
-                                "vehicletype".tr,
-                                style: const TextStyle(
-                                    color: Colors.grey, fontSize: 12),
-                              ),
-                              items: vehicles
-                                  .map<DropdownMenuItem<String>>((vehicle val) {
-                                return DropdownMenuItem<String>(
-                                  value: val.id,
-                                  child: Text(val.name.toString()),
-                                );
-                              }).toList(),
-                              style: const TextStyle(
-                                  color: Colors.black, fontSize: 14),
-                              onChanged: (String? newValue) {
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, vehicles);
+                              if (generic != null && generic != '') {
                                 setState(() {
-                                  selectedVehicle = newValue;
+                                  selectedVehicle = generic.id;
                                 });
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'selectvehicletype'.tr;
-                                } else {
-                                  return null;
-                                }
-                              },
-                              elevation: 0,
+                              }
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey, width: 0.8),
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.transparent,
+                              ),
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.065,
+                              child: Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal:
+                                        MediaQuery.of(context).size.width *
+                                            0.04),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      selectedVehicle != null
+                                          ? vehicles
+                                              .firstWhere((element) =>
+                                                  element.id == selectedVehicle)
+                                              .name
+                                              .toString()
+                                          : 'vehicletype'.tr,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: selectedVehicle != null
+                                            ? Colors.black
+                                            : Colors.grey,
+                                      ),
+                                    ),
+                                    Icon(
+                                      Icons.arrow_drop_down,
+                                      size: 20,
+                                      color: selectedVehicle != null
+                                          ? Colors.black
+                                          : Colors.black,
+                                    )
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
+                          selectedVehicle == null &&
+                                  chk == true &&
+                                  widget.fromlogin == false
+                              ? SizedBox(
+                                  child: Column(
+                                    children: [
+                                      SizedBox(height: Get.height * 0.01),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: Get.width * 0.05),
+                                            child: Text(
+                                              "selectvehicletype".tr,
+                                              style: const TextStyle(
+                                                color: Colors.red,
+                                                fontSize: 12,
+                                                // fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : const SizedBox.shrink(),
+
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
@@ -873,9 +974,9 @@ class _SignupState extends State<Signup> {
                             ),
                             validator: (value) {
                               if (Re_Password.text.isEmpty) {
-                                return 'enterpassword'.tr;
+                                return 'reenterpassword'.tr;
                               } else if (Re_Password.text == value) {
-                                return null; 
+                                return null;
                               } else {
                                 return 'passnotmatch'.tr;
                               }
@@ -920,17 +1021,18 @@ class _SignupState extends State<Signup> {
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.grey, width: 0.8),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                   color: Colors.transparent,
                                 ),
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 height:
                                     MediaQuery.of(context).size.height * 0.07,
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -960,19 +1062,24 @@ class _SignupState extends State<Signup> {
                           selectedCountries == null &&
                                   chk == true &&
                                   widget.fromlogin == false
-                              ? Row(
+                              ? Column(
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.05),
-                                      child: Text(
-                                        "selectcountry".tr,
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: Get.height * 0.018,
-                                          // fontWeight: FontWeight.w500,
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcountry".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 )
@@ -1009,17 +1116,18 @@ class _SignupState extends State<Signup> {
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.grey, width: 0.8),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                   color: Colors.transparent,
                                 ),
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 height:
                                     MediaQuery.of(context).size.height * 0.065,
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1049,19 +1157,24 @@ class _SignupState extends State<Signup> {
                           SelectedState == null &&
                                   chk == true &&
                                   widget.fromlogin == false
-                              ? Row(
+                              ? Column(
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.05),
-                                      child: Text(
-                                        "selectstate".tr,
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: Get.height * 0.018,
-                                          // fontWeight: FontWeight.w500,
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectstate".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 )
@@ -1095,17 +1208,18 @@ class _SignupState extends State<Signup> {
                                 decoration: BoxDecoration(
                                   border: Border.all(
                                       color: Colors.grey, width: 0.8),
-                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderRadius: BorderRadius.circular(10),
                                   color: Colors.transparent,
                                 ),
                                 width: MediaQuery.of(context).size.width * 0.9,
                                 height:
                                     MediaQuery.of(context).size.height * 0.065,
                                 child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              0.05),
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1135,19 +1249,24 @@ class _SignupState extends State<Signup> {
                           selectedCity == null &&
                                   chk == true &&
                                   widget.fromlogin == false
-                              ? Row(
+                              ? Column(
                                   children: [
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: Get.width * 0.05),
-                                      child: Text(
-                                        "selectcity".tr,
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                          fontSize: Get.height * 0.018,
-                                          // fontWeight: FontWeight.w500,
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcity".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
                                         ),
-                                      ),
+                                      ],
                                     ),
                                   ],
                                 )
@@ -1183,8 +1302,8 @@ class _SignupState extends State<Signup> {
                                 widget.fromlogin = false;
                                 chk = true;
                                 setState(() {});
-
-                                if (formkey.currentState!.validate()) {
+                                if (formkey.currentState!.validate() &&
+                                    mobile_number.text.isNotEmpty) {
                                   if (Password.text.toString() ==
                                       Re_Password.text.toString()) {
                                     Register register = Register();
@@ -1224,19 +1343,18 @@ class _SignupState extends State<Signup> {
                                       })),
                                     );
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text("passnotmatch".tr)));
+                                    Showtoaster()
+                                        .classtoaster("passnotmatch".tr);
                                   }
 
                                   checkval = true;
                                   setState(() {});
                                 } else {
+                                  Showtoaster()
+                                      .classtoaster("Enter Complete Detail");
+
                                   checkval = false;
                                   setState(() {});
-                                  // ScaffoldMessenger.of(context).showSnackBar(
-                                  //     SnackBar(
-                                  //         content: Text("entervaliddata".tr)));
                                 }
                               },
                               child: Text(
@@ -1413,6 +1531,7 @@ class AuthTextField extends StatelessWidget {
       obscureText: obscureText ?? false,
       inputFormatters: formatters,
       readOnly: readOnly ?? false,
+      enabled: readOnly ?? true,
       validator: validator,
       controller: controller,
       decoration: InputDecoration(
@@ -1424,14 +1543,18 @@ class AuthTextField extends StatelessWidget {
           contentPadding: const EdgeInsets.symmetric(horizontal: 20),
           hintText: hintText,
           hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
-          disabledBorder: const OutlineInputBorder(),
-          errorBorder: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.red)),
+          disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.grey)),
+          errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.red)),
           enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: const BorderSide(color: Colors.grey)),
-          border: const OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.grey))),
+          border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+              borderSide: const BorderSide(color: Colors.grey))),
     );
   }
 }

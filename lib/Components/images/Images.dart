@@ -8,5 +8,5 @@ class Images {
 
   static const String logoBackground = '$path/helpbackgraound.png';
   // static const String logo='$path/help.png';
-   static const String logo='$path/logoaria.png';
+   static const String logo='$path/Helpful.png';
 }

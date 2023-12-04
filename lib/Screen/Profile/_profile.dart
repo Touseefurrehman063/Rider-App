@@ -1,4 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/controllers/Notification/dashboardcontroller.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,16 +34,15 @@ class _ProfileState extends State<Profile> {
   //   // TODO: implement initState
   //   super.initState();
   // }
-
   String _getGreetingMessage() {
     var now = DateTime.now();
     var hour = now.hour;
 
-    if (hour < 10) {
+    if (hour < 12) {
       return 'goodmorning'.tr;
-    } else if (hour < 18) {
+    } else if (hour < 14) {
       return 'goodAfterNoon'.tr;
-    } else if (hour < 22) {
+    } else if (hour < 17) {
       return 'goodEvening'.tr;
     } else {
       return 'goodNight'.tr;
@@ -69,10 +72,18 @@ class _ProfileState extends State<Profile> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
+        leading: InkWell(
+            onTap: () {
+              log("message");
+              setState(() {
+                dashboardcontroller.j.updatenotification(1);
+              });
+            },
+            child: const Icon(Icons.arrow_back_ios_new, color: Colors.white)),
         // leading: Row(
         //   children: [
         //     InkWell(
-        //       onTap: Get.back,
+        //       onTap:(){ Get.back();},
         //       child: Padding(
         //         padding: const EdgeInsets.only(left: 10.0),
         //         child: Image.asset(
@@ -112,25 +123,23 @@ class _ProfileState extends State<Profile> {
                     children: [
                       Stack(alignment: Alignment.center, children: [
                         CircleAvatar(
-                          radius: 27,
+                          radius: 31,
                           backgroundColor: Colors.blue,
                           child: userprofile?.imagePath == null
                               ? const CircleAvatar(
-                                  backgroundImage:
-                                      AssetImage("assets/pp.jpg"),
+                                  backgroundImage: AssetImage("assets/pp.jpg"),
                                   radius: 25,
                                 )
-                              : Hero(
-                                  tag: 'profile',
-                                  child: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        ip + userprofile!.imagePath!),
-                                    radius: 25,
-                                  ),
+                              : CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      ip + userprofile!.imagePath!),
+                                  radius: 29,
                                 ),
                         ),
                       ]),
-                        SizedBox(width: Get.width*0.02,),
+                      SizedBox(
+                        width: Get.width * 0.02,
+                      ),
                       Container(
                         child: RichText(
                           text: TextSpan(
@@ -143,7 +152,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               TextSpan(
                                 text:
-                                    'Hi, ${(userprofile?.firstName ?? "Tabib Rider").length > 15 ? '${(userprofile?.firstName ?? "Tabib Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
+                                    'Hi, ${(userprofile?.firstName ?? " Rider").length > 15 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
                                 style: GoogleFonts.raleway(
                                   fontSize: 23,
                                   fontWeight: FontWeight.w800,
@@ -176,20 +185,24 @@ class _ProfileState extends State<Profile> {
                   ),
                 ),
               ),
-              SingleChildScrollView(
+              Expanded(
                 child: Container(
                   alignment: Alignment.topCenter,
                   // width: Get.width,
                   // height: Get.height,
-                  padding: EdgeInsets.symmetric(vertical: Get.height * 0.14),
+                  // padding: EdgeInsets.symmetric(vertical: Get.height * 0.14),
                   decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30)),
-                      color: Color(0xFF1272D3)),
+                      color: ColorManager.kDarkBlue),
                   child: SingleChildScrollView(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        SizedBox(
+                          height: Get.height * 0.14,
+                        ),
                         RecordWidget(
                           title: "vehiclenumber".tr,
                           name: userprofile?.vehicleNumber ?? "_",
@@ -327,54 +340,51 @@ class RecordWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 30),
-      child: Center(
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    '$title',
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                  ),
-                ),
-                const SizedBox(
-                  width: 20,
-                ),
-                const Expanded(
-                  child: Center(
-                    child: Text(
-                      ':',
-                      style: TextStyle(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: Text(
+                  '$title',
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
                         color: Colors.white,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
                       ),
+                ),
+              ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    ':',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w900,
                     ),
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    '$name',
-                    maxLines: 2,
-                    textAlign: TextAlign.start,
-                    style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w300,
-                          fontSize: 12,
-                        ),
-                  ),
+              ),
+              SizedBox(
+                width: Get.width * 0.09,
+              ),
+              Expanded(
+                child: Text(
+                  '$name',
+                  textAlign: TextAlign.start,
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w300,
+                        fontSize: 12,
+                      ),
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

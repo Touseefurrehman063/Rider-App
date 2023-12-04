@@ -12,14 +12,13 @@ import 'package:flutter_riderapp/Models/relations.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
 import 'package:flutter_riderapp/Screen/Login/_signup.dart';
 import 'package:flutter_riderapp/Screen/register_patient/register_patient.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_riderapp/Models/Register.dart';
 import 'package:flutter_riderapp/Models/city.dart';
 import 'package:flutter_riderapp/Models/gender.dart';
-import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl_phone_field/intl_phone_field.dart';
@@ -55,6 +54,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   TextEditingController NOKName = TextEditingController();
   // ignore: non_constant_identifier_names
   final TextEditingController gvt_guardian_id = TextEditingController();
+  TextEditingController datetimecontroller = TextEditingController();
 
 // final GlobalKey _dropdownKey = GlobalKey();
 
@@ -100,6 +100,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
   String? SelectedState;
   String? countryCode;
   String? selectedCityName;
+  bool chk = false;
   // ignore: non_constant_identifier_names
   String? SelectedStateName;
 
@@ -372,23 +373,14 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
-          leading: Row(
-            children: [
-              InkWell(
-                onTap: Get.back,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Image.asset(
-                    "assets/back.png",
-                    height: Get.height * 0.1,
-                    width: Get.width * 0.08,
-
-                    // color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
+          leading: InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Color(0xff0F64C6),
+              )),
           title: Text(
             'registration'.tr,
             textAlign: TextAlign.center,
@@ -480,6 +472,32 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 },
                               ),
                             ),
+
+                            mobile_number.text.isEmpty && chk == true
+                                ? SizedBox(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: Get.height * 0.01),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: Get.width * 0.05),
+                                              child: Text(
+                                                "entervalidno".tr,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  // fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
@@ -496,111 +514,169 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
-                            AuthTextField(
-                              readOnly: true,
-                              controller: TextEditingController(
-                                text: dateFormat.format(dateTime),
-                              ),
-                              validator: (value) {
-                                return null;
+                            InkWell(
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: selectedDate ?? DateTime.now(),
+                                  firstDate: DateTime(1900),
+                                  lastDate: DateTime.now(),
+                                );
+
+                                if (pickedDate != null &&
+                                    pickedDate != selectedDate) {
+                                  setState(() {
+                                    selectedDate = pickedDate;
+                                    datetimecontroller.text =
+                                        DateFormat('dd-M-yyyy')
+                                            .format(pickedDate);
+                                  });
+                                }
                               },
-                              // ignore: unnecessary_null_comparison
-                              hintText: selectedDate == null
-                                  ? "Date of birth"
-                                  : DateFormat('dd-M-yyyy')
-                                      .format(selectedDate),
-                              suffixIcon: IconButton(
-                                onPressed: () async {
-                                  showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (BuildContext context) => Center(
-                                      child: SizedBox(
-                                        height: 200,
-                                        child: CupertinoDatePicker(
-                                          backgroundColor: Colors.white,
-                                          initialDateTime: selectedDate,
-                                          onDateTimeChanged:
-                                              (DateTime newTime) {
-                                            setState(() => dateTime = newTime);
-                                          },
-                                          use24hFormat: true,
-                                          mode: CupertinoDatePickerMode.date,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(Icons.calendar_month),
+                              child: SizedBox(
+                                child: AuthTextField(
+                                  readOnly: false,
+                                  controller: datetimecontroller,
+                                  validator: (p0) {
+                                    if (p0!.isEmpty) {
+                                      return 'selectdob'.tr;
+                                    }
+                                    return null;
+                                  },
+                                  hintText: datetimecontroller.text.isEmpty
+                                      ? "dob".tr
+                                      : DateFormat('dd-M-yyyy')
+                                          .format(selectedDate),
+                                  suffixIcon: IconButton(
+                                    onPressed: () async {
+                                      DateTime? pickedDate =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate:
+                                            selectedDate ?? DateTime.now(),
+                                        firstDate: DateTime(1900),
+                                        lastDate: DateTime.now(),
+                                      );
+
+                                      if (pickedDate != null &&
+                                          pickedDate != selectedDate) {
+                                        setState(() {
+                                          selectedDate = pickedDate;
+                                          datetimecontroller.text =
+                                              DateFormat('dd-M-yyyy')
+                                                  .format(pickedDate);
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.calendar_month),
+                                  ),
+                                ),
                               ),
                             ),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
+
                             InkWell(
                               onTap: () async {
                                 selectedGender = null;
                                 gender.clear();
                                 await genderapi();
                                 setState(() {});
+                                dynamic generic = await searchableDropdown(
+                                    context, constraints, gender);
+                                if (generic != null && generic != '') {
+                                  setState(() {
+                                    selectedGender = generic.id;
+                                  });
+                                }
                               },
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
-                                child: DropdownButtonFormField(
-                                    decoration: checkval
-                                        ? InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                borderSide: const BorderSide(
-                                                    width: 1,
-                                                    color: Colors.black)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 17,
-                                                    vertical: 13),
-                                          )
-                                        : InputDecoration(
-                                            border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                borderSide: const BorderSide(
-                                                    width: 1,
-                                                    color: Colors.black)),
-                                            contentPadding:
-                                                const EdgeInsets.symmetric(
-                                                    horizontal: 17,
-                                                    vertical: 13),
+                                child: Container(
+                                  decoration: checkval
+                                      ? BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey, width: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.transparent,
+                                        )
+                                      : BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey, width: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.transparent,
+                                        ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
+                                  height: MediaQuery.of(context).size.height *
+                                      0.065,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                0.04),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          selectedGender != null
+                                              ? gender
+                                                  .firstWhere((element) =>
+                                                      element.id ==
+                                                      selectedGender)
+                                                  .name
+                                                  .toString()
+                                              : 'gender'.tr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedGender != null
+                                                ? Colors.black
+                                                : Colors.grey,
                                           ),
-                                    value: selectedGender,
-                                    hint: Text(
-                                      'gender'.tr,
-                                      style: const TextStyle(
-                                          color: Colors.grey, fontSize: 10),
+                                        ),
+                                        Icon(
+                                          Icons.arrow_drop_down,
+                                          size: 20,
+                                          color: selectedGender != null
+                                              ? Colors.black
+                                              : Colors.black,
+                                        )
+                                      ],
                                     ),
-                                    items: gender.map<DropdownMenuItem<String>>(
-                                        (Gender val) {
-                                      return DropdownMenuItem<String>(
-                                        value: val.id,
-                                        child: Text(val.name.toString()),
-                                      );
-                                    }).toList(),
-                                    style: const TextStyle(
-                                        color: Colors.black, fontSize: 14),
-                                    onChanged: (String? newValue) {
-                                      setState(() {
-                                        selectedGender = newValue;
-                                      });
-                                    },
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'selectgender'.tr;
-                                      } else {
-                                        return null;
-                                      }
-                                    }),
+                                  ),
+                                ),
                               ),
                             ),
+                            selectedGender == null && chk == true
+                                ? SizedBox(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: Get.height * 0.01),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: Get.width * 0.05),
+                                              child: Text(
+                                                "selectgender".tr,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  // fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
@@ -610,64 +686,101 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 relations.clear();
                                 await relationapi();
                                 setState(() {});
+                                dynamic generic = await searchableDropdown(
+                                    context, constraints, relations);
+                                if (generic != null && generic != '') {
+                                  setState(() {
+                                    selectedRelation = generic.id;
+                                  });
+                                }
                               },
                               child: Padding(
                                 padding:
                                     const EdgeInsets.symmetric(horizontal: 1),
-                                child: SizedBox(
+                                child: Container(
+                                  decoration: checkval
+                                      ? BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey, width: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.transparent,
+                                        )
+                                      : BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.grey, width: 0.8),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          color: Colors.transparent,
+                                        ),
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.9,
                                   height: MediaQuery.of(context).size.height *
-                                      0.075,
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: Colors.black, width: 0.5),
-                                      borderRadius: BorderRadius.circular(10.0),
-                                      color: Colors.transparent,
-                                    ),
-                                    width:
-                                        MediaQuery.of(context).size.width * 0.9,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.04,
-                                    child: DropdownButtonFormField(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        contentPadding: EdgeInsets.symmetric(
-                                            horizontal: 15),
-                                      ),
-                                      value: selectedRelation,
-                                      hint: Text(
-                                        "relation".tr,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey),
-                                      ),
-                                      items: relations
-                                          .map<DropdownMenuItem<String>>(
-                                              (RelationModel val) {
-                                        return DropdownMenuItem<String>(
-                                          value: val.id,
-                                          child: Text(
-                                            val.name.toString(),
-                                            style:
-                                                const TextStyle(fontSize: 14),
+                                      0.065,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                0.04),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          selectedRelation != null
+                                              ? relations
+                                                  .firstWhere((element) =>
+                                                      element.id ==
+                                                      selectedRelation)
+                                                  .name
+                                                  .toString()
+                                              : 'relation'.tr,
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedRelation != null
+                                                ? Colors.black
+                                                : Colors.grey,
                                           ),
-                                        );
-                                      }).toList(),
-                                      style: const TextStyle(
-                                          color: Colors.black, fontSize: 18),
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          selectedRelation = newValue;
-                                        });
-                                      },
-                                      elevation: 0,
-                                      menuMaxHeight:
-                                          MediaQuery.of(context).size.height *
-                                              0.5,
+                                        ),
+                                        Icon(
+                                          Icons.arrow_drop_down,
+                                          size: 20,
+                                          color: selectedRelation != null
+                                              ? Colors.black
+                                              : Colors.black,
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ),
                               ),
                             ),
+                              selectedRelation == null && chk == true
+                                ? SizedBox(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(height: Get.height * 0.01),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: Get.width * 0.05),
+                                              child: Text(
+                                                "selectrelation".tr,
+                                                style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 12,
+                                                  // fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
@@ -684,216 +797,283 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
-                            InkWell(
-                              onTap: () async {
-                                selectedCountries = null;
-                                countries.clear();
-                                await countriesapi();
-                                setState(() {});
-                                // ignore: use_build_context_synchronously
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, countries);
-                                selectedCountriesName = null;
-                                if (generic != null && generic != '') {
-                                  // ignore: prefer_interpolation_to_compose_strings
-                                  print('Countries selected Id' + generic.id);
-                                  selectedCountries = generic.id;
-                                  selectedCountriesName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                  state.clear();
-                                  cities.clear();
-                                  await stateapi(generic.id);
-                                  selectedCity = null;
-                                  selectedCityName = null;
-                                  SelectedState = null;
-                                  SelectedStateName = null;
-                                  setState(() {});
-                                }
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.height *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.07,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          //"${selectedCountriesName?? "Country"}",
-                                          "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "country".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color:
-                                                  selectedCountriesName != null
-                                                      ? Colors.black
-                                                      : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: selectedCountriesName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                SelectedState = null;
-                                setState(() {});
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, state);
-                                SelectedStateName = null;
-                                if (generic != null && generic != '') {
-                                  SelectedState = generic.id;
-                                  SelectedStateName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                  cities.clear();
-                                  selectedCity = null;
-                                  selectedCityName = null;
-                                  await cityapi();
-                                }
-                                setState(() {});
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.065,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          // "${SelectedStateName?? "State"}",
-                                          "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "state".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: SelectedStateName != null
-                                                  ? Colors.black
-                                                  : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: SelectedStateName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
+                           
+                          InkWell(
+                            onTap: () async {
+                              selectedCountries = null;
+                              countries.clear();
+                              await countriesapi();
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, countries);
+                              selectedCountriesName = null;
+                              if (generic != null && generic != '') {
+                                print('Countries selected Id' + generic.id);
+                                selectedCountries = generic.id;
+                                selectedCountriesName =
+                                    (generic.name == '') ? null : generic.name;
+                                state.clear();
+                                cities.clear();
+                                await stateapi(generic.id);
                                 selectedCity = null;
-                                // cities.clear();
-                                setState(() {});
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, cities);
                                 selectedCityName = null;
-                                if (generic != null && generic != '') {
-                                  selectedCity = generic.id;
-                                  selectedCityName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                }
+                                SelectedState = null;
+                                SelectedStateName = null;
                                 setState(() {});
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10.0),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.065,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          // "${selectedCityName?? "City"}",
-                                          "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "city".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: selectedCityName != null
-                                                  ? Colors.black
-                                                  : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: selectedCityName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.height *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.07,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        //"${selectedCountriesName?? "Country"}",
+                                        "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "country".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedCountriesName != null
+                                                ? Colors.black
+                                                : Colors.grey),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: selectedCountriesName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
+                          ),
+                          selectedCountries == null &&
+                                  chk == true 
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcountry".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
+                            InkWell(
+                            onTap: () async {
+                              SelectedState = null;
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, state);
+                              SelectedStateName = null;
+                              if (generic != null && generic != '') {
+                                SelectedState = generic.id;
+                                SelectedStateName =
+                                    (generic.name == '') ? null : generic.name;
+                                cities.clear();
+                                selectedCity = null;
+                                selectedCityName = null;
+                                await cityapi();
+                              }
+                              setState(() {});
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        // "${SelectedStateName?? "State"}",
+                                        "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "state".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: SelectedStateName != null
+                                                ? Colors.black
+                                                : Colors.grey),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: SelectedStateName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SelectedState == null &&
+                                  chk == true
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectstate".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
+                            InkWell(
+                            onTap: () async {
+                              selectedCity = null;
+                              // cities.clear();
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, cities);
+                              selectedCityName = null;
+                              if (generic != null && generic != '') {
+                                selectedCity = generic.id;
+                                selectedCityName =
+                                    (generic.name == '') ? null : generic.name;
+                              }
+                              setState(() {});
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        // "${selectedCityName?? "City"}",
+                                        "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "city".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedCityName != null
+                                                ? Colors.black
+                                                : Colors.grey),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: selectedCityName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          selectedCity == null &&
+                                  chk == true 
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcity".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
@@ -916,9 +1096,12 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                     horizontal: 120, vertical: 0.5),
                                 borderRadius: BorderRadius.circular(8),
                                 onPressed: () async {
+                                     chk = true;
+                                setState(() {});
                                   if (formkey.currentState!.validate()) {
                                     PatientRegistrationModal patientregister =
                                         PatientRegistrationModal();
+                                      
 
                                     patientregister.firstName =
                                         Name.text.toString();
@@ -948,19 +1131,17 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                         mobile_number.text.toString();
                                     patientregister.patientTypeId =
                                         "BEB03D33-E8AA-E711-80C1-A0B3CCE147BA";
+                                        
 
                                     print(patientregister.countryId);
                                     await _register_api(patientregister);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Patient Register Succesfully')));
-                                    Get.to(const RegisterPatient());
+                                    Showtoaster().classtoaster(
+                                        "Patient Register Succesfully");
+                                    Get.to(() => const RegisterPatient());
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Failed To register Patient')));
+                                    Showtoaster().classtoaster(
+                                        "Failed To register Patient");
+
                                     log("Failed");
                                   }
                                 },
@@ -974,27 +1155,27 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.03,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text("Already have an account?"),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: ((context) {
-                                        return const Login();
-                                      })),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                  ),
-                                  child: const Text("Sign in"),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                            //   children: [
+                            //     const Text("Already have an account?"),
+                            //     TextButton(
+                            //       onPressed: () async {
+                            //         Navigator.push(
+                            //           context,
+                            //           MaterialPageRoute(builder: ((context) {
+                            //             return const Login();
+                            //           })),
+                            //         );
+                            //       },
+                            //       style: TextButton.styleFrom(
+                            //         foregroundColor: Colors.blue,
+                            //       ),
+                            //       child: const Text("Sign in"),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

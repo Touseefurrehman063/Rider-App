@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/Notification_Model/notification_model.dart';
 import 'package:flutter_riderapp/Models/User.dart';
@@ -17,13 +19,20 @@ class CustomNotification extends StatefulWidget {
 }
 
 class _CustomNotificationState extends State<CustomNotification> {
-    User? user;
+  User? user;
   String endDate = "";
   String startDate = "";
   int start = 0;
   int length = 10;
   @override
   void initState() {
+    didChangeDependencies(_)
+    {
+      today=0;
+      yesterday=0;
+      before=0;
+    }
+    log(DateTime.now().toString());
     super.initState();
   }
 
@@ -34,7 +43,8 @@ class _CustomNotificationState extends State<CustomNotification> {
     final formatter = DateFormat('yyyy-MM-dd');
     return formatter.format(lastMonth);
   }
-   Future<void> _refreshNotifications() async {
+
+  Future<void> _refreshNotifications() async {
     await NotificationRepository().getnotifications(
       userprofile!.id.toString(),
       formatLastMonthDate().toString(),
@@ -45,36 +55,139 @@ class _CustomNotificationState extends State<CustomNotification> {
   }
 
   @override
+  void dispose() {
+  today=0;
+      yesterday=0;
+      before=0;
+    // TODO: implement dispose
+    super.dispose();
+  }
+  DateTime t1=DateTime.now().subtract(const Duration(days:1));
+
+int today=0;
+int yesterday=0;
+int before=0;
+
+  @override
   Widget build(BuildContext context) {
-    return GetBuilder<notificationscontroller>(
-      builder: (cont) {
-        return Column(
-          children: [
-            RefreshIndicator(
-              onRefresh: _refreshNotifications,
-              child: ListView.builder(
+    return GetBuilder<notificationscontroller>(builder: (cont) {
+      return Column(
+        children: [
+          RefreshIndicator(
+            onRefresh: _refreshNotifications,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: notificationscontroller.j.notifications.length,
+              itemBuilder: (context, index) {
+                final data = notificationscontroller.j.notifications[index];
                 
-                physics: const AlwaysScrollableScrollPhysics(),
-                shrinkWrap: true,
-                itemCount: notificationscontroller.j.notifications.length,
-                itemBuilder: (context, index) {
-                  final data = notificationscontroller.j.notifications[index];
+              
+                if(DateTime.now().toString().split(' ')[0]==data.dateTime.toString().split('T')[0] && today==0)
+                {
+                  today+=1;
                   return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: customListTile(context, data),
-                  );
-                },
-              ),
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                         const Text("Today"),
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+                else if(t1.isBefore(DateTime.now()) && yesterday==0)
+                {
+                  yesterday+=1;
+                  return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           const Text("Yesterday"),
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+               
+               
+                else
+                {
+                   return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+               
+
+
+
+
+                // } else if (DateTime.now().toString().split(' ')[0] !=
+                //         data.dateTime.toString().split('T')[0] &&
+                //     chk2) {
+                //       chk2=false;
+                //   return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           "${DateTime.now().toString().split(' ')[0].split('-')[0]}-${int.parse(DateTime.now().toString().split(' ')[0].split('-')[2]) - 1}${DateTime.now().toString().split(' ')[0].split('-')[2]}" ==
+                //                   data.dateTime.toString().split('T')[0]
+                //               ? const Padding(
+                //                   padding: EdgeInsets.only(left: 8.0),
+                //                   child: Text("Yesterday"),
+                //                 )
+                //               :  const SizedBox.shrink(),
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // } else if (DateTime.now().toString().split(' ')[0] !=
+                //         data.dateTime.toString().split('T')[0] &&
+                //     chk2) {
+                //   return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           DateTime.now().toString().split(' ')[0] ==
+                //                   data.dateTime.toString().split('T')[0]
+                //               ? const Padding(
+                //                   padding: EdgeInsets.only(left: 8.0),
+                //                   child: Text("Yesterday"),
+                //                 )
+                //               : const SizedBox.shrink(),
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // }
+                // else{
+                //    return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                         
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // }
+              }
+
             ),
-          ],
-        );
-      }
-    );
+          ),
+        ],
+      );
+    });
   }
 
-   customListTile(BuildContext context, RiderNotifications data) {
+  customListTile(BuildContext context, RiderNotifications data) {
     return Card(
-      color: Colors.blue.shade50,
       child: ListTile(
         minVerticalPadding: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),

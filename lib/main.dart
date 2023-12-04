@@ -1,3 +1,4 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/AppConstants.dart';
@@ -44,10 +45,12 @@ class _MyAppState extends State<MyApp> {
       locale: const Locale('en', 'US'),
       initialBinding: AppBindings(),
       debugShowCheckedModeBanner:false,
-      home: const Splashscreen()
+      home: const Splashscreen(),
+    
     );
   }
 }
+
 getLocale() async {
     LanguageModel? lang = await LocalDb().getLanguage();
     if (lang == null) {

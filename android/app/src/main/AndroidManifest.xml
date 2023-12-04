@@ -2,7 +2,7 @@
 <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <application
-        android:label="AIMS Rider"
+        android:label="Helpful Rider"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <meta-data android:name="com.google.android.geo.API_KEY"

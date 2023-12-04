@@ -138,23 +138,11 @@ callvback();
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: Row(
-              children: [
-                InkWell(
-                  onTap: Get.back,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Image.asset(
-                      "assets/back.png",
-                      height: Get.height * 0.1,
-                      width: Get.width * 0.08,
-
-                      // color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
             title: Text(
               'registerpatient'.tr,
               textAlign: TextAlign.center,
@@ -223,7 +211,7 @@ callvback();
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Text(
-                                                  user.patientName ?? "",
+                                                  user.patientName?.toString().trim().replaceAll(' ', '') ?? "",
                                                   style: GoogleFonts.poppins(
                                                       fontSize: 20,
                                                       color: Colors.white,
@@ -242,7 +230,8 @@ callvback();
                                             alignment: Alignment.bottomCenter,
                                             child: ElevatedButton(
                                               onPressed: () async {
-                                                Get.to(const Labinvestigation());
+                                             
+                                                Get.to( Labinvestigation(user:_appointments[index]));
                                               
                                                 
                                               },

@@ -10,10 +10,11 @@ class ColorManager {
   static const Color kGreyColor = Color(0xFF8E8E8E);
   static const Color kRedColor = Color(0xFFFF0101);
   static const Color lightGrey = Color(0xFFE6E6E6);
-  static const Color kDarkBlue = Color(0xFF144DD9);
   static const Color kyellowContainer = Color(0xFFFDD504);
   static const Color kCyanBlue = Color(0xFF01C6CB);
   static const Color kLightBlue = Color(0xFFDBEAF8);
   static const Color kOrangeColor = Color(0xFFF79E1B);
+  static const Color kDarkBlue = Color(0XFF1272D3);
+  static const Color kmenuBlue = Color(0xFF2157B2);
   //
 }

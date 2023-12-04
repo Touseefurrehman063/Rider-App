@@ -1,11 +1,17 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
 import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
 import 'package:flutter_riderapp/Widgets/registration_selection.dart';
+import 'package:flutter_riderapp/controllers/internet_connectivity/connectivity_controller.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,11 +30,11 @@ class _FirstViewState extends State<FirstView> {
     var now = DateTime.now();
     var hour = now.hour;
 
-    if (hour < 10) {
+    if (hour < 12) {
       return 'goodmorning'.tr;
-    } else if (hour < 18) {
+    } else if (hour < 14) {
       return 'goodAfterNoon'.tr;
-    } else if (hour < 22) {
+    } else if (hour < 17) {
       return 'goodEvening'.tr;
     } else {
       return 'goodNight'.tr;
@@ -38,6 +44,34 @@ class _FirstViewState extends State<FirstView> {
   Future<void> saveLoginState() async {
     var sharedpref = await SharedPreferences.getInstance();
     sharedpref.setBool(SplashscreenState.KEYLOGIN, true);
+  }
+
+  Future<ConnectivityResult> internetCheck() async {
+    ConnectivityResult result =
+        await NetworkController.i.connectivity.checkConnectivity();
+    // log(result.toString());
+    if (result.name == "none") {
+      Get.rawSnackbar(
+          messageText: const Text('Network Connection Error',
+              style: TextStyle(color: Colors.black, fontSize: 14)),
+          isDismissible: false,
+          duration: const Duration(days: 1),
+          backgroundColor: Colors.red[400] ?? Colors.red,
+          icon: const Icon(
+            Icons.wifi_off,
+            color: Colors.white,
+            size: 35,
+          ),
+          margin: EdgeInsets.zero,
+          snackStyle: SnackStyle.GROUNDED);
+    } else {}
+    return result;
+  }
+
+  @override
+  void initState() {
+    internetCheck();
+    super.initState();
   }
 
   @override
@@ -66,13 +100,12 @@ class _FirstViewState extends State<FirstView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: double.infinity,
-                      height: Get.height*0.015
-                    ),
+                        width: double.infinity, height: Get.height * 0.015),
                     Padding(
-                      padding:  EdgeInsets.only(right:Get.width*0.23),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: Get.width * 0.08),
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           // Image.asset(
@@ -80,74 +113,73 @@ class _FirstViewState extends State<FirstView> {
                           //   height: MediaQuery.of(context).size.height * 0.1,
                           // ),
                           CircleAvatar(
-                                      radius: 27,
-                                      backgroundColor:  Colors.blue,
-                                      child: userprofile?.imagePath == null
-                      ? const CircleAvatar(
-                          backgroundImage: AssetImage("assets/pp.jpg"),
-                          radius: 25,
-                        )
-                      : Hero(
-                          tag: 'profile',
-                          child: CircleAvatar(
-                            backgroundImage:
-                                NetworkImage(ip+userprofile!.imagePath!),
-                            radius: 25,
+                            radius: 30,
+                            backgroundColor: ColorManager.kDarkBlue,
+                            child: userprofile?.imagePath == null
+                                ? const CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage("assets/pp.jpg"),
+                                    radius: 28,
+                                  )
+                                : CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        ip + userprofile!.imagePath!),
+                                    radius: 28,
+                                  ),
                           ),
-                        ),
-                                    ),
-                                    SizedBox(width: Get.width*0.02,),
+                          SizedBox(
+                            width: Get.width * 0.02,
+                          ),
                           Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: GoogleFonts.readexPro(
-                                      fontSize: constraints.maxWidth / 35,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.25,
-                                      color: const Color(0xff1272d3),
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                        text: 'hi'.tr,
-                                        style: GoogleFonts.raleway(
-                                          fontSize: constraints.maxWidth / 15,
-                                          fontWeight: FontWeight.w800,
-                                          height: 1.175,
-                                          color: const Color(0xff1272d3),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text:
-                                            ' ${(userprofile?.firstName ?? "Helpful Rider").length > 10 ? '${(userprofile?.firstName ?? "Helpful Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Helpful Rider")}',
-                                        style: GoogleFonts.raleway(
-                                          fontSize: constraints.maxWidth / 15,
-                                          fontWeight: FontWeight.w800,
-                                          height: 1.175,
-                                          color: const Color(0xff1272d3),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: '\n',
-                                        style: GoogleFonts.readexPro(
-                                          fontSize: constraints.maxWidth / 20,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xff1272d3),
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: _getGreetingMessage(),
-                                        style: GoogleFonts.raleway(
-                                          fontSize: constraints.maxWidth / 30,
-                                          fontWeight: FontWeight.w700,
-                                          // letterSpacing: 4.5,
-                                          color: const Color(0xff1272d3),
-                                        ),
-                                      ),
-                                    ],
+                              RichText(
+                                text: TextSpan(
+                                  style: GoogleFonts.readexPro(
+                                    fontSize: constraints.maxWidth / 35,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.25,
+                                    color: const Color(0xff1272d3),
                                   ),
+                                  children: [
+                                    TextSpan(
+                                      text: 'hi'.tr,
+                                      style: GoogleFonts.raleway(
+                                        fontSize: constraints.maxWidth / 15,
+                                        fontWeight: FontWeight.w800,
+                                        height: 1.175,
+                                        color: const Color(0xff1272d3),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text:
+                                          ' ${(userprofile?.firstName ?? " Rider").length > 10 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? " Rider")}',
+                                      style: GoogleFonts.raleway(
+                                        fontSize: constraints.maxWidth / 15,
+                                        fontWeight: FontWeight.w800,
+                                        height: 1.175,
+                                        color: const Color(0xff1272d3),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: '\n',
+                                      style: GoogleFonts.readexPro(
+                                        fontSize: constraints.maxWidth / 20,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color(0xff1272d3),
+                                      ),
+                                    ),
+                                    TextSpan(
+                                      text: _getGreetingMessage(),
+                                      style: GoogleFonts.raleway(
+                                        fontSize: constraints.maxWidth / 30,
+                                        fontWeight: FontWeight.w700,
+                                        // letterSpacing: 4.5,
+                                        color: const Color(0xff1272d3),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -166,6 +198,7 @@ class _FirstViewState extends State<FirstView> {
                                 GestureDetector(
                                   onTap: () async {
                                     await saveLoginState();
+                                    homechk = false;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -177,8 +210,8 @@ class _FirstViewState extends State<FirstView> {
                                     print('Image tapped!');
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: Get.height*0.28),
+                                    padding:
+                                        EdgeInsets.only(top: Get.height * 0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -205,6 +238,7 @@ class _FirstViewState extends State<FirstView> {
                                 GestureDetector(
                                   onTap: () async {
                                     await saveLoginState();
+                                    homechk = false;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -217,8 +251,8 @@ class _FirstViewState extends State<FirstView> {
                                     print('Image tapped!');
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: Get.height*0.28),
+                                    padding:
+                                        EdgeInsets.only(top: Get.height * 0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [

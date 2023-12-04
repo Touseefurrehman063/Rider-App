@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
@@ -18,7 +19,10 @@ import 'package:flutter_riderapp/Models/samplecollectionresponse.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_riderapp/Widgets/Customdropdown.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -70,7 +74,7 @@ class _ViewInformationState extends State<ViewInformation> {
   final RxString _selectedOption = 'no'.tr.obs;
   int _polylineCount = 1;
   final GoogleMapPolyline _googleMapPolyline =
-      GoogleMapPolyline(apiKey: "AIzaSyAO9XAv-175N385sGFtr-aeA3EgjEIGWWY");
+      GoogleMapPolyline(apiKey: "AIzaSyB07oKE_GD9xHgPEHrielmn1__vD3OsaYs");
   LatLng _currentLatLng = const LatLng(0.0, 0.0);
   final Completer<GoogleMapController> _controller = Completer();
   final Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
@@ -205,8 +209,7 @@ class _ViewInformationState extends State<ViewInformation> {
           points: coordinates!,
           width: 10,
           onTap: () {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text(timeInHours.toString())));
+            Showtoaster().classtoaster(timeInHours.toString());
           });
 
       setState(() {
@@ -225,7 +228,7 @@ class _ViewInformationState extends State<ViewInformation> {
   final Set<Marker> _markers = {};
   Map<PolylineId, Polyline> polylines = {};
   List<LatLng> polylineCoordinates = [];
-  String googleAPiKey = "AIzaSyAO9XAv-175N385sGFtr-aeA3EgjEIGWWY";
+  String googleAPiKey = "AIzaSyB07oKE_GD9xHgPEHrielmn1__vD3OsaYs";
   final Set<Polyline> _polyline = HashSet<Polyline>();
   List<LatLng> ltlg = [];
   String dropdownvalue = 'percentage'.tr;
@@ -336,7 +339,6 @@ class _ViewInformationState extends State<ViewInformation> {
   Future<void> appointmentserviceapi() async {
     final url = '$ip/api/account/GetAppointmentServicesDetail';
     final headers = {'Content-Type': 'application/json'};
-
     var requestBody = {
       "BranchLocationId": widget.user.branchlocationid ?? "",
       "UserId": widget.empId,
@@ -875,7 +877,7 @@ class _ViewInformationState extends State<ViewInformation> {
     );
 
     dynamic bd = bdody.toJson();
-
+    log(bd.toString());
     final response =
         await http.post(Uri.parse(url), headers: headers, body: jsonEncode(bd));
     print("Response: ${response.body}");
@@ -1084,7 +1086,7 @@ class _ViewInformationState extends State<ViewInformation> {
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: ColorManager.kDarkBlue,
                           fixedSize: const Size(100, 1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1121,7 +1123,7 @@ class _ViewInformationState extends State<ViewInformation> {
     );
   }
 
-  _showarrivedDialog() {
+  _showarrivedDialog(String text, bool arrive, bool sample) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -1140,7 +1142,7 @@ class _ViewInformationState extends State<ViewInformation> {
                   ),
                 ],
               ),
-              content: Text('arrivedatlocation'.tr),
+              content: Text(text.tr),
               actions: [
                 Padding(
                   padding: const EdgeInsets.only(left: 20.0),
@@ -1148,43 +1150,65 @@ class _ViewInformationState extends State<ViewInformation> {
                     children: [
                       ElevatedButton(
                         onPressed: () async {
-                          widget.user.empId = userprofile!.id;
-                          widget.user.status = 'Ride Arrived';
+                          if (arrive) {
+                            widget.user.empId = userprofile!.id;
+                            widget.user.status = 'Ride Arrived';
 
-                          await EndRide(widget.user);
-                          setState(() {
-                            isLoading = true;
-                          });
-                          try {
-                            await appointmentserviceapi();
+                            await EndRide(widget.user);
+                            setState(() {
+                              isLoading = true;
+                            });
+                            try {
+                              await appointmentserviceapi();
+                              setState(() {
+                                isLoading = false;
+                              });
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+
                             setState(() {
                               isLoading = false;
                             });
-                          } catch (e) {
-                            setState(() {
-                              isLoading = false;
-                            });
+
+                            // isRideEnd=true;
+
+                            //  chk=true;
+                            if (isRideStarted) {
+                              setState(() {
+                                message = '';
+                              });
+                            }
+                          } else if (sample) {
+                            try {
+                              setState(() {
+                                isLoading = true;
+                              });
+
+                              await samplecollectionapi();
+                              setState(() {
+                                isLoading = false;
+                              });
+                            } catch (e) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                            }
+                            if (collectionstatus == 1 || ischeckin == true) {
+                              setState(() {
+                                message = '';
+                                widget.user.status = "Sample Collected";
+                              });
+                            }
                           }
-
-                          setState(() {
-                            isLoading = false;
-                          });
-
-                          // isRideEnd=true;
-
-                          //  chk=true;
-                          if (isRideStarted) {
-                            setState(() {
-                              message = '';
-                            });
-                          }
-
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue,
+                          backgroundColor: ColorManager.kDarkBlue,
                           fixedSize: const Size(100, 1),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8),
@@ -1248,6 +1272,8 @@ class _ViewInformationState extends State<ViewInformation> {
         opacity: 0.4,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Scaffold(
+            bottomNavigationBar: const Mycustomnavbar(),
+            backgroundColor: Colors.blue,
             body: SizedBox(
                 width: MediaQuery.of(context).size.width * 1,
                 height: MediaQuery.of(context).size.height * 1,
@@ -1261,6 +1287,8 @@ class _ViewInformationState extends State<ViewInformation> {
                           width: MediaQuery.of(context).size.width * 01,
                           height: MediaQuery.of(context).size.height * 0.4,
                           child: Scaffold(
+                            floatingActionButtonLocation:
+                                FloatingActionButtonLocation.centerFloat,
                             floatingActionButton: distance != 0.0
                                 ? Container(
                                     child: time > 60.0
@@ -1328,25 +1356,24 @@ class _ViewInformationState extends State<ViewInformation> {
                             Navigator.of(context).pop();
                           },
                           child: Padding(
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 10.0),
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.099,
-                              child: Image.asset(
-                                "assets/back.png",
-                                height:
-                                    MediaQuery.of(context).size.height * 0.11,
-                              ),
+                            padding: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.04,
+                              left: MediaQuery.of(context).size.width * 0.04,
+                            ),
+                            child: const Icon(
+                              Icons.arrow_back_ios_new,
+                              color: Color(0xff0F64C6),
                             ),
                           ),
                         ),
                         Positioned(
                           top: MediaQuery.of(context).size.height * 0.03,
-                          left: MediaQuery.of(context).size.width * 0.45,
+                          left: MediaQuery.of(context).size.width * 0.34,
                           child: Center(
                             child: Image.asset(
-                             Images.logo,
-                              height: MediaQuery.of(context).size.height * 0.075,
+                              Images.logo,
+                              height:
+                                  MediaQuery.of(context).size.height * 0.075,
                             ),
                           ),
                         ),
@@ -1354,309 +1381,277 @@ class _ViewInformationState extends State<ViewInformation> {
                     ),
                   ),
                   Expanded(
+                      child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 1,
+                    height: MediaQuery.of(context).size.height,
                     child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 1,
-                        height: MediaQuery.of(context).size.height,
-                        child: SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          width: MediaQuery.of(context).size.width * 0.78,
-                          child: Card(
-                            color: Colors.blue,
-                            elevation: 0,
-                            child: SingleChildScrollView(
-                              child: ListTile(
+                      height: MediaQuery.of(context).size.height * 0.7,
+                      width: MediaQuery.of(context).size.width * 0.78,
+                      child: Card(
+                        color: ColorManager.kDarkBlue,
+                        elevation: 0,
+                        child: SingleChildScrollView(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ListTile(
                                 title: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    ListTile(
-                                      title: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.02,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.5,
-                                          ),
-                                          Text(
-                                            '${DateFormat('d MMMM y').format(DateTime.parse(widget.user.StartDate!))} | ${widget.user.time ?? ""}',
-                                            style: const TextStyle(
-                                                fontSize: 10,
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold),
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.person,
-                                                  color: Colors.white),
-                                              const SizedBox(width: 10),
-                                              Flexible(
-                                                child: Text(
-                                                  widget.user.patientName ?? "",
-                                                 
-                                                  style: GoogleFonts.poppins(
-                                                    fontSize: 20,
-                                                    color: Colors.white,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.clip,
-                                                  maxLines: 1,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 5,
-                                          ),
-                                          Row(
-                                            children: [
-                                              const Icon(
-                                                Icons.edit_document,
-                                                color: Colors.white,
-                                              ),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Flexible(
-                                                child: Text.rich(
-                                                  TextSpan(
-                                                    text: "Test  | ",
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                    children: [
-                                                      TextSpan(
-                                                        text: widget
-                                                                .user.test ??
-                                                            "",
-                                                        style: GoogleFonts
-                                                            .poppins(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight
-                                                                  .normal,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 2,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 5),
-                                          Row(
-                                            children: [
-                                              const Icon(Icons.pin_drop,
-                                                  color: Colors.white),
-                                              const SizedBox(
-                                                width: 10,
-                                              ),
-                                              Expanded(
-                                                child: Text.rich(
-                                                  TextSpan(
-                                                    text: "Address  | ",
-                                                    style: const TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold),
-                                                    children: [
-                                                      TextSpan(
-                                                          text: widget.user
-                                                                  .address ??
-                                                              "",
-                                                          style: GoogleFonts
-                                                              .poppins(
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal)),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                      trailing: Text(
-                                        widget.user.status ?? "",
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              0.02,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: Get.width * 0.01),
+                                      child: Text(
+                                        '${DateFormat('d MMMM y').format(DateTime.parse(widget.user.StartDate!))} | ${widget.user.time ?? ""}',
                                         style: const TextStyle(
-                                            fontSize: 12, color: Colors.white),
+                                            fontSize: 10,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
-
-                                    if (widget.user.status == "Pending")
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            chk = true;
-                                            isRideCancel = false;
-                                            isRideEnd = false;
-                                            // Navigator.push(context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
-                                            _showStartRideDialog();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(380, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15), // Set the border radius here
-                                            ),
-                                          ),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        Flexible(
                                           child: Text(
-                                            'startride'.tr,
+                                            widget.user.patientName ?? "",
                                             style: GoogleFonts.poppins(
-                                                fontSize: 14,
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.clip,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.edit_document,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Flexible(
+                                          child: Text.rich(
+                                            TextSpan(
+                                              text: "Test  | ",
+                                              style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white,
                                                 fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
+                                              ),
+                                              children: [
+                                                TextSpan(
+                                                  text: widget.user.test
+                                                          ?.toString()
+                                                          .trim() ??
+                                                      "",
+                                                  style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            // overflow:
+                                            //     TextOverflow.ellipsis,
+                                            // maxLines: 2,
                                           ),
                                         ),
-                                      ),
-                                    // SizedBox(
-                                    //   height:
-                                    //       MediaQuery.of(context).size.height *
-                                    //           0.02,
-                                    // ),
-                                    if (widget.user.status == "Pending")
-                                      Center(
-                                        child: Padding(
-                                          padding:  EdgeInsets.only(top:Get.height*0.02),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "order".tr,
-                                                style: GoogleFonts.poppins(
+                                      ],
+                                    ),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.pin_drop,
+                                            color: Colors.white),
+                                        const SizedBox(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Text.rich(
+                                            TextSpan(
+                                              text: "Address  | ",
+                                              style: const TextStyle(
                                                   fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
                                                   color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              Text(
-                                                "${widget.user.LabNo ?? " #0001"} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 10,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ],
+                                                  fontWeight: FontWeight.bold),
+                                              children: [
+                                                TextSpan(
+                                                    text: widget.user.address ??
+                                                        "",
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.normal)),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      ),
-                                    // SizedBox(
-                                    //   height:
-                                    //       MediaQuery.of(context).size.height *
-                                    //           0.02,
-                                    // ),
-                                    if (widget.user.status == "Pending")
-                                      Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: Get.height*0.02),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "paymentstatus".tr,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                                trailing: Text(
+                                  widget.user.status ?? "",
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.white),
+                                ),
+                              ),
+
+                              if (widget.user.status == "Pending")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        chk = true;
+                                        isRideCancel = false;
+                                        isRideEnd = false;
+                                        // Navigator.push(context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
+                                        _showStartRideDialog();
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        fixedSize: const Size(380, 4),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              15), // Set the border radius here
                                         ),
                                       ),
+                                      child: Text(
+                                        'startride'.tr,
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              // SizedBox(
+                              //   height:
+                              //       MediaQuery.of(context).size.height *
+                              //           0.02,
+                              // ),
 
-                                    if (widget.user.status == "Ride Started")
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(top: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            // if(chk)
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 0),
-                                              child: ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog<void>(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return CupertinoAlertDialog(
-                                                          title: Text(
-                                                              'cancelride'.tr),
-                                                          content: Column(
+                              if (widget.user.status == "Ride Started")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // if(chk)
+                                      SizedBox(
+                                        width: Get.width * 0.43,
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                    ),
+                                                    content: SizedBox(
+                                                      height: Get.height * 0.23,
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                             children: [
-                                                              const SizedBox(
-                                                                height: 30,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            170.0),
-                                                                child: Text(
-                                                                  'remarks'.tr,
-                                                                  style: GoogleFonts
-                                                                      .poppins(
-                                                                          fontSize:
-                                                                              14),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 30,
-                                                              ),
-                                                              CupertinoTextField(
-                                                                controller:
-                                                                    _remarksController,
-                                                                placeholder:
-                                                                    'enterremarks'
-                                                                        .tr,
-                                                              ),
+                                                              const Text(""),
+                                                              Text('cancelride'
+                                                                  .tr),
+                                                              InkWell(
+                                                                  onTap: () {
+                                                                    Get.back();
+                                                                  },
+                                                                  child: const Icon(
+                                                                      CupertinoIcons
+                                                                          .clear)),
                                                             ],
                                                           ),
-                                                          actions: <Widget>[
-                                                            CupertinoButton(
+                                                          SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02),
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  'remarks'.tr,
+                                                              enabledBorder: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          width:
+                                                                              1,
+                                                                          color:
+                                                                              Colors.black)),
+                                                              disabledBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              border: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          width:
+                                                                              1,
+                                                                          color:
+                                                                              Colors.black)),
+                                                            ),
+                                                            controller:
+                                                                _remarksController,
+                                                            // placeholder:
+                                                            //     'enterremarks'
+                                                            //         .tr,
+                                                          ),
+                                                          SizedBox(
+                                                            height: Get.height *
+                                                                0.03,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                Get.width * 0.7,
+                                                            child:
+                                                                CupertinoButton(
                                                               color:
                                                                   Colors.blue,
                                                               borderRadius:
                                                                   const BorderRadius
                                                                       .all(
                                                                       Radius.circular(
-                                                                          5.0)),
+                                                                          15.0)),
                                                               child: Text(
                                                                 'ok'.tr,
                                                               ),
@@ -1696,176 +1691,201 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                           context)
                                                                       .pop();
                                                                 } else {
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(SnackBar(
-                                                                          content:
-                                                                              Text("pleaseenterremarks".tr)));
+                                                                  Showtoaster()
+                                                                      .classtoaster(
+                                                                          "pleaseenterremarks"
+                                                                              .tr);
                                                                 }
                                                               },
                                                             ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.red,
-                                                    fixedSize:
-                                                        const Size(120, 4),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              fixedSize: const Size(120, 4),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    15), // Set the border radius here
+                                              ),
+                                            ),
+                                            child: Text(
+                                              "cancel".tr,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            )),
+                                      ),
+                                      const SizedBox(
+                                        width: 0.01,
+                                      ),
+                                      if (!isRideEnd && !isRideCancel)
+                                        SizedBox(
+                                          width: Get.width * 0.43,
+                                          child: ElevatedButton(
+                                              onPressed: () async {
+                                                await _showarrivedDialog(
+                                                    'arrivedatlocation',
+                                                    true,
+                                                    false);
+
+                                                if (isRideEnd) {
+                                                  setState(() {
+                                                    message = '';
+                                                  });
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                fixedSize: const Size(120, 4),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "arrived".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
+                                              )),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              if (widget.user.status == "Ride Started")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: Get.height * 0.03),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "Ride Started Successfully",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.normal,
+                                            color: Colors.white),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                              //Here
+
+                              if (widget.user.status == "Ride Arrived")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // if(chk)
+                                      SizedBox(
+                                        width: Get.width * 0.43,
+                                        child: ElevatedButton(
+                                            onPressed: () {
+                                              showDialog<void>(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
                                                     shape:
                                                         RoundedRectangleBorder(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              8), // Set the border radius here
+                                                              30),
                                                     ),
-                                                  ),
-                                                  child: Text(
-                                                    "cancel".tr,
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white),
-                                                  )),
-                                            ),
-                                            const SizedBox(
-                                              width: 0.01,
-                                            ),
-                                            if (!isRideEnd && !isRideCancel)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    right: 5.0),
-                                                child: ElevatedButton(
-                                                    onPressed: () async {
-                                                      await _showarrivedDialog();
-
-                                                      if (isRideEnd) {
-                                                        setState(() {
-                                                          message = '';
-                                                        });
-                                                      }
-                                                    },
-                                                    style: ElevatedButton
-                                                        .styleFrom(
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      fixedSize:
-                                                          const Size(120, 4),
-                                                      shape:
-                                                          RoundedRectangleBorder(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(8),
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      "arrived".tr,
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.blue),
-                                                    )),
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      if(widget.user.status=="Ride Started")
-                                      Padding(
-                                        padding:  EdgeInsets.symmetric(vertical: Get.height*0.05),
-                                        child: Row(
-                                         mainAxisAlignment: MainAxisAlignment.center,
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          
-                                          children: [
-                                            Text("Ride Started Successfully",
-                                             style:
-                                                              GoogleFonts.poppins(
-                                                                  fontSize: 16,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .normal,
-                                                                  color:
-                                                                      Colors.white),),
-                                          ],
-                                        ),
-                                      ),
-
-                                    //Here
-
-                                    if (widget.user.status == "Ride Arrived")
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            // if(chk)
-                                            Padding(
-                                              padding: const EdgeInsets.only(
-                                                  right: 80.0),
-                                              child: ElevatedButton(
-                                                  onPressed: () {
-                                                    showDialog<void>(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return CupertinoAlertDialog(
-                                                          title: Text(
-                                                              'cancelride'.tr),
-                                                          content: Column(
+                                                    content: SizedBox(
+                                                      height: Get.height * 0.23,
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                             children: [
-                                                              const SizedBox(
-                                                                height: 30,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            170.0),
-                                                                child: Text(
-                                                                  'remarks'.tr,
-                                                                  style: GoogleFonts
-                                                                      .poppins(
-                                                                          fontSize:
-                                                                              14),
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                height: 30,
-                                                              ),
-                                                              CupertinoTextField(
-                                                                controller:
-                                                                    _remarksController,
-                                                                placeholder:
-                                                                    'enterremarks'
-                                                                        .tr,
-                                                              ),
+                                                              const Text(""),
+                                                              Text('cancelride'
+                                                                  .tr),
+                                                              InkWell(
+                                                                  onTap: () {
+                                                                    Get.back();
+                                                                  },
+                                                                  child: const Icon(
+                                                                      CupertinoIcons
+                                                                          .clear)),
                                                             ],
                                                           ),
-                                                          actions: <Widget>[
-                                                            CupertinoButton(
+                                                          SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.02),
+                                                          TextFormField(
+                                                            decoration:
+                                                                InputDecoration(
+                                                              labelText:
+                                                                  'remarks'.tr,
+                                                              enabledBorder: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          width:
+                                                                              1,
+                                                                          color:
+                                                                              Colors.black)),
+                                                              disabledBorder:
+                                                                  InputBorder
+                                                                      .none,
+                                                              border: const OutlineInputBorder(
+                                                                  borderSide:
+                                                                      BorderSide(
+                                                                          width:
+                                                                              1,
+                                                                          color:
+                                                                              Colors.black)),
+                                                            ),
+                                                            controller:
+                                                                _remarksController,
+                                                            // placeholder:
+                                                            //     'enterremarks'
+                                                            //         .tr,
+                                                          ),
+                                                          SizedBox(
+                                                            height: Get.height *
+                                                                0.03,
+                                                          ),
+                                                          SizedBox(
+                                                            width:
+                                                                Get.width * 0.7,
+                                                            child:
+                                                                CupertinoButton(
                                                               color:
                                                                   Colors.blue,
                                                               borderRadius:
                                                                   const BorderRadius
                                                                       .all(
                                                                       Radius.circular(
-                                                                          5.0)),
+                                                                          15.0)),
                                                               child: Text(
                                                                 'ok'.tr,
                                                               ),
                                                               onPressed:
                                                                   () async {
+                                                                widget.user
+                                                                        .status =
+                                                                    "Ride Started";
                                                                 if (_remarksController
                                                                     .text
                                                                     .isNotEmpty) {
@@ -1887,258 +1907,75 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                       widget
                                                                           .user,
                                                                       remarks);
+                                                                  isRideCancel =
+                                                                      true;
+                                                                  setState(
+                                                                      () {});
                                                                   _remarksController
                                                                       .clear();
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
                                                                 } else {
-                                                                  ScaffoldMessenger.of(
-                                                                          context)
-                                                                      .showSnackBar(SnackBar(
-                                                                          content:
-                                                                              Text("pleaseenterremarks".tr)));
+                                                                  Showtoaster()
+                                                                      .classtoaster(
+                                                                          "pleaseenterremarks"
+                                                                              .tr);
                                                                 }
                                                               },
                                                             ),
-                                                          ],
-                                                        );
-                                                      },
-                                                    );
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor: Colors.red,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8), // Set the border radius here
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    "cancel".tr,
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.white),
-                                                  )),
-                                            ),
-
-                                            const SizedBox(
-                                              width: 0.01,
-                                            ),
-                                            // if(isRideEnd && !isRideCancel)
-                                            if (widget.user.status ==
-                                                "Ride Arrived")
-                                              ElevatedButton(
-                                                  onPressed: () async {
-                                                    if (ispaymentselected ==
-                                                            true ||
-                                                        (widget.user.paymentstatusvalue ==
-                                                                "1" &&
-                                                            ispaymentselected ==
-                                                                false)) {
-                                                      ischeckin = true;
-                                                      distance = 0.0;
-                                                      time = 0.0;
-                                                      if (ischeckin) {
-                                                        widget.user.status =
-                                                            'Booked';
-                                                        isLoading = false;
-                                                        setState(() {});
-                                                        try {
-                                                          await checkinapi();
-                                                          // _polylines.clear();
-                                                          //  _markers.remove(0);
-                                                          // await callback();
-                                                          await getsampleapi();
-                                                          setState(() {
-                                                            isLoading = false;
-                                                          });
-                                                        } catch (e) {
-                                                          setState(() {
-                                                            isLoading = false;
-                                                          });
-                                                        }
-
-                                                        setState(() {
-                                                          // message='Checkin Successfully';
-                                                        });
-                                                      }
-                                                    } else {
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(SnackBar(
-                                                              content: Text(
-                                                                  "pleaseselectpaymentmethod"
-                                                                      .tr)));
-                                                    }
-                                                  },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    "checkin".tr,
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.blue),
-                                                  )),
-                                          ],
-                                        ),
-                                      ),
-
-                                    if (widget.user.status == "Booked")
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceAround,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          // if(chk)
-                                          Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 0),
-                                            child: ElevatedButton(
-                                                onPressed: () {
-                                                  showDialog<void>(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return CupertinoAlertDialog(
-                                                        title: Text(
-                                                            'cancelride'.tr),
-                                                        content: Column(
-                                                          children: [
-                                                            const SizedBox(
-                                                              height: 30,
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      right:
-                                                                          170.0),
-                                                              child: Text(
-                                                                'Remarks',
-                                                                style: GoogleFonts
-                                                                    .poppins(
-                                                                        fontSize:
-                                                                            14),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                              height: 30,
-                                                            ),
-                                                            CupertinoTextField(
-                                                              controller:
-                                                                  _remarksController,
-                                                              placeholder:
-                                                                  'enterremarks'
-                                                                      .tr,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        actions: <Widget>[
-                                                          CupertinoButton(
-                                                            color: Colors.blue,
-                                                            borderRadius:
-                                                                const BorderRadius
-                                                                    .all(
-                                                                    Radius.circular(
-                                                                        5.0)),
-                                                            child: Text(
-                                                              'ok'.tr,
-                                                            ),
-                                                            onPressed:
-                                                                () async {
-                                                              if (_remarksController
-                                                                  .text
-                                                                  .isNotEmpty) {
-                                                                chk = false;
-                                                                String remarks =
-                                                                    _remarksController
-                                                                        .text;
-                                                                isRideCancel =
-                                                                    true;
-                                                                if (isRideCancel) {
-                                                                  setState(() {
-                                                                    message =
-                                                                        'Ride Cancel successfully!';
-                                                                  });
-                                                                }
-                                                                await CancelRide(
-                                                                    widget.user,
-                                                                    remarks);
-                                                                isRideCanceled =
-                                                                    true;
-                                                                _remarksController
-                                                                    .clear();
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                              } else {
-                                                                ScaffoldMessenger.of(
-                                                                        context)
-                                                                    .showSnackBar(SnackBar(
-                                                                        content:
-                                                                            Text("pleaseenterremarks".tr)));
-                                                              }
-                                                            },
                                                           ),
                                                         ],
-                                                      );
-                                                    },
+                                                      ),
+                                                    ),
                                                   );
                                                 },
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.red,
-                                                  fixedSize: const Size(140, 4),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8), // Set the border radius here
-                                                  ),
-                                                ),
-                                                child: Text(
-                                                  "cancel".tr,
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white),
-                                                )),
-                                          ),
-                                          const SizedBox(
-                                            width: 0.01,
-                                          ),
-                                          // if(!isRideEnd && !isRideCancel)
-                                          if (widget.user.status == "Booked")
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20),
-                                              child: ElevatedButton(
-                                                  onPressed: () async {
-                                                    // await _showarrivedDialog();
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.red,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(
+                                                    15), // Set the border radius here
+                                              ),
+                                            ),
+                                            child: Text(
+                                              "cancel".tr,
+                                              style: GoogleFonts.poppins(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.white),
+                                            )),
+                                      ),
 
+                                      const SizedBox(
+                                        width: 0.01,
+                                      ),
+                                      // if(isRideEnd && !isRideCancel)
+                                      if (widget.user.status == "Ride Arrived")
+                                        SizedBox(
+                                          width: Get.width * 0.43,
+                                          child: ElevatedButton(
+                                              onPressed: () async {
+                                                if (ispaymentselected == true ||
+                                                    (widget.user.paymentstatusvalue ==
+                                                            "1" &&
+                                                        ispaymentselected ==
+                                                            false)) {
+                                                  ischeckin = true;
+                                                  distance = 0.0;
+                                                  time = 0.0;
+                                                  if (ischeckin) {
+                                                    widget.user.status =
+                                                        'Booked';
+                                                    isLoading = false;
+                                                    setState(() {});
                                                     try {
-                                                      setState(() {
-                                                        isLoading = true;
-                                                      });
-
-                                                      await samplecollectionapi();
+                                                      await checkinapi();
+                                                      // _polylines.clear();
+                                                      //  _markers.remove(0);
+                                                      // await callback();
+                                                      await getsampleapi();
                                                       setState(() {
                                                         isLoading = false;
                                                       });
@@ -2147,837 +1984,1140 @@ class _ViewInformationState extends State<ViewInformation> {
                                                         isLoading = false;
                                                       });
                                                     }
-                                                    if (collectionstatus == 1 ||
-                                                        ischeckin == true) {
-                                                      setState(() {
-                                                        message = '';
-                                                        widget.user.status =
-                                                            "Sample Collected";
-                                                      });
-                                                    }
+
+                                                    setState(() {
+                                                      // message='Checkin Successfully';
+                                                    });
+                                                  }
+                                                } else {
+                                                  Showtoaster().classtoaster(
+                                                      "pleaseselectpaymentmethod"
+                                                          .tr);
+                                                }
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "checkin".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
+                                              )),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+
+                              if (widget.user.status == "Booked")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      // if(chk)
+                                      SizedBox(
+                                        width: Get.width * 0.43,
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 0),
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return AlertDialog(
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(30),
+                                                      ),
+                                                      content: SizedBox(
+                                                        height:
+                                                            Get.height * 0.23,
+                                                        child: Column(
+                                                          children: [
+                                                            Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                const Text(""),
+                                                                Text(
+                                                                    'cancelride'
+                                                                        .tr),
+                                                                InkWell(
+                                                                    onTap: () {
+                                                                      Get.back();
+                                                                    },
+                                                                    child: const Icon(
+                                                                        CupertinoIcons
+                                                                            .clear)),
+                                                              ],
+                                                            ),
+                                                            SizedBox(
+                                                                height:
+                                                                    Get.height *
+                                                                        0.02),
+                                                            TextFormField(
+                                                              decoration:
+                                                                  InputDecoration(
+                                                                labelText:
+                                                                    'remarks'
+                                                                        .tr,
+                                                                enabledBorder: const OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        width:
+                                                                            1,
+                                                                        color: Colors
+                                                                            .black)),
+                                                                disabledBorder:
+                                                                    InputBorder
+                                                                        .none,
+                                                                border: const OutlineInputBorder(
+                                                                    borderSide: BorderSide(
+                                                                        width:
+                                                                            1,
+                                                                        color: Colors
+                                                                            .black)),
+                                                              ),
+                                                              controller:
+                                                                  _remarksController,
+                                                              // placeholder:
+                                                              //     'enterremarks'
+                                                              //         .tr,
+                                                            ),
+                                                            SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.03,
+                                                            ),
+                                                            SizedBox(
+                                                              width: Get.width *
+                                                                  0.7,
+                                                              child:
+                                                                  CupertinoButton(
+                                                                color:
+                                                                    Colors.blue,
+                                                                borderRadius:
+                                                                    const BorderRadius
+                                                                        .all(
+                                                                        Radius.circular(
+                                                                            15.0)),
+                                                                child: Text(
+                                                                  'ok'.tr,
+                                                                ),
+                                                                onPressed:
+                                                                    () async {
+                                                                  widget.user
+                                                                          .status =
+                                                                      "Ride Started";
+                                                                  if (_remarksController
+                                                                      .text
+                                                                      .isNotEmpty) {
+                                                                    chk = false;
+                                                                    String
+                                                                        remarks =
+                                                                        _remarksController
+                                                                            .text;
+                                                                    isRideCancel =
+                                                                        true;
+                                                                    if (isRideCancel) {
+                                                                      setState(
+                                                                          () {
+                                                                        message =
+                                                                            'Ride Cancel successfully!';
+                                                                      });
+                                                                    }
+                                                                    await CancelRide(
+                                                                        widget
+                                                                            .user,
+                                                                        remarks);
+                                                                    isRideCancel =
+                                                                        true;
+                                                                    setState(
+                                                                        () {});
+                                                                    _remarksController
+                                                                        .clear();
+                                                                    Navigator.of(
+                                                                            context)
+                                                                        .pop();
+                                                                  } else {
+                                                                    Showtoaster()
+                                                                        .classtoaster(
+                                                                            "pleaseenterremarks".tr);
+                                                                  }
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    );
                                                   },
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        Colors.white,
-                                                    fixedSize:
-                                                        const Size(150, 4),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                    ),
-                                                  ),
-                                                  child: Text(
-                                                    "samplecollected".tr,
-                                                    style: GoogleFonts.poppins(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        color: Colors.blue),
-                                                  )),
-                                            ),
-                                        ],
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.red,
+                                                fixedSize: const Size(140, 4),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15), // Set the border radius here
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "cancel".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.white),
+                                              )),
+                                        ),
                                       ),
+                                      const SizedBox(
+                                        width: 0.01,
+                                      ),
+                                      // if(!isRideEnd && !isRideCancel)
+                                      if (widget.user.status == "Booked")
                                         SizedBox(
-                                      height: Get.height * 0.05,
-                                    ),
-                                       if (widget.user.status == "Booked")
-                                      Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                              
-                                          children: [
-                                            Text(
-                                              "totalamount".tr,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
+                                          width: Get.width * 0.43,
+                                          child: ElevatedButton(
+                                              onPressed: () async {
+                                                // await _showarrivedDialog();
+                                                await _showarrivedDialog(
+                                                    'Have you Collected Sample',
+                                                    false,
+                                                    true);
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                fixedSize: const Size(150, 4),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(15),
+                                                ),
                                               ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              "$totalAppointmentPrice ",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.right,
-                                            ),
-                                          ],
+                                              child: Text(
+                                                "samplecollected".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
+                                              )),
                                         ),
+                                    ],
+                                  ),
+                                ),
+                              widget.user.status == "Booked"
+                                  ? SizedBox(height: Get.height * 0.07)
+                                  : const SizedBox.shrink(),
+                              if (widget.user.status == "Booked")
+                                Center(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        "totalamount".tr,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.center,
                                       ),
-                                  
-                                    if (widget.user.status == "Booked")
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "paymentstatus".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              Text(
-                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
-                                              ),
-                                            ],
-                                          )),
-                                    // SizedBox(height: Get.height*0.05,),
-                                   
+                                      Text(
+                                        "$totalAppointmentPrice ",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    ],
+                                  ),
+                                ),
 
-                                    //checked in
-
-                                    if (widget.user.status == "Ride Arrived")
-                                      InkWell(
-                                        onTap: () async {
-                                          Selectpayment = null;
-                                          payments.clear();
-                                          await paymentapi();
-                                          setState(() {});
-                                        },
-                                        child: SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.84,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.072,
-                                          child: Padding(
-                                            padding: EdgeInsets.only(
-                                                left: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.28,
-                                                right: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    0.05),
-                                            child: widget.user
-                                                        .paymentstatusvalue !=
-                                                    "1"
-                                                ? Container(
-                                                    decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                          color: Colors.black,
-                                                          width: 0.5),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10.0),
-                                                      color: Colors.white,
-                                                    ),
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.05,
-                                                    child:
-                                                        DropdownButtonFormField(
-                                                      decoration:
-                                                          const InputDecoration(
-                                                        border:
-                                                            InputBorder.none,
-                                                      ),
-                                                      value: Selectpayment,
-                                                      hint: Text(
-                                                          'paymentmethod'.tr,
-                                                          textAlign:
-                                                              TextAlign.center),
-                                                      items: payments.map<
-                                                              DropdownMenuItem<
-                                                                  String>>(
-                                                          (PaymentMethod val) {
-                                                        return DropdownMenuItem<
-                                                            String>(
-                                                          value: val.name,
-                                                          child: Text(val.name
-                                                              .toString()),
-                                                        );
-                                                      }).toList(),
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontSize: 10,
-                                                      ),
-                                                      onChanged:
-                                                          (String? newValue) {
-                                                        setState(() {
-                                                          Selectpayment =
-                                                              newValue;
-                                                          ispaymentselected =
-                                                              true;
-                                                          print(newValue);
-                                                        });
-                                                      },
-                                                      alignment:
-                                                          Alignment.center,
-                                                    ),
-                                                  )
-                                                : const SizedBox.shrink(),
+                              if (widget.user.status == "Booked")
+                                SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 1,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "paymentstatus".tr,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            color: Colors.white,
                                           ),
+                                          textAlign: TextAlign.center,
                                         ),
-                                      ),
-                                    if (widget.user.status == "Ride Arrived")
-                                      SizedBox(
-                                          child:
-                                              widget.user.paymentstatusvalue !=
-                                                      "1"
-                                                  ? Text(
-                                                      "discount".tr,
-                                                      style: const TextStyle(
-                                                          color: Colors.white),
-                                                    )
-                                                  : const SizedBox.shrink()),
-                                    if (widget.user.status == "Ride Arrived")
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.9,
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            widget.user.paymentstatusvalue !=
-                                                    "1"
-                                                ? Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.start,
-                                                    children: [
-                                                      Text(
-                                                        'yes'.tr,
-                                                        style: const TextStyle(
-                                                            color:
-                                                                Colors.white),
-                                                      ),
-                                                      Obx(() => SizedBox(
+                                        Text(
+                                          "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                      ],
+                                    )),
+                              // SizedBox(height: Get.height*0.05,),
+
+                              //checked in
+
+                              if (widget.user.status == "Ride Arrived" ||
+                                  widget.user.status == "Sample Collected" ||
+                                  widget.user.status == "In Route" ||
+                                  widget.user.status == "Sample Delivered")
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: Get.width * 0.05),
+                                  child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Column(children: [
+                                          Row(
+                                            children: [
+                                              Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  if (widget.user.status ==
+                                                      "Ride Arrived")
+                                                    SizedBox(
+                                                        child: widget.user
+                                                                    .paymentstatusvalue !=
+                                                                "1"
+                                                            ? Text(
+                                                                "discount".tr,
+                                                                style: const TextStyle(
+                                                                    color: Colors
+                                                                        .white),
+                                                              )
+                                                            : const SizedBox
+                                                                .shrink()),
+                                                  if (widget.user.status ==
+                                                      "Ride Arrived")
+                                                    SizedBox(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.04,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              0.27,
+                                                      child: widget.user
+                                                                  .paymentstatusvalue !=
+                                                              "1"
+                                                          ? Padding(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                      vertical:
+                                                                          Get.height *
+                                                                              0.01),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  Text(
+                                                                    'yes'.tr,
+                                                                    style: const TextStyle(
+                                                                        color: Colors
+                                                                            .white),
+                                                                  ),
+                                                                  Obx(() =>
+                                                                      SizedBox(
+                                                                        width: MediaQuery.of(context).size.width *
+                                                                            0.06,
+                                                                        child:
+                                                                            Radio(
+                                                                          value:
+                                                                              'yes'.tr,
+                                                                          groupValue:
+                                                                              _selectedOption.value, // Access value property
+                                                                          fillColor:
+                                                                              MaterialStateColor.resolveWith((states) => Colors.white),
+                                                                          onChanged:
+                                                                              (value) {
+                                                                            _selectedOption.value =
+                                                                                value!; // Update _selectedOption value
+                                                                          },
+                                                                        ),
+                                                                      )),
+                                                                  Obx(() => Row(
+                                                                        mainAxisSize:
+                                                                            MainAxisSize.min,
+                                                                        children: [
+                                                                          Text(
+                                                                            'no'.tr,
+                                                                            style:
+                                                                                const TextStyle(color: Colors.white),
+                                                                          ),
+                                                                          SizedBox(
+                                                                            width:
+                                                                                MediaQuery.of(context).size.width * 0.06,
+                                                                            child:
+                                                                                Radio(
+                                                                              value: 'no'.tr,
+                                                                              groupValue: _selectedOption.value,
+                                                                              fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
+                                                                              onChanged: (value) {
+                                                                                discount = TextEditingController();
+                                                                                dsct = "0.0";
+                                                                                setState(() {});
+                                                                                _selectedOption.value = value!;
+                                                                              },
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      )),
+                                                                ],
+                                                              ),
+                                                            )
+                                                          : const SizedBox
+                                                              .shrink(),
+                                                    ),
+                                                ],
+                                              ),
+                                              widget.user.status ==
+                                                      "Ride Arrived"
+                                                  ? Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .end,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () async {
+                                                            Selectpayment =
+                                                                null;
+                                                            payments.clear();
+                                                            await paymentapi();
+                                                            setState(() {});
+                                                          },
+                                                          child: SizedBox(
                                                             width: MediaQuery.of(
                                                                         context)
                                                                     .size
                                                                     .width *
-                                                                0.07,
-                                                            child: Radio(
-                                                              value: 'yes'.tr,
-                                                              groupValue:
-                                                                  _selectedOption
-                                                                      .value, // Access value property
-                                                              fillColor: MaterialStateColor
-                                                                  .resolveWith(
-                                                                      (states) =>
-                                                                          Colors
-                                                                              .white),
-                                                              onChanged:
-                                                                  (value) {
-                                                                _selectedOption
-                                                                        .value =
-                                                                    value!; // Update _selectedOption value
-                                                              },
-                                                            ),
-                                                          )),
-                                                      Obx(() => Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              Text(
-                                                                'no'.tr,
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              ),
-                                                              SizedBox(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    0.07,
-                                                                child: Radio(
-                                                                  value:
-                                                                      'no'.tr,
-                                                                  groupValue:
-                                                                      _selectedOption
-                                                                          .value,
-                                                                  fillColor: MaterialStateColor.resolveWith(
-                                                                      (states) =>
-                                                                          Colors
-                                                                              .white),
-                                                                  onChanged:
-                                                                      (value) {
-                                                                    discount =
-                                                                        TextEditingController();
-                                                                    dsct =
-                                                                        "0.0";
-                                                                    setState(
-                                                                        () {});
-                                                                    _selectedOption
-                                                                            .value =
-                                                                        value!;
-                                                                  },
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          )),
-                                                    ],
-                                                  )
-                                                : const SizedBox.shrink(),
-                                            Obx(
-                                              () => _selectedOption == 'yes'.tr
-                                                  ? Row(
-                                                      children: [
-                                                        Container(
+                                                                0.37,
+                                                            height: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .height *
+                                                                0.05,
+                                                            child: widget.user
+                                                                        .paymentstatusvalue !=
+                                                                    "1"
+                                                                ? Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border: Border.all(
+                                                                          color: Colors
+                                                                              .black,
+                                                                          width:
+                                                                              0.5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              5.0),
+                                                                      color: Colors
+                                                                          .white,
+                                                                    ),
+                                                                    height: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height *
+                                                                        0.05,
+                                                                    width:
+                                                                        Get.width *
+                                                                            0.32,
+                                                                    child:
+                                                                        DropdownButtonFormField(
+                                                                      decoration:
+                                                                          const InputDecoration(
+                                                                        contentPadding:
+                                                                            EdgeInsets.only(bottom: 12),
+                                                                        border:
+                                                                            InputBorder.none,
+                                                                      ),
+                                                                      value:
+                                                                          Selectpayment,
+                                                                      hint: Text(
+                                                                          'paymentmethod'
+                                                                              .tr,
+                                                                          textAlign:
+                                                                              TextAlign.center),
+                                                                      items: payments.map<
+                                                                          DropdownMenuItem<
+                                                                              String>>((PaymentMethod
+                                                                          val) {
+                                                                        return DropdownMenuItem<
+                                                                            String>(
+                                                                          value:
+                                                                              val.name,
+                                                                          child: Text(val
+                                                                              .name
+                                                                              .toString()),
+                                                                        );
+                                                                      }).toList(),
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        color: Colors
+                                                                            .black,
+                                                                        fontSize:
+                                                                            10,
+                                                                      ),
+                                                                      onChanged:
+                                                                          (String?
+                                                                              newValue) {
+                                                                        discount
+                                                                            .clear();
+                                                                        setState(
+                                                                            () {
+                                                                          Selectpayment =
+                                                                              newValue;
+                                                                          ispaymentselected =
+                                                                              true;
+                                                                          print(
+                                                                              newValue);
+                                                                        });
+                                                                      },
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .center,
+                                                                    ),
+                                                                  )
+                                                                : const SizedBox
+                                                                    .shrink(),
+                                                          ),
+                                                        ),
+                                                        Obx(
+                                                          () => _selectedOption ==
+                                                                  'yes'.tr
+                                                              ? Row(
+                                                                  children: [
+                                                                    Container(
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        border: Border.all(
+                                                                            color:
+                                                                                Colors.black,
+                                                                            width: 0.5),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(5.0),
+                                                                        color: Colors
+                                                                            .white,
+                                                                      ),
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.22,
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .height *
+                                                                          0.05,
+                                                                      child:
+                                                                          DropdownButtonFormField(
+                                                                        decoration:
+                                                                            const InputDecoration(
+                                                                          contentPadding:
+                                                                              EdgeInsets.only(bottom: 12),
+                                                                          border:
+                                                                              InputBorder.none,
+                                                                        ),
+                                                                        value:
+                                                                            dropdownvalue,
+                                                                        items: item1.map((String
+                                                                            items) {
+                                                                          return DropdownMenuItem(
+                                                                            value:
+                                                                                items,
+                                                                            child:
+                                                                                Center(
+                                                                              child: Text(
+                                                                                "  $items",
+                                                                                //  textAlign: AlignmentDirectional.topCenter,
+                                                                              ),
+                                                                            ),
+                                                                          );
+                                                                        }).toList(),
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontSize:
+                                                                              12,
+                                                                        ),
+                                                                        onChanged:
+                                                                            (String?
+                                                                                newValue) {
+                                                                          setState(
+                                                                              () {
+                                                                            dropdownvalue =
+                                                                                newValue!;
+                                                                          });
+                                                                        },
+                                                                        alignment:
+                                                                            Alignment.center,
+                                                                        elevation:
+                                                                            0,
+                                                                      ),
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: MediaQuery.of(context)
+                                                                              .size
+                                                                              .width *
+                                                                          0.15,
+                                                                      height: MediaQuery.of(context)
+                                                                              .size
+                                                                              .height *
+                                                                          0.05,
+                                                                      child:
+                                                                          TextFormField(
+                                                                        controller:
+                                                                            discount,
+                                                                        onChanged:
+                                                                            (val) {
+                                                                          if (dropdownvalue == "percentage".tr &&
+                                                                              val.replaceAll('0', '') !=
+                                                                                  "") {
+                                                                            dsct = int.parse(val) >= 100
+                                                                                ? totalAppointmentPrice.toString()
+                                                                                : ((totalAppointmentPrice - ((totalAppointmentPrice / 100) * int.parse(val)))).toString();
+                                                                          } else if (dropdownvalue != "" &&
+                                                                              val.replaceAll('0', '') !=
+                                                                                  "") {
+                                                                            dsct = double.parse(val) > totalAppointmentPrice
+                                                                                ? totalAppointmentPrice.toString()
+                                                                                : (totalAppointmentPrice - int.parse(val)).toString();
+                                                                          } else if (discount.text.isEmpty ||
+                                                                              val.replaceAll('0', '') == "") {
+                                                                            dsct =
+                                                                                "0.0";
+                                                                          }
+                                                                          setState(
+                                                                              () {});
+                                                                        },
+                                                                        keyboardType:
+                                                                            TextInputType.number,
+                                                                        decoration:
+                                                                            InputDecoration(
+                                                                          contentPadding: EdgeInsets.symmetric(
+                                                                              vertical: Get.height * 0.01,
+                                                                              horizontal: Get.width * 0.02),
+                                                                          filled:
+                                                                              true,
+                                                                          fillColor:
+                                                                              Colors.white,
+                                                                          hintText:
+                                                                              dropdownvalue,
+                                                                          border:
+                                                                              OutlineInputBorder(
+                                                                            borderSide:
+                                                                                const BorderSide(color: Colors.black),
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(5.0),
+                                                                          ),
+                                                                        ),
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.black, // Text color
+                                                                          fontSize:
+                                                                              12.0, // Text size
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                              : const SizedBox(),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                            ],
+                                          ),
+                                          if (widget.user.status ==
+                                              "Sample Collected")
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  if (widget.user.status ==
+                                                      "Sample Collected")
+                                                    Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: InkWell(
+                                                        onTap: () async {
+                                                          SelectLab = null;
+                                                          Labs.clear();
+                                                          await labsapi();
+                                                          setState(() {});
+                                                          dynamic generic =
+                                                              await custom_dropdown(
+                                                            context,
+                                                            Labs,
+                                                          );
+                                                          _selectedlab =
+                                                              generic;
+                                                          selectedLabsName =
+                                                              null;
+                                                          if (generic != null &&
+                                                              generic != '') {
+                                                            SelectLab =
+                                                                generic.id;
+                                                            selectedLabsName =
+                                                                (generic.name ==
+                                                                        '')
+                                                                    ? null
+                                                                    : generic
+                                                                        .name;
+
+                                                            setState(() {});
+                                                          }
+                                                        },
+                                                        child: Container(
                                                           decoration:
                                                               BoxDecoration(
-                                                            border: Border.all(
-                                                                color: Colors
-                                                                    .black,
-                                                                width: 0.5),
                                                             borderRadius:
                                                                 BorderRadius
                                                                     .circular(
-                                                                        10.0),
+                                                                        15.0),
                                                             color: Colors.white,
                                                           ),
                                                           width: MediaQuery.of(
                                                                       context)
                                                                   .size
                                                                   .width *
-                                                              0.33,
+                                                              0.4,
                                                           height: MediaQuery.of(
                                                                       context)
                                                                   .size
                                                                   .height *
-                                                              0.06,
-                                                          child:
-                                                              DropdownButtonFormField(
-                                                            decoration:
-                                                                const InputDecoration(
-                                                              contentPadding:
-                                                                  EdgeInsets.only(
-                                                                      bottom:
-                                                                          10),
-                                                              border:
-                                                                  InputBorder
-                                                                      .none,
-                                                            ),
-                                                            value:
-                                                                dropdownvalue,
-                                                            items: item1.map(
-                                                                (String items) {
-                                                              return DropdownMenuItem(
-                                                                value: items,
-                                                                child: Center(
-                                                                  child: Text(
-                                                                    "  $items",
-                                                                    //  textAlign: AlignmentDirectional.topCenter,
-                                                                  ),
+                                                              0.05,
+                                                          child: Padding(
+                                                            padding: EdgeInsets.symmetric(
+                                                                horizontal: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width *
+                                                                    0.04),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  //"${selectedCountriesName?? "Country"}",
+                                                                  "${(selectedLabsName != null) ? (selectedLabsName!.length > 8 ? ('${selectedLabsName!.substring(0, 8)}...') : selectedLabsName) : "selectlab".tr}",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: selectedLabsName !=
+                                                                              null
+                                                                          ? Colors
+                                                                              .black
+                                                                          : Colors
+                                                                              .grey[700]),
                                                                 ),
-                                                              );
-                                                            }).toList(),
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontSize: 12,
-                                                            ),
-                                                            onChanged: (String?
-                                                                newValue) {
-                                                              setState(() {
-                                                                dropdownvalue =
-                                                                    newValue!;
-                                                              });
-                                                            },
-                                                            alignment: Alignment
-                                                                .center,
-                                                            elevation: 0,
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              0.23,
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              0.06,
-                                                          child: TextFormField(
-                                                            controller:
-                                                                discount,
-                                                            onChanged: (val) {
-                                                              if (dropdownvalue ==
-                                                                  "percentage"
-                                                                      .tr) {
-                                                                dsct = ((totalAppointmentPrice -
-                                                                        ((totalAppointmentPrice /
-                                                                                100) *
-                                                                            int.parse(val))))
-                                                                    .toString();
-                                                              } else if (dropdownvalue !=
-                                                                  "") {
-                                                                dsct = (totalAppointmentPrice -
-                                                                        int.parse(
-                                                                            val))
-                                                                    .toString();
-                                                              }
-                                                              setState(() {});
-                                                            },
-                                                            decoration:
-                                                                InputDecoration(
-                                                              filled: true,
-                                                              fillColor:
-                                                                  Colors.white,
-                                                              hintText:
-                                                                  dropdownvalue,
-                                                              border:
-                                                                  OutlineInputBorder(
-                                                                borderSide: const BorderSide(
-                                                                    color: Colors
-                                                                        .black),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            10.0),
-                                                              ),
-                                                            ),
-                                                            style:
-                                                                const TextStyle(
-                                                              color: Colors
-                                                                  .black, // Text color
-                                                              fontSize:
-                                                                  12.0, // Text size
+                                                                Icon(
+                                                                  Icons
+                                                                      .arrow_drop_down,
+                                                                  size: 25,
+                                                                  color: selectedLabsName !=
+                                                                          null
+                                                                      ? Colors
+                                                                          .black
+                                                                      : Colors.grey[
+                                                                          700],
+                                                                )
+                                                              ],
                                                             ),
                                                           ),
                                                         ),
-                                                      ],
-                                                    )
-                                                  : const SizedBox(),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-
-                                    if (widget.user.status ==
-                                        "Sample Collected")
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            if (selectedLabsName == null) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content:
-                                                      Text('pleaseselect'.tr),
-                                                ),
-                                              );
-                                            } else {
-                                              isLoading = true;
-                                              setState(() {});
-                                              try {
-                                                await InRouteapi();
-                                                _getPolylinesWithLocation(
-                                                    _currentLatLng,
-                                                    LatLng(
-                                                        double.parse(
-                                                            _selectedlab!
-                                                                .latitude
-                                                                .toString()),
-                                                        double.parse(
-                                                            _selectedlab!
-                                                                .longitude
-                                                                .toString())));
-                                                setState(() {
-                                                  isLoading = false;
-                                                });
-                                              } catch (e) {
-                                                setState(() {
-                                                  isLoading = false;
-                                                });
-                                              }
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-
-                                              setState(() {
-                                                //  message='';
-                                                widget.user.status = "In Route";
-                                              });
-                                            }
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(300, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'inroutelab'.tr,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                          ),
-                                        ),
-                                      ),
-
-                                    if (widget.user.status ==
-                                        "Sample Collected")
-                                      InkWell(
-                                        onTap: () async {
-                                          SelectLab = null;
-                                          Labs.clear();
-                                          await labsapi();
-                                          setState(() {});
-                                          dynamic generic =
-                                              await custom_dropdown(
-                                            context,
-                                            Labs,
-                                          );
-                                          _selectedlab = generic;
-                                          selectedLabsName = null;
-                                          if (generic != null &&
-                                              generic != '') {
-                                            SelectLab = generic.id;
-                                            selectedLabsName =
-                                                (generic.name == '')
-                                                    ? null
-                                                    : generic.name;
-
-                                            setState(() {});
-                                          }
-                                        },
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.055),
-                                          child: SizedBox(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                0.055,
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.black,
-                                                    width: 0.5),
-                                                borderRadius:
-                                                    BorderRadius.circular(10.0),
-                                                color: Colors.white,
-                                              ),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.5,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.05,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.04),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      //"${selectedCountriesName?? "Country"}",
-                                                      "${(selectedLabsName != null) ? (selectedLabsName!.length > 8 ? ('${selectedLabsName!.substring(0, 8)}...') : selectedLabsName) : "selectlab".tr}",
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          color:
-                                                              selectedLabsName !=
-                                                                      null
-                                                                  ? Colors.black
-                                                                  : Colors.grey[
-                                                                      700]),
+                                                      ),
                                                     ),
-                                                    Icon(
-                                                      Icons.arrow_drop_down,
-                                                      size: 25,
-                                                      color: selectedLabsName !=
-                                                              null
-                                                          ? Colors.black
-                                                          : Colors.grey[700],
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    SizedBox(
-                                      height: Get.height * 0.05,
-                                    ),
-                                     if (widget.user.status ==
-                                        "Sample Collected")
-                                      Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "totalamount".tr,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              "$totalAppointmentPrice",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    if (widget.user.status ==
-                                        "Sample Collected")
-                                      Center(
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "paymentstatus".tr,
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 12,
-                                                color: Colors.white,
-                                              ),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                   
+                                                  SizedBox(
+                                                    width: Get.width * 0.08,
+                                                  ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: SizedBox(
+                                                      height: Get.height * 0.05,
+                                                      width: Get.width * 0.4,
+                                                      child: ElevatedButton(
+                                                        onPressed: () async {
+                                                          if (selectedLabsName ==
+                                                              null) {
+                                                            Showtoaster()
+                                                                .classtoaster(
+                                                                    "pleaseselect"
+                                                                        .tr);
+                                                          } else {
+                                                            isLoading = true;
+                                                            setState(() {});
+                                                            try {
+                                                              await InRouteapi();
+                                                              _getPolylinesWithLocation(
+                                                                  _currentLatLng,
+                                                                  LatLng(
+                                                                      double.parse(_selectedlab!
+                                                                          .latitude
+                                                                          .toString()),
+                                                                      double.parse(_selectedlab!
+                                                                          .longitude
+                                                                          .toString())));
+                                                              setState(() {
+                                                                isLoading =
+                                                                    false;
+                                                              });
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                isLoading =
+                                                                    false;
+                                                              });
+                                                            }
+                                                            setState(() {
+                                                              isLoading = false;
+                                                            });
 
-                                    if (widget.user.status == "In Route")
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ElevatedButton(
-                                          onPressed: () async {
-                                            isLoading = true;
-                                            setState(() {});
-                                            try {
-                                              _polylines.clear();
-                                              setState(() {});
-
-                                              distance = 0.0;
-                                              time = 0.0;
-                                              _markers.clear();
-                                              setState(() {
-                                                _polylines;
-                                                _markers;
-                                              });
-
-                                              String? msg =
-                                                  await sampledeliveredapi();
-                                              if (msg != null) {
-                                                widget.user.status =
-                                                    "Sample Delivered";
-                                              }
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(msg!),
-                                                ),
-                                              );
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-                                            } catch (e) {
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-                                            }
-
-                                            setState(() {
-                                              isLoading = false;
-                                            });
-
-                                            setState(() {});
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(300, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(15),
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'deliversample'.tr,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                          ),
-                                        ),
-                                      ),
-                                    if (widget.user.status ==
-                                        "Sample Delivered")
-                                      ElevatedButton(
-                                          onPressed: () {
-                                            isLoading = true;
-                                            setState(() {});
-                                            try {
-                                              CompleteRide(widget.user);
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-                                            } catch (e) {
-                                              setState(() {
-                                                isLoading = false;
-                                              });
-                                            }
-                                            setState(() {
-                                              isLoading = false;
-                                            });
-
-                                            showDialog<void>(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return CupertinoAlertDialog(
-                                                  content: Column(
-                                                    children: [
-                                                      const SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                      Image.asset(
-                                                          'assets/show.png'),
-                                                      const SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      Align(
-                                                        alignment:
-                                                            Alignment.center,
+                                                            setState(() {
+                                                              //  message='';
+                                                              widget.user
+                                                                      .status =
+                                                                  "In Route";
+                                                            });
+                                                          }
+                                                        },
+                                                        style: ElevatedButton
+                                                            .styleFrom(
+                                                          backgroundColor:
+                                                              Colors.white,
+                                                          shape:
+                                                              RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                          ),
+                                                        ),
                                                         child: Text(
-                                                          'thankyou'.tr,
+                                                          'inroutelab'.tr,
                                                           style: GoogleFonts
                                                               .poppins(
-                                                            fontSize: 20,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .blue),
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                        height: 30,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  actions: <Widget>[
-                                                    CupertinoButton(
-                                                      color: Colors.blue,
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .all(
-                                                              Radius.circular(
-                                                                  5.0)),
-                                                      child: Text(
-                                                        'backhome'.tr,
-                                                      ),
-                                                      onPressed: () async {
-                                                        Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        Dashboard(
-                                                                          empId:
-                                                                              widget.empId,
-                                                                          userName:
-                                                                              userprofile?.fullName ?? "",
-                                                                        )));
-                                                      },
                                                     ),
-                                                  ],
-                                                );
-                                              },
-                                            );
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(520, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  18), // Set the border radius here
-                                            ),
-                                          ),
-                                          child: Text(
-                                            "ridecompleted".tr,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                          )),
+                                                  ),
+                                                ]),
 
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              0.02,
-                                    ),
-                                    if (widget.user.status == "Ride Arrived")
-                                      Obx(
-                                        () => _selectedOption == 'yes'.tr
-                                            ? Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                    Center(
+                                          // if (widget.user.status ==
+                                          //     "Sample Collected")
+                                          //   Center(
+                                          //     child: Row(
+                                          //       mainAxisAlignment:
+                                          //           MainAxisAlignment.center,
+                                          //       children: [
+                                          //         Text(
+                                          //           "totalamount".tr,
+                                          //           style: GoogleFonts.poppins(
+                                          //             fontSize: 12,
+                                          //             fontWeight:
+                                          //                 FontWeight.bold,
+                                          //             color: Colors.white,
+                                          //           ),
+                                          //           textAlign: TextAlign.center,
+                                          //         ),
+                                          //         Text(
+                                          //           "$totalAppointmentPrice",
+                                          //           style: GoogleFonts.poppins(
+                                          //             fontSize: 12,
+                                          //             fontWeight:
+                                          //                 FontWeight.bold,
+                                          //             color: Colors.white,
+                                          //           ),
+                                          //           textAlign: TextAlign.center,
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //   ),
+                                          // if (widget.user.status ==
+                                          //     "Sample Collected")
+                                          //   Center(
+                                          //     child: Row(
+                                          //       mainAxisAlignment:
+                                          //           MainAxisAlignment.center,
+                                          //       children: [
+                                          //         Text(
+                                          //           "paymentstatus".tr,
+                                          //           style: GoogleFonts.poppins(
+                                          //             fontSize: 12,
+                                          //             color: Colors.white,
+                                          //           ),
+                                          //           textAlign: TextAlign.center,
+                                          //         ),
+                                          //         Text(
+                                          //           "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                          //           style: GoogleFonts.poppins(
+                                          //             fontSize: 12,
+                                          //             color: Colors.white,
+                                          //           ),
+                                          //           textAlign: TextAlign.center,
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //   ),
+
+                                          widget.user.status == "In Route"
+                                              ? SizedBox(
+                                                  height: Get.height * 0.05,
+                                                  width: Get.width * 0.88,
+                                                  child: ElevatedButton(
+                                                    onPressed: () async {
+                                                      isLoading = true;
+                                                      setState(() {});
+                                                      try {
+                                                        _polylines.clear();
+                                                        setState(() {});
+
+                                                        distance = 0.0;
+                                                        time = 0.0;
+                                                        _markers.clear();
+                                                        setState(() {
+                                                          _polylines;
+                                                          _markers;
+                                                        });
+
+                                                        String? msg =
+                                                            await sampledeliveredapi();
+                                                        if (msg != null) {
+                                                          widget.user.status =
+                                                              "Sample Delivered";
+                                                        }
+                                                        Fluttertoast.showToast(
+                                                            msg: msg ??
+                                                                "Sample Delivered Successfully",
+                                                            toastLength: Toast
+                                                                .LENGTH_SHORT,
+                                                            gravity:
+                                                                ToastGravity
+                                                                    .BOTTOM,
+                                                            timeInSecForIosWeb:
+                                                                1,
+                                                            backgroundColor:
+                                                                Colors.red,
+                                                            textColor:
+                                                                Colors.white,
+                                                            fontSize: 16.0);
+                                                        setState(() {
+                                                          isLoading = false;
+                                                        });
+                                                      } catch (e) {
+                                                        setState(() {
+                                                          isLoading = false;
+                                                        });
+                                                      }
+
+                                                      setState(() {
+                                                        isLoading = false;
+                                                      });
+
+                                                      setState(() {});
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(15),
+                                                      ),
+                                                    ),
+                                                    child: Text(
+                                                      'deliversample'.tr,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.blue),
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink(),
+                                          widget.user.status == "In Route"
+                                              ? SizedBox(
+                                                  height: Get.height * 0.07)
+                                              : const SizedBox.shrink(),
+                                          widget.user.status ==
+                                                  "Sample Delivered"
+                                              ? SizedBox(
+                                                  height: Get.height * 0.05,
+                                                  width: Get.width * 0.88,
+                                                  child: ElevatedButton(
+                                                      onPressed: () {
+                                                        isLoading = true;
+                                                        setState(() {});
+                                                        try {
+                                                          CompleteRide(
+                                                              widget.user);
+                                                          setState(() {
+                                                            isLoading = false;
+                                                          });
+                                                        } catch (e) {
+                                                          setState(() {
+                                                            isLoading = false;
+                                                          });
+                                                        }
+                                                        setState(() {
+                                                          isLoading = false;
+                                                        });
+
+                                                        showDialog<void>(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return CupertinoAlertDialog(
+                                                              content: Column(
+                                                                children: [
+                                                                  const SizedBox(
+                                                                    height: 30,
+                                                                  ),
+                                                                  Image.asset(
+                                                                      'assets/show.png'),
+                                                                  const SizedBox(
+                                                                    height: 20,
+                                                                  ),
+                                                                  Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .center,
+                                                                    child: Text(
+                                                                      'thankyou'
+                                                                          .tr,
+                                                                      style: GoogleFonts
+                                                                          .poppins(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontWeight:
+                                                                            FontWeight.bold,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                    height: 30,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              actions: <Widget>[
+                                                                CupertinoButton(
+                                                                  color: ColorManager
+                                                                      .kDarkBlue,
+                                                                  borderRadius:
+                                                                      const BorderRadius
+                                                                          .all(
+                                                                          Radius.circular(
+                                                                              5.0)),
+                                                                  child: Text(
+                                                                    'backhome'
+                                                                        .tr,
+                                                                  ),
+                                                                  onPressed:
+                                                                      () async {
+                                                                    Navigator.push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                            builder: (context) => Dashboard(
+                                                                                  empId: widget.empId,
+                                                                                  userName: userprofile?.fullName ?? "",
+                                                                                )));
+                                                                  },
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      style: ElevatedButton
+                                                          .styleFrom(
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius.circular(
+                                                                  15), // Set the border radius here
+                                                        ),
+                                                      ),
+                                                      child: Text(
+                                                        "ridecompleted".tr,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .blue),
+                                                      )),
+                                                )
+                                              : const SizedBox.shrink(),
+                                          widget.user.status ==
+                                                  "Sample Delivered"
+                                              ? SizedBox(
+                                                  height: Get.height * 0.07)
+                                              : const SizedBox.shrink(),
+                                          if (widget.user.status ==
+                                              "Ride Arrived")
+                                            Obx(
+                                              () => _selectedOption == 'yes'.tr
+                                                  ? Center(
                                                       child: SizedBox(
                                                         width: MediaQuery.of(
                                                                     context)
                                                                 .size
                                                                 .width *
-                                                            0.83,
+                                                            0.64,
                                                         height: MediaQuery.of(
                                                                     context)
                                                                 .size
                                                                 .height *
-                                                            0.095,
+                                                            0.05,
                                                         child: Padding(
                                                           padding:
                                                               const EdgeInsets
@@ -2988,11 +3128,19 @@ class _ViewInformationState extends State<ViewInformation> {
                                                             onChanged: (val) {},
                                                             decoration:
                                                                 InputDecoration(
+                                                              contentPadding:
+                                                                  EdgeInsets.only(
+                                                                      bottom: Get
+                                                                              .height *
+                                                                          0.02,
+                                                                      left: Get
+                                                                              .width *
+                                                                          0.02),
                                                               filled: true,
                                                               fillColor:
                                                                   Colors.white,
                                                               hintText:
-                                                                  'remarks'.tr,
+                                                                  'Remarks',
                                                               border:
                                                                   OutlineInputBorder(
                                                                 borderSide: const BorderSide(
@@ -3005,7 +3153,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            10.0),
+                                                                            5.0),
                                                               ),
                                                             ),
                                                             style:
@@ -3018,220 +3166,275 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           ),
                                                         ),
                                                       ),
+                                                    )
+                                                  : const SizedBox(),
+                                            ),
+                                        ]),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.end,
+                                          children: [
+                                            if (widget.user.status ==
+                                                "Ride Arrived")
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    "amount".tr,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
                                                     ),
-                                                  ])
-                                            : const SizedBox(),
-                                      ),
-                                    if (widget.user.status == "Ride Arrived")
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              Text(
-                                                "paymentstatus".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                  Text(
+                                                    "$totalAppointmentPrice ",
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                ],
                                               ),
-                                              Text(
-                                                "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.center,
+                                            if (widget.user.status ==
+                                                "Ride Arrived")
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    "discount".tr,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                  Text(
+                                                    "${discount.text.isNotEmpty ? dropdownvalue == "percentage".tr && double.parse(discount.text.toString()) >= 100 ? totalAppointmentPrice : (totalAppointmentPrice) - double.parse(dsct ?? "0.0") : 0.0} ",
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          )),
-
-                                    if (widget.user.status == "Ride Arrived")
-                                     SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "amount".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
+                                            if (widget.user.status ==
+                                                "Ride Arrived")
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.end,
+                                                children: [
+                                                  Text(
+                                                    "totalamount".tr,
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                  Text(
+                                                    "${discount.text.isNotEmpty && discount.text.toString().replaceAll('.', '').replaceAll('0', '') != "" ? dropdownvalue != "percentage".tr && (double.parse(discount.text)).toString() == totalAppointmentPrice.toString() ? 0.0 : dropdownvalue == "percentage".tr && discount.text.toString() == '100' ? 0.0 : dsct : totalAppointmentPrice} ",
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      color: Colors.white,
+                                                    ),
+                                                    textAlign: TextAlign.right,
+                                                  ),
+                                                ],
                                               ),
-                                              Text(
-                                                "$totalAppointmentPrice ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
-                                              ),
-
-                                            ],
-                                          )),
-                                           if (widget.user.status == "Ride Arrived")
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "discount".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
-                                              ),
-                                              Text(
-                                                "${dsct ?? 0.0} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ],
-                                          )),
-                                    if (widget.user.status == "Ride Arrived")
-                                      SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              1,
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                "totalamount".tr,
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
-                                              ),
-                                              Text(
-                                                "${dsct ?? totalAppointmentPrice} ",
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Colors.white,
-                                                ),
-                                                textAlign: TextAlign.right,
-                                              ),
-                                            ],
-                                          )),
-
-                                    // if (widget.user.status ==
-                                    //     "Sample Collected")
-                                    //   SizedBox(
-                                    //       width: MediaQuery.of(context)
-                                    //               .size
-                                    //               .width *
-                                    //           1,
-                                    //       child: Text(
-                                    //         "Total Amount: $totalAppointmentPrice ",
-                                    //         style: GoogleFonts.poppins(
-                                    //           fontSize: 12,
-                                    //           fontWeight: FontWeight.bold,
-                                    //           color: Colors.white,
-                                    //         ),
-                                    //         textAlign: TextAlign.right,
-                                    //       )),
-
-                                    // Padding(
-                                    //           padding: const EdgeInsets.only(top:30.0,left: 70),
-                                    //           child: Text(message ?? '', style: GoogleFonts.poppins(fontSize: 18,fontWeight: FontWeight.normal,color: Colors.white)),
-                                    // ),
-
-                                    // SizedBox(
-                                    //   height:
-                                    //       MediaQuery.of(context).size.height *
-                                    //           0.015,
-                                    // ),
-                                    //           SizedBox(
-                                    // width: MediaQuery.of(context).size.width*1,
-
-                                    // child: Text("Payment Status: Paid Online ",style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white,),textAlign: TextAlign.center,)),
-
-                                    Row(
+                                          ],
+                                        )
+                                      ]),
+                                ),
+                              if (widget.user.status == "Ride Arrived")
+                                SizedBox(
+                                    width:
+                                        MediaQuery.of(context).size.width * 1,
+                                    child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        CustomButton(
-                                          onPressed: () {
-                                            FlutterPhoneDirectCaller.callNumber(
-                                                widget.user.cellNumber
-                                                    .toString());
-                                          },
-                                          title: "call".tr,
-                                          radius: 20,
+                                        Text(
+                                          "paymentstatus".tr,
                                           style: GoogleFonts.poppins(
-                                              color: Colors.white,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
-                                          primcolor: Colors.blue,
-                                          //    width: Get.width*0.4,
-                                          // height: Get.height*0.088,
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.04,
-                                        ),
-                                        CustomButton(
-                                          onPressed: () async {
-                                            final Uri smsLaunchUri = Uri(
-                                              scheme: 'sms',
-                                              path: widget.user.cellNumber,
-                                            );
-                                            urllauncher.launchUrl(smsLaunchUri);
-
-                                            setState(() {});
-                                            // whatsapp();
-                                            //  Get.to(RiderChat());
-                                          },
-                                          title: "message".tr,
-                                          radius: 20,
+                                        Text(
+                                          "${widget.user.paymentstatusname ?? " Unpaid"} ",
                                           style: GoogleFonts.poppins(
-                                              color: Colors.blue,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.bold),
-                                          primcolor: Colors.white,
-                                          // width: Get.width*0.4,
-                                          // height: Get.height*0.088,
+                                            fontSize: 12,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
                                         ),
                                       ],
+                                    )),
+                              if (widget.user.status == "Pending")
+                                SizedBox(
+                                  height: Get.height * 0.07,
+                                ),
+                              if (widget.user.status == "Pending")
+                                Center(
+                                  child: Padding(
+                                    padding:
+                                        EdgeInsets.only(top: Get.height * 0.02),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          "order".tr,
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        Text(
+                                          "${widget.user.LabNo ?? " #0001"} ",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                              if (widget.user.status == "Pending")
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "paymentstatus".tr,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+                              widget.user.status == "Sample Collected"
+                                  ? SizedBox(height: Get.height * 0.07)
+                                  : const SizedBox.shrink(),
+                              widget.user.status == "Sample Collected"
+                                  ? Center(
+                                      child: Text(
+                                        "Total Amount: $totalAppointmentPrice ",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      ),
+                                    )
+                                  : const SizedBox.shrink(),
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.005,
+                              ),
+                              // Padding(
+                              //           padding: const EdgeInsets.only(top:30.0,left: 70),
+                              //           child: Text(message ?? '', style: GoogleFonts.poppins(fontSize: 18,fontWeight: FontWeight.normal,color: Colors.white)),
+                              // ),
+
+                              // SizedBox(
+                              //   height:
+                              //       MediaQuery.of(context).size.height *
+                              //           0.015,
+                              // ),
+                              //   widget.user.status ==
+                              //     "Sample Collected"?         SizedBox(
+                              // width: MediaQuery.of(context).size.width*1,
+                              // child: Text("Payment Status: Paid",style: GoogleFonts.poppins(fontSize: 12,fontWeight: FontWeight.bold,color: Colors.white,),textAlign: TextAlign.center,)):SizedBox.shrink(),
+
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Get.width * 0.05),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    CustomButton(
+                                      onPressed: () {
+                                        FlutterPhoneDirectCaller().callnumber(
+                                            widget.user.cellNumber.toString());
+                                      },
+                                      title: "call".tr,
+                                      radius: 20,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                      primcolor: ColorManager.kDarkBlue,
+                                      //    width: Get.width*0.4,
+                                      // height: Get.height*0.088,
+                                    ),
+                                    CustomButton(
+                                      onPressed: () async {
+                                        final Uri smsLaunchUri = Uri(
+                                          scheme: 'sms',
+                                          path: widget.user.cellNumber,
+                                        );
+                                        urllauncher.launchUrl(smsLaunchUri);
+
+                                        setState(() {});
+                                        // whatsapp();
+                                        //  Get.to(RiderChat());
+                                      },
+                                      title: "message".tr,
+                                      radius: 20,
+                                      style: GoogleFonts.poppins(
+                                          color: Colors.blue,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.bold),
+                                      primcolor: Colors.white,
+                                      // width: Get.width*0.4,
+                                      // height: Get.height*0.088,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        )),
-                  )
+                        ),
+                      ),
+                    ),
+                  )),
                 ]))));
   }
 }

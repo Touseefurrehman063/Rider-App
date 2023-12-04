@@ -49,14 +49,17 @@ body: Container(
                 SizedBox(height: MediaQuery.of(context).size.height*0.23,),
                 SizedBox(
                   
-                  child: Text("registered".tr,style: GoogleFonts.poppins(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.blue,),)),
+                  child: Text("registered".tr,style: GoogleFonts.poppins(fontSize: 35,fontWeight: FontWeight.bold,color: Colors.blue,),)),
+                SizedBox(height: MediaQuery.of(context).size.height*0.02,),
                 SizedBox(
                   
-                  child: Text("requestregister".tr,style: GoogleFonts.poppins(fontSize: 15,fontWeight: FontWeight.bold,color: Colors.black,),)),
-                  SizedBox(
+                  child: Text("requestregister".tr,style: GoogleFonts.poppins(fontSize: 19,fontWeight: FontWeight.bold,color: Colors.black,),)),
+                 
+                   SizedBox(height: MediaQuery.of(context).size.height*0.005,),
+                    SizedBox(
                   
-                  child: Text("supportteam".tr,style: GoogleFonts.poppins(fontSize: 12,color: Colors.black,),)),
-                SizedBox(height: MediaQuery.of(context).size.height*0.01,),
+                  child: Text("supportteam".tr,style: GoogleFonts.poppins(fontSize: 15,color: Colors.black,),)),
+                SizedBox(height: MediaQuery.of(context).size.height*0.05,),
                 CupertinoButton(
 
                   
@@ -74,7 +77,7 @@ body: Container(
             borderRadius: BorderRadius.circular(8),
 
                   
-                  child: Text("login".tr,style: GoogleFonts.poppins(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 15),), ),
+                  child: Text("Ok".tr,style: GoogleFonts.poppins(fontWeight: FontWeight.bold,color: Colors.white,fontSize: 15),), ),
                 
               ],
             )
