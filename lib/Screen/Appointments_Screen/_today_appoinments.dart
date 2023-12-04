@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -45,10 +46,10 @@ class _TodayAppoinmentsState extends State<TodayAppoinments> {
   // ignore: non_constant_identifier_names
   String StartDate = "";
 
-callvback()async
-{
-  _appointments = await getappointments(widget.empId, StartDate, EndDate,AppConstants.maximumDataTobeFetched, start);
-}
+  callvback() async {
+    _appointments = await getappointments(widget.empId, StartDate, EndDate,
+        AppConstants.maximumDataTobeFetched, start);
+  }
 
   @override
   void initState() {
@@ -60,14 +61,10 @@ callvback()async
     EndDate = formatDate(DateTime.now());
     start = 0;
     resetAllDataValues();
-    if(_appointments.isEmpty)
-    {
-callvback();
+    if (_appointments.isEmpty) {
+      callvback();
     }
-    
 
-    
-        
     // Timer.periodic(const Duration(seconds: 2), (timer) {
     //   setState(() {});
     // });
@@ -107,9 +104,13 @@ callvback();
   }
 
   // ignore: non_constant_identifier_names
-  Future<List<User>> getappointments(String empId, String StartDate,
+  Future<List<User>> getappointments(
+      String empId,
+      String StartDate,
       // ignore: non_constant_identifier_names
-      String EndDate, int length, int start) async {
+      String EndDate,
+      int length,
+      int start) async {
     if (start == 0) {
       isLoadingData = true;
       setState(() {});
@@ -153,7 +154,7 @@ callvback();
           for (var element in ulist) {
             _appointments.add(element);
           }
-                }
+        }
         // ignore: avoid_print
         print(ulist);
 
@@ -201,30 +202,18 @@ callvback();
         opacity: 0.4,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Scaffold(
+          bottomNavigationBar:  Mycustomnavbar(),
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: Row(
-              children: [
-                InkWell(
-                  onTap: Get.back,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left:10.0),
-                    child: Image.asset(
-                              "assets/back.png",
-                              height: Get.height*0.1,
-                              width: Get.width*0.08,
-                            
-                  
-                              
-                              // color: Colors.white,
-                            
-                              
-                            ),
-                  ),
-                ),
-              ],
-            ),
+            leading: InkWell(
+                onTap: () {
+                  Get.back();
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Color(0xff0F64C6),
+                )),
             title: Text(
               'todayappointment'.tr,
               textAlign: TextAlign.center,
@@ -242,12 +231,11 @@ callvback();
                   print('Image tapped');
                 },
                 child: PopupMenuButton<int>(
-                  
-                  shape: const  RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(
-               Radius.circular(15.0),
-          ),
-),
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(15.0),
+                    ),
+                  ),
                   onSelected: (value) {
                     setState(() {
                       if (value == 1) {
@@ -259,11 +247,10 @@ callvback();
                       } else if (value == 3) {
                         selectedStatusFilter = "Completed";
                         setState(() {});
-                      }
-                      else if (value == 4) {
+                      } else if (value == 4) {
                         selectedStatusFilter = "Cancelled";
                         setState(() {});
-                      } else if (value == 5 ) {
+                      } else if (value == 5) {
                         selectedStatusFilter = "Refunded";
                         setState(() {});
                       }
@@ -282,7 +269,7 @@ callvback();
                       value: 3,
                       child: Text('Completed'),
                     ),
-                     const PopupMenuItem<int>(
+                    const PopupMenuItem<int>(
                       value: 4,
                       child: Text('Cancelled'),
                     ),
@@ -297,10 +284,9 @@ callvback();
                   //     "assets/filter.png",
                   //     // color: Colors.white,
                   //     width: Get.width*0.06,
-                      
+
                   //   ),
                   // ),
-                
                 ),
               ),
             ],
@@ -342,24 +328,24 @@ callvback();
                 height: MediaQuery.of(context).size.height * 0.9,
                 width: MediaQuery.of(context).size.width * 1,
                 child: Column(
-              
                   children: [
-                    (((_appointments.isNotEmpty) ? _appointments.length : 0) != 0)
+                    (((_appointments.isNotEmpty) ? _appointments.length : 0) !=
+                            0)
                         ? Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: ((_appointments.isNotEmpty)
-                                ? _appointments.length
-                                : 0),
-                            itemBuilder: (context, index) {
-                              
+                            child: ListView.builder(
+                              controller: _scrollController,
+                              physics: const BouncingScrollPhysics(),
+                              shrinkWrap: true,
+                              itemCount: ((_appointments.isNotEmpty)
+                                  ? _appointments.length
+                                  : 0),
+                              itemBuilder: (context, index) {
                                 User user = _appointments[index];
-                                        
+
                                 if (user.status.toString().toLowerCase() ==
-                                selectedStatusFilter.toString().toLowerCase()
-                                    ) {
+                                    selectedStatusFilter
+                                        .toString()
+                                        .toLowerCase()) {
                                   return Padding(
                                     padding: const EdgeInsets.only(
                                         top: 10, right: 15, left: 15),
@@ -367,10 +353,9 @@ callvback();
                                       color: const Color(0xFF1272D3),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
-                                        
+
                                       child: ListTile(
                                           title: Column(
                                         crossAxisAlignment:
@@ -381,17 +366,31 @@ callvback();
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                                  style: const TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                     user.status?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    //user.status 
+                                                  ],
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Text(
-                                                  user.patientName ?? "",
+                                                   user.patientName?.toString().trim()?? "",
                                                   style: GoogleFonts.poppins(
                                                       fontSize: 20,
                                                       color: Colors.white,
@@ -399,7 +398,6 @@ callvback();
                                                           FontWeight.bold),
                                                 ),
                                                 const SizedBox(height: 5),
-                                                
                                                 Text.rich(
                                                   TextSpan(
                                                     text: "test".tr,
@@ -410,12 +408,10 @@ callvback();
                                                             FontWeight.bold),
                                                     children: [
                                                       TextSpan(
-                                                          text:
-                                                              user.test ?? "",
+                                                          text: user.test ?? "",
                                                           style: GoogleFonts
                                                               .poppins(
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .normal)),
@@ -423,7 +419,7 @@ callvback();
                                                   ),
                                                 ),
                                                 const SizedBox(height: 5),
-                                                Text.rich(
+                                            user.address==""? const SizedBox.shrink() :     Text.rich(
                                                   TextSpan(
                                                     text: "addres".tr,
                                                     style: const TextStyle(
@@ -433,13 +429,11 @@ callvback();
                                                             FontWeight.bold),
                                                     children: [
                                                       TextSpan(
-                                                          text:
-                                                              user.address ??
-                                                                  "",
+                                                          text: user.address ??
+                                                              "",
                                                           style: GoogleFonts
                                                               .poppins(
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .normal)),
@@ -448,14 +442,14 @@ callvback();
                                                 ),
                                               ],
                                             ),
-                                            trailing: Text(
-                                              user.status ?? "",
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.white),
-                                            ),
+                                            // trailing: Text(
+                                            //  ?? "",
+                                            //   style: const TextStyle(
+                                            //       fontSize: 12,
+                                            //       color: Colors.white),
+                                            // ),
                                           ),
-                                          Align(
+                                        Align(
                                             alignment: Alignment.bottomCenter,
                                             child: ElevatedButton(
                                               onPressed: () async {
@@ -464,8 +458,8 @@ callvback();
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ViewInformation(
-                                                              empId: widget
-                                                                  .empId,
+                                                              empId:
+                                                                  widget.empId,
                                                               user: user,
                                                               labid:
                                                                   user.labTestChallanNo ??
@@ -494,25 +488,22 @@ callvback();
                                                 'viewinformation'.tr,
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.blue),
                                               ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       )),
                                       // child: ListTile(
-                                        
+
                                       //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
                                       //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
-                                        
+
                                       // ),
                                     ),
                                   );
-                                } else if (selectedStatusFilter
-                                         ==
-                                    "") {
+                                } else if (selectedStatusFilter == "") {
                                   return Padding(
                                     padding: const EdgeInsets.only(
                                         top: 10, right: 15, left: 15),
@@ -520,8 +511,7 @@ callvback();
                                       color: const Color(0xFF1272D3),
                                       elevation: 0,
                                       shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(15),
                                       ),
                                       child: ListTile(
                                           title: Column(
@@ -533,17 +523,31 @@ callvback();
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(
-                                                  '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                                  style: const TextStyle(
-                                                      fontSize: 10,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                     user.status?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    //user.status 
+                                                  ],
                                                 ),
                                                 const SizedBox(height: 5),
                                                 Text(
-                                                  user.patientName ?? "",
+                                                  user.patientName?.toString().trim() ?? "",
                                                   style: GoogleFonts.poppins(
                                                       fontSize: 20,
                                                       color: Colors.white,
@@ -561,12 +565,10 @@ callvback();
                                                             FontWeight.bold),
                                                     children: [
                                                       TextSpan(
-                                                          text:
-                                                              user.test ?? "",
+                                                          text: user.test ?? "",
                                                           style: GoogleFonts
                                                               .poppins(
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .normal)),
@@ -574,7 +576,7 @@ callvback();
                                                   ),
                                                 ),
                                                 const SizedBox(height: 5),
-                                                Text.rich(
+                                               user.address==""? const SizedBox.shrink() :   Text.rich(
                                                   TextSpan(
                                                     text: "addres".tr,
                                                     style: const TextStyle(
@@ -584,13 +586,11 @@ callvback();
                                                             FontWeight.bold),
                                                     children: [
                                                       TextSpan(
-                                                          text:
-                                                              user.address ??
-                                                                  "",
+                                                          text: user.address ??
+                                                              "",
                                                           style: GoogleFonts
                                                               .poppins(
-                                                                  fontSize:
-                                                                      12,
+                                                                  fontSize: 12,
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .normal)),
@@ -599,14 +599,9 @@ callvback();
                                                 ),
                                               ],
                                             ),
-                                            trailing: Text(
-                                              user.status ?? "",
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.white),
-                                            ),
+                                            
                                           ),
-                                          Align(
+                                       Align(
                                             alignment: Alignment.bottomCenter,
                                             child: ElevatedButton(
                                               onPressed: () async {
@@ -615,8 +610,8 @@ callvback();
                                                     MaterialPageRoute(
                                                         builder: (context) =>
                                                             ViewInformation(
-                                                              empId: widget
-                                                                  .empId,
+                                                              empId:
+                                                                  widget.empId,
                                                               user: user,
                                                               labid:
                                                                   user.labTestChallanNo ??
@@ -644,19 +639,18 @@ callvback();
                                                 'viewinformation'.tr,
                                                 style: GoogleFonts.poppins(
                                                     fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold,
+                                                    fontWeight: FontWeight.bold,
                                                     color: Colors.blue),
                                               ),
                                             ),
-                                          ),
+                                          )
                                         ],
                                       )),
                                       // child: ListTile(
-                                        
+
                                       //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
                                       //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
-                                        
+
                                       // ),
                                     ),
                                   );
@@ -667,14 +661,13 @@ callvback();
                                   );
                                 }
                                 return null;
-                              
-                            },
-                          ),
-                        )
+                              },
+                            ),
+                          )
                         : Expanded(
                             child: SizedBox(
                               height: MediaQuery.of(context).size.height * 0.7,
-                              child:  Center(
+                              child: Center(
                                 child: Text('todayappointmentsnotfound'.tr),
                               ),
                             ),
@@ -689,8 +682,7 @@ callvback();
                           )
                         : Container()
                   ],
-                
-            )),
+                )),
           ),
         ));
   }

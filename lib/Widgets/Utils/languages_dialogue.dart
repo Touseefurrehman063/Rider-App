@@ -16,6 +16,8 @@ Future<String?> languageSelector(
         StatefulBuilder(builder: (context, newState) {
       LanguageController.i.updateSelected(LanguageController.i.selected);
       return AlertDialog(
+         shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(20.0))),
         backgroundColor: Theme.of(context).primaryColorDark,
         title: Text(
           'selectLanguage'.tr,
@@ -65,8 +67,12 @@ Future<String?> languageSelector(
               children: [
                 Expanded(
                   child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: ColorManager.kPrimaryColor),
+                      style:  ButtonStyle(
+                          shape:MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                            backgroundColor:const MaterialStatePropertyAll( ColorManager.kPrimaryColor),
+                        ),
+                      
+                
                       onPressed: () => Navigator.pop(context, 'Cancel'),
                       child:  Text('cancel'.tr)),
                 ),
@@ -76,8 +82,10 @@ Future<String?> languageSelector(
                 GetBuilder<LanguageController>(builder: (cont) {
                   return Expanded(
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: ColorManager.kPrimaryLightColor),
+                        style:  ButtonStyle(
+                          shape:MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))),
+                           backgroundColor:const MaterialStatePropertyAll( ColorManager.kPrimaryLightColor),
+                        ),
                         onPressed: () {
                          
                           cont.updateLocale(cont.selected!.locale!);

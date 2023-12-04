@@ -15,25 +15,28 @@ final double radius;
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton(
-           onPressed: onPressed,
-          style: ElevatedButton.styleFrom(
-                 foregroundColor: Colors.white, backgroundColor: primcolor, padding:  EdgeInsets.symmetric(vertical: Get.height*0.020, horizontal: Get.width*0.12), 
-                 shape: RoundedRectangleBorder(
-                   borderRadius: BorderRadius.circular(8), 
-                   side: const BorderSide(color: Colors.white),
-                   
-                   
-                    )
-                   
-                   ),
-                   
-           child: Text(title,style: style,),
-          
-           
-          
-           
-           
-           );
+    return SizedBox(  
+      width: Get.width*0.4,
+      child: ElevatedButton(
+             onPressed: onPressed,
+            style: ElevatedButton.styleFrom(
+                   foregroundColor: Colors.white, backgroundColor: primcolor, padding:  EdgeInsets.symmetric(vertical: Get.height*0.020, horizontal: Get.width*0.12), 
+                   shape: RoundedRectangleBorder(
+                     borderRadius: BorderRadius.circular(8), 
+                     side: const BorderSide(color: Colors.white),
+                     
+                     
+                      )
+                     
+                     ),
+                     
+             child: Text(title,style: style,),
+            
+             
+            
+             
+             
+             ),
+    );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -228,26 +229,15 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
         opacity: 0.4,
         color: Theme.of(context).scaffoldBackgroundColor,
         child: Scaffold(
+          bottomNavigationBar:  const Mycustomnavbar(),
           appBar: AppBar(
             backgroundColor: Colors.white,
             elevation: 0,
-            leading: Row(
-              children: [
-                InkWell(
-                  onTap: Get.back,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Image.asset(
-                      "assets/back.png",
-                      height: Get.height * 0.1,
-                      width: Get.width * 0.08,
-
-                      // color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+            leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
             title: Text(
               'appointmenhistory'.tr,
               textAlign: TextAlign.center,
@@ -351,7 +341,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                 Row(
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(left: 20.0),
+                      padding: const EdgeInsets.only(left: 27.0),
                       child: Text(
                         'from'.tr,
                         style: GoogleFonts.poppins(
@@ -359,15 +349,12 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                       ),
                     ),
                     SizedBox(
-                      width: Get.width * 0.323,
+                    width: MediaQuery.of(context).size.width / 2.75,
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 30.0),
-                      child: Text(
-                        'to'.tr,
-                        style: GoogleFonts.poppins(
-                            fontSize: 14, fontWeight: FontWeight.w600),
-                      ),
+                    Text(
+                      'to'.tr,
+                      style: GoogleFonts.poppins(
+                          fontSize: 14, fontWeight: FontWeight.w600),
                     ),
                   ],
                 ),
@@ -593,271 +580,317 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                             if (user.status.toString().toLowerCase() ==
                                 selectedStatusFilter.toString().toLowerCase()) {
                               return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, right: 15, left: 15),
-                                child: Card(
-                                  color: const Color(0xFF1272D3),
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-
-                                  child: ListTile(
-                                      title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                              style: const TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              user.patientName ?? "",
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text.rich(
-                                              TextSpan(
-                                                text: "test".tr,
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                children: [
+                                    padding: const EdgeInsets.only(
+                                        top: 10, right: 15, left: 15),
+                                    child: Card(
+                                      color: const Color(0xFF1272D3),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ListTile(
+                                          title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ListTile(
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                     user.status?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    //user.status 
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  user.patientName?.toString().trim() ?? "",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 20,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text.rich(
                                                   TextSpan(
-                                                      text: user.test ?? "",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
-                                                ],
+                                                    text: "test".tr,
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    children: [
+                                                      TextSpan(
+                                                          text: user.test ?? "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal)),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                               user.address==""? const SizedBox.shrink() :   Text.rich(
+                                                  TextSpan(
+                                                    text: "addres".tr,
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    children: [
+                                                      TextSpan(
+                                                          text: user.address ??
+                                                              "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            
+                                          ),
+                                       Padding(
+                                            padding:  EdgeInsets.symmetric(horizontal: Get.width*0.04),
+                                         child: Align(
+                                              alignment: Alignment.bottomCenter,
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewInformation(
+                                                                empId:
+                                                                    widget.empId,
+                                                                user: user,
+                                                                labid:
+                                                                    user.labTestChallanNo ??
+                                                                        "",
+                                                              )));
+                                                  await getappointments(
+                                                      widget.empId,
+                                                      StartDate,
+                                                      EndDate,
+                                                      25,
+                                                      start);
+                                                  setState(() {});
+                                                  debugPrint(widget.empId);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  fixedSize: const Size(380, 4),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15), // Set the border radius here
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'viewinformation'.tr,
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.blue),
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(height: 5),
-                                            Text.rich(
-                                              TextSpan(
-                                                text: "addres".tr,
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                children: [
-                                                  TextSpan(
-                                                      text: user.address ?? "",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Text(
-                                          user.status ?? "",
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewInformation(
-                                                          empId: widget.empId,
-                                                          user: user,
-                                                          labid:
-                                                              user.labTestChallanNo ??
-                                                                  "",
-                                                        )));
-                                            debugPrint(widget.empId);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(380, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15), // Set the border radius here
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'viewinformation'.tr,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                                  // child: ListTile(
+                                       )
+                                        ],
+                                      )),
+                                      // child: ListTile(
 
-                                  //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                  //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
+                                      //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
+                                      //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
 
-                                  // ),
-                                ),
-                              );
+                                      // ),
+                                    ),
+                                  );
                             } else if (selectedStatusFilter.toString().toLowerCase() == "") {
-                              return Padding(
-                                padding: const EdgeInsets.only(
-                                    top: 10, right: 15, left: 15),
-                                child: Card(
-                                  color: const Color(0xFF1272D3),
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-
-                                  child: ListTile(
-                                      title: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      ListTile(
-                                        title: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
-                                              style: const TextStyle(
-                                                  fontSize: 10,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text(
-                                              user.patientName ?? "",
-                                              style: GoogleFonts.poppins(
-                                                  fontSize: 20,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            const SizedBox(height: 5),
-                                            Text.rich(
-                                              TextSpan(
-                                                text: "test".tr,
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                children: [
+                               return Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10, right: 15, left: 15),
+                                    child: Card(
+                                      color: const Color(0xFF1272D3),
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                      child: ListTile(
+                                          title: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          ListTile(
+                                            title: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""}',
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    Text(
+                                                     user.status?? "",
+                                                      style: const TextStyle(
+                                                          fontSize: 10,
+                                                          color: Colors.white,
+                                                          fontWeight:
+                                                              FontWeight.bold),
+                                                    ),
+                                                    //user.status 
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text(
+                                                  user.patientName?.toString().trim() ?? "",
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 20,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold),
+                                                ),
+                                                const SizedBox(height: 5),
+                                                Text.rich(
                                                   TextSpan(
-                                                      text: user.test ?? "",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
-                                                ],
+                                                    text: "test".tr,
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    children: [
+                                                      TextSpan(
+                                                          text: user.test ?? "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal)),
+                                                    ],
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 5),
+                                               user.address==""? const SizedBox.shrink() :   Text.rich(
+                                                  TextSpan(
+                                                    text: "addres".tr,
+                                                    style: const TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.bold),
+                                                    children: [
+                                                      TextSpan(
+                                                          text: user.address ??
+                                                              "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .normal)),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                            
+                                          ),
+                                       Padding(
+                                         padding:  EdgeInsets.symmetric(horizontal: Get.width*0.04),
+                                         child: Align(
+                                              alignment: Alignment.bottomCenter,
+                                              child: ElevatedButton(
+                                                onPressed: () async {
+                                                  await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              ViewInformation(
+                                                                empId:
+                                                                    widget.empId,
+                                                                user: user,
+                                                                labid:
+                                                                    user.labTestChallanNo ??
+                                                                        "",
+                                                              )));
+                                                  await getappointments(
+                                                      widget.empId,
+                                                      StartDate,
+                                                      EndDate,
+                                                      25,
+                                                      start);
+                                                  setState(() {});
+                                                  debugPrint(widget.empId);
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.white,
+                                                  fixedSize: const Size(380, 4),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15), // Set the border radius here
+                                                  ),
+                                                ),
+                                                child: Text(
+                                                  'viewinformation'.tr,
+                                                  style: GoogleFonts.poppins(
+                                                      fontSize: 16,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.blue),
+                                                ),
                                               ),
                                             ),
-                                            const SizedBox(height: 5),
-                                            Text.rich(
-                                              TextSpan(
-                                                text: "addres".tr,
-                                                style: const TextStyle(
-                                                    fontSize: 12,
-                                                    color: Colors.white,
-                                                    fontWeight:
-                                                        FontWeight.bold),
-                                                children: [
-                                                  TextSpan(
-                                                      text: user.address ?? "",
-                                                      style:
-                                                          GoogleFonts.poppins(
-                                                              fontSize: 12,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .normal)),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        trailing: Text(
-                                          user.status ?? "",
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              color: Colors.white),
-                                        ),
-                                      ),
-                                      Align(
-                                        alignment: Alignment.bottomCenter,
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        ViewInformation(
-                                                          empId: widget.empId,
-                                                          user: user,
-                                                          labid:
-                                                              user.labTestChallanNo ??
-                                                                  "",
-                                                        )));
-                                            debugPrint(widget.empId);
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white,
-                                            fixedSize: const Size(380, 4),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(
-                                                  15), // Set the border radius here
-                                            ),
-                                          ),
-                                          child: Text(
-                                            'viewinformation'.tr,
-                                            style: GoogleFonts.poppins(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.blue),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  )),
-                                  // child: ListTile(
+                                       )
+                                        ],
+                                      )),
+                                      // child: ListTile(
 
-                                  //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                  //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
+                                      //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
+                                      //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
 
-                                  // ),
-                                ),
-                              );
+                                      // ),
+                                    ),
+                                  );
                             } else {
                              const SizedBox.shrink();
                             }
-                           const SizedBox.shrink();
-                           return null;
+                         return   const SizedBox.shrink();
+                      
                           },
                         ),
                       )

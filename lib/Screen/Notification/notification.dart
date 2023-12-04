@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/Notificationrepo/notification_repo.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
+import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Widgets/custom_notification.dart';
+import 'package:flutter_riderapp/controllers/Notification/dashboardcontroller.dart';
 import 'package:flutter_riderapp/controllers/Notification/notification_controller.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -50,6 +52,14 @@ class _notificationState extends State<notification> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          leading: InkWell(
+            onTap: (){
+            setState(() {
+              
+              dashboardcontroller.j.updatenotification(1);
+            });
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
           elevation: 0.0,
@@ -62,7 +72,7 @@ class _notificationState extends State<notification> {
                 style: GoogleFonts.poppins(
                   color: Colors.blue,
                   fontWeight: FontWeight.bold,
-                  fontSize: 24,
+                  fontSize: 26,
                 ),
               ),
             ),
@@ -70,21 +80,11 @@ class _notificationState extends State<notification> {
         ),
         body: GetBuilder<notificationscontroller>(
           builder: (context) {
-            return SingleChildScrollView(
+            return const SingleChildScrollView(
               child: Column(
                 children: [
+                 
                   Padding(
-                    padding: EdgeInsets.only(right: Get.width * 0.7),
-                    child: Text(
-                      "notification".tr,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: CustomNotification(),
                   ),

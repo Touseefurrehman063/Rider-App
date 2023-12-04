@@ -1,9 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 import 'package:flutter_riderapp/Utilities.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -32,12 +34,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 3),
-      ),
-    );
+          Showtoaster().classtoaster(message);
   }
 
   Future<bool> changepass() async {
@@ -77,34 +74,23 @@ class _ChangePasswordState extends State<ChangePassword> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
-        leading: Row(
-          children: [
-            InkWell(
-              onTap: Get.back,
-              child: Padding(
-                padding: const EdgeInsets.only(left: 10.0),
-                child: Image.asset(
-                  "assets/back.png",
-                  height: Get.height * 0.1,
-                  width: Get.width * 0.08,
-
-                  // color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
-        title: Text(
-          'changepassword'.tr,
-          textAlign: TextAlign.center,
-          style: GoogleFonts.raleway(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-            height: 1.175,
-            color: const Color(0xFF1272D3),
-          ),
-        ),
-        centerTitle: true,
+         centerTitle: true,
+                    shadowColor: Colors.white,
+                    
+                    title: Padding(
+                      padding: EdgeInsets.only(left: Get.width * 0.01),
+                      child: Image.asset(
+                        Images.logo,
+                        height: Get.height * 0.07,
+                        alignment: Alignment.center,
+                      ),
+                    ),
+       leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+      
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -116,7 +102,7 @@ class _ChangePasswordState extends State<ChangePassword> {
           ),
         ),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             // Padding(
             //   padding: const EdgeInsets.symmetric(horizontal: 120),
@@ -128,36 +114,36 @@ class _ChangePasswordState extends State<ChangePassword> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.15,
             ),
-            Row(
+            
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                SizedBox(width: MediaQuery.of(context).size.width * 0.07),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'welcometo'.tr,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 40,
-                          color: Color(0xFF1272D3),
-                        ),
-                      ),
+                Text(
+                  'Create New Password'.tr,
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 28,
+                     
                     ),
-                    Text(
-                      'aria'.tr,
-                      style: GoogleFonts.raleway(
-                        textStyle: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 24,
-                          color: Color(0xFF1272D3),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
+                SizedBox(height: Get.height*0.03,),
+                Text(
+                  'Kindly enter a unique password'.tr,
+                  style: GoogleFonts.raleway(
+                    textStyle: const TextStyle(
+                      // fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    
+                    ),
+                  ),
+                ),
+                
               ],
             ),
+            SizedBox(height: Get.height*0.06,),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -200,6 +186,9 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                             ),
                           ),
+                           SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 0.01),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             child: TextFormField(

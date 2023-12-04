@@ -8,9 +8,11 @@ class NoDataFound extends StatelessWidget {
   Widget build(BuildContext context) {
     return  Scaffold(
       appBar: AppBar(
-        leading: IconButton(onPressed: (){
-          Get.back();
-        }, icon: const Icon(Icons.arrow_back_ios)),
+       leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
       ),
       body: const Center(
         child: Text('No Data Found'),

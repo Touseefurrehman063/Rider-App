@@ -12,11 +12,11 @@ import 'package:flutter_riderapp/Models/relations.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
 import 'package:flutter_riderapp/Screen/Login/_signup.dart';
 import 'package:flutter_riderapp/Screen/register_patient/register_patient.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:flutter_riderapp/Models/Register.dart';
 import 'package:flutter_riderapp/Models/city.dart';
 import 'package:flutter_riderapp/Models/gender.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
@@ -372,23 +372,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0.0,
-          leading: Row(
-            children: [
-              InkWell(
-                onTap: Get.back,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Image.asset(
-                    "assets/back.png",
-                    height: Get.height * 0.1,
-                    width: Get.width * 0.08,
-
-                    // color: Colors.white,
-                  ),
-                ),
-              ),
-            ],
-          ),
+         leading: InkWell(
+            onTap: (){
+              Get.back();
+            },
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
           title: Text(
             'registration'.tr,
             textAlign: TextAlign.center,
@@ -951,16 +939,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
                                     print(patientregister.countryId);
                                     await _register_api(patientregister);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Patient Register Succesfully')));
-                                    Get.to(const RegisterPatient());
+                                      Showtoaster().classtoaster("Patient Register Succesfully");
+                                    Get.to(()=>const RegisterPatient());
                                   } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'Failed To register Patient')));
+                                     Showtoaster().classtoaster("Failed To register Patient");
+                                  
                                     log("Failed");
                                   }
                                 },
@@ -974,27 +957,27 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.03,
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                const Text("Already have an account?"),
-                                TextButton(
-                                  onPressed: () async {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: ((context) {
-                                        return const Login();
-                                      })),
-                                    );
-                                  },
-                                  style: TextButton.styleFrom(
-                                    foregroundColor: Colors.blue,
-                                  ),
-                                  child: const Text("Sign in"),
-                                ),
-                              ],
-                            ),
+                            // Row(
+                            //   mainAxisAlignment: MainAxisAlignment.center,
+                            //   crossAxisAlignment: CrossAxisAlignment.center,
+                            //   children: [
+                            //     const Text("Already have an account?"),
+                            //     TextButton(
+                            //       onPressed: () async {
+                            //         Navigator.push(
+                            //           context,
+                            //           MaterialPageRoute(builder: ((context) {
+                            //             return const Login();
+                            //           })),
+                            //         );
+                            //       },
+                            //       style: TextButton.styleFrom(
+                            //         foregroundColor: Colors.blue,
+                            //       ),
+                            //       child: const Text("Sign in"),
+                            //     ),
+                            //   ],
+                            // ),
                           ],
                         ),
                       ),

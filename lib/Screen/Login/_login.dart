@@ -3,10 +3,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
-import 'package:flutter_riderapp/LocalDb/localDB.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
+import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -36,8 +36,8 @@ class _LoginState extends State<Login> {
   final bool _obscureText = true;
 
   Future<Map<String, dynamic>> login(String userName, String password) async {
-    SharedPreferences sharedpref= await SharedPreferences.getInstance();
-   
+    SharedPreferences sharedpref = await SharedPreferences.getInstance();
+
     var url = '$ip/api/account';
     var headers = {
       'Content-Type': 'application/json',
@@ -71,11 +71,11 @@ class _LoginState extends State<Login> {
 
       if (status != -5) {
         // ignore: use_build_context_synchronously
-  sharedpref.setString('username',userName);
-    sharedpref.setString('pass',password);
+        sharedpref.setString('username', userName);
+        sharedpref.setString('pass', password);
         var empId = responseData['Id'];
-         sharedpref.setString('userId',empId).toString();
-    sharedpref.setString('username',userName).toString();
+        sharedpref.setString('userId', empId).toString();
+        sharedpref.setString('username', userName).toString();
 
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setBool('isLoggedIn', true);
@@ -141,43 +141,27 @@ class _LoginState extends State<Login> {
     String? riderpassword = sharedpref.getString(
       'riderpassword',
     );
-    bool fingerprint =await LocalDB.getfingerprint();
+
+    setState(() {});
     if (username != null && riderpassword != null && fingerprint) {
       bool auth = await Authentication.authentication();
       if (auth) {
         // authentication = await _authenticate();
+
         if (auth) {
-          fingerprint = auth;
-          //   } else {
-          //     ScaffoldMessenger.of(context).showSnackBar(
-          //         const SnackBar(content: Text('You are already Logged in')));
-          //     // Utils().toastmessage(“You are already Logged in”);
-          //     fingerprint = true;
-          //   }
-          //   setState(() {});
-          // } else {
-          // ScaffoldMessenger.of(context).showSnackBar(
-          //     const SnackBar(
-          //         content: Text(
-          //             “You declined the biometric login.“)));
-        }
-        if (fingerprint) {
-          if (auth) {
-            if (userprofile?.id != null) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('You are already Logged in')));
-              setState(() {
-                fingerprint = true;
-              });
-            }else
-            {
-              var loginResult = await login(
+          {
+            var loginResult = await login(
               username,
               riderpassword,
             );
             bool isLoggedIn = loginResult['isLoggedIn'];
 
             if (isLoggedIn) {
+              sharedpref.setString(
+                'username',
+                username,
+              );
+              sharedpref.setString('password', riderpassword);
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -192,17 +176,13 @@ class _LoginState extends State<Login> {
               userprofile;
             });
           }
-          }
         }
-      } else {
-        setState(() {
-          fingerprint = false;
-        });
       }
     }
   }
 
   instance() async {
+    fingerprint = await LocalDB.getfingerprint();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     bool value = await prefs.setString('firstapp', "notfirst");
     return value;
@@ -213,202 +193,209 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-        child: Form(
-          key: formkey,
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/helpbackgraound.png'),
-                alignment: Alignment.centerLeft,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0),
+          child: Form(
+            key: formkey,
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage('assets/helpbackgraound.png'),
+                  alignment: Alignment.centerLeft,
+                ),
               ),
-            ),
-            child: SafeArea(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    Images.logo,
-                    width: Get.width * 0.25,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.2,
-                  ),
-                  Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.07,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'welcometo'.tr,
-                            style: GoogleFonts.raleway(
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 40,
-                                color: Color(0xFF1272D3),
+              child: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      Images.logo,
+                      width: Get.width * 0.25,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.2,
+                    ),
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.07,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'welcometo'.tr,
+                              style: GoogleFonts.raleway(
+                                textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 40,
+                                  color: Color(0xFF1272D3),
+                                ),
                               ),
                             ),
-                          ),
-                          Text(
-                            'aria'.tr,
-                            style: GoogleFonts.raleway(
-                              textStyle: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 24,
-                                color: Color(0xFF1272D3),
+                            Text(
+                              'helpful'.tr,
+                              style: GoogleFonts.raleway(
+                                textStyle: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 24,
+                                  color: Color(0xFF1272D3),
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: Get.height * 0.03,
-                  ),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      physics: const NeverScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          AuthTextField(
-                            validator: (p0) {
-                              if (p0!.isEmpty) {
-                                return 'enterusername'.tr;
-                              }
-                              return null;
-                            },
-                            controller: userNameController,
-                            hintText: 'username'.tr,
-                          ),
-                          const SizedBox(height: 10),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 1),
-                            child: AuthTextField(
-                              validator: (value) {
-                                if (value!.isEmpty) {
-                                  return 'Please enter a password'; // You can replace this message with a translated string if needed.
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      height: Get.height * 0.03,
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        physics: const NeverScrollableScrollPhysics(),
+                        child: Column(
+                          children: [
+                            AuthTextField(
+                              validator: (p0) {
+                                if (p0!.isEmpty) {
+                                  return 'enterusername'.tr;
                                 }
                                 return null;
                               },
-                              hintText: 'password'.tr,
-                              keyboardType: TextInputType.text,
-                              controller: passwordController,
-                              obscureText: passwordVisible,
-                              suffixIcon: IconButton(
-                                icon: Icon(passwordVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off),
-                                onPressed: () {
-                                  setState(() {
-                                    passwordVisible = !passwordVisible;
-                                  });
+                              controller: userNameController,
+                              hintText: 'username'.tr,
+                            ),
+                            const SizedBox(height: 10),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 1),
+                              child: AuthTextField(
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Please Enter Your Password';
+                                  }
+                                  return null;
                                 },
+                                hintText: 'password'.tr,
+                                keyboardType: TextInputType.text,
+                                controller: passwordController,
+                                obscureText: passwordVisible,
+                                suffixIcon: IconButton(
+                                  icon: Icon(passwordVisible
+                                      ? Icons.visibility
+                                      : Icons.visibility_off),
+                                  onPressed: () {
+                                    setState(() {
+                                      passwordVisible = !passwordVisible;
+                                    });
+                                  },
+                                ),
                               ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 20, vertical: 20),
-                            child: CupertinoButton(
-                              color: CupertinoColors.activeBlue,
-                              onPressed: () async {
-                                if (formkey.currentState!.validate()) {
-                                  var sharedpref =
-                                      await SharedPreferences.getInstance();
-                                  sharedpref.setBool(
-                                      SplashscreenState.KEYLOGIN, true);
-                                  if (userNameController.text
-                                          .toString()
-                                          .isNotEmpty &&
-                                      passwordController.text
-                                          .toString()
-                                          .isNotEmpty) {
-                                    var loginResult = await login(
-                                      userNameController.text,
-                                      passwordController.text,
-                                    );
-                                    sharedpref.setString('username',
-                                        userNameController.text.toString());
-                                    sharedpref.setString('password',
-                                        passwordController.text.toString());
-
-                                    bool isLoggedIn = loginResult['isLoggedIn'];
-
-                                    if (isLoggedIn) {
-                                      sharedpref.setString('riderusername',
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 20),
+                              child: CupertinoButton(
+                                color: CupertinoColors.activeBlue,
+                                onPressed: () async {
+                                  if (formkey.currentState!.validate()) {
+                                    var sharedpref =
+                                        await SharedPreferences.getInstance();
+                                    sharedpref.setBool(
+                                        SplashscreenState.KEYLOGIN, true);
+                                    if (userNameController.text
+                                            .toString()
+                                            .isNotEmpty &&
+                                        passwordController.text
+                                            .toString()
+                                            .isNotEmpty) {
+                                      var loginResult = await login(
+                                        userNameController.text,
+                                        passwordController.text,
+                                      );
+                                      sharedpref.setString('username',
                                           userNameController.text.toString());
-                                      sharedpref.setString('riderpassword',
+                                      sharedpref.setString('password',
                                           passwordController.text.toString());
-                                      Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) => Dashboard(
-                                                  userName:
-                                                      userNameController.text,
-                                                  empId: loginResult['empId'],
-                                                  user: user,
-                                                )),
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        SnackBar(
-                                          content: Text('invalid'.tr),
-                                          duration: const Duration(seconds: 5),
-                                        ),
-                                      );
+      
+                                      bool isLoggedIn = loginResult['isLoggedIn'];
+      
+                                      if (isLoggedIn) {
+                                        sharedpref.setString('riderusername',
+                                            userNameController.text.toString());
+                                        sharedpref.setString('riderpassword',
+                                            passwordController.text.toString());
+                                        Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => Dashboard(
+                                                    userName:
+                                                        userNameController.text,
+                                                    empId: loginResult['empId'],
+                                                    user: user,
+                                                  )),
+                                        );
+                                      } else {
+                                        Showtoaster().classtoaster("invalid".tr);
+                                      }
                                     }
                                   }
-                                } else {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                          content: Text("entervaliddata".tr)));
-                                }
-                              },
-                              borderRadius: BorderRadius.circular(8),
-                              child: Center(
-                                child: Text(
-                                  'login'.tr,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                },
+                                borderRadius: BorderRadius.circular(8),
+                                child: Center(
+                                  child: Text(
+                                    'login'.tr,
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.09,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Text("dontaccount".tr),
-                              TextButton(
-                                onPressed: () async {
-                                  Get.to(()=> Signup(fromlogin: true,));
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: Colors.blue,
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.09,
+                            ),
+                            fingerprint
+                                ? InkWell(
+                                    onTap: () {
+                                      call();
+                                    },
+                                    child: Image.asset(
+                                      'assets/fingerprintscanner.png',
+                                      height: Get.height * 0.07,
+                                    ))
+                                : const SizedBox(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Text("dontaccount".tr),
+                                TextButton(
+                                  onPressed: () async {
+                                    Get.to(() => Signup(
+                                          fromlogin: true,
+                                        ));
+                                  },
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: const Color(0XFF1272D3 ),
+                                  ),
+                                  child: Text("register".tr),
                                 ),
-                                child: Text("register".tr),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
