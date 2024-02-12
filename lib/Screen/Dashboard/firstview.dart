@@ -1,5 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
@@ -9,6 +10,8 @@ import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_histor
 import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
 import 'package:flutter_riderapp/Widgets/registration_selection.dart';
+import 'package:flutter_riderapp/controllers/internet_connectivity/connectivity_controller.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -43,6 +46,34 @@ class _FirstViewState extends State<FirstView> {
     sharedpref.setBool(SplashscreenState.KEYLOGIN, true);
   }
 
+  Future<ConnectivityResult> internetCheck() async {
+    ConnectivityResult result =
+        await NetworkController.i.connectivity.checkConnectivity();
+    // log(result.toString());
+    if (result.name == "none") {
+      Get.rawSnackbar(
+          messageText: const Text('Network Connection Error',
+              style: TextStyle(color: Colors.black, fontSize: 14)),
+          isDismissible: false,
+          duration: const Duration(days: 1),
+          backgroundColor: Colors.red[400] ?? Colors.red,
+          icon: const Icon(
+            Icons.wifi_off,
+            color: Colors.white,
+            size: 35,
+          ),
+          margin: EdgeInsets.zero,
+          snackStyle: SnackStyle.GROUNDED);
+    } else {}
+    return result;
+  }
+
+  @override
+  void initState() {
+    internetCheck();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,11 +100,10 @@ class _FirstViewState extends State<FirstView> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     SizedBox(
-                      width: double.infinity,
-                      height: Get.height*0.015
-                    ),
+                        width: double.infinity, height: Get.height * 0.015),
                     Padding(
-                    padding: EdgeInsets.symmetric(horizontal:Get.width*0.08),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: Get.width * 0.08),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -83,20 +113,23 @@ class _FirstViewState extends State<FirstView> {
                           //   height: MediaQuery.of(context).size.height * 0.1,
                           // ),
                           CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor:  Colors.blue,
-                                      child: userprofile?.imagePath == null
-                      ? const CircleAvatar(
-                          backgroundImage: AssetImage("assets/pp.jpg"),
-                          radius: 28,
-                        )
-                      : CircleAvatar(
-                        backgroundImage:
-                            NetworkImage(ip+userprofile!.imagePath!),
-                        radius: 28,
-                      ),
-                                    ),
-                                    SizedBox(width: Get.width*0.02,),
+                            radius: 30,
+                            backgroundColor: ColorManager.kDarkBlue,
+                            child: userprofile?.imagePath == null
+                                ? const CircleAvatar(
+                                    backgroundImage:
+                                        AssetImage("assets/pp.jpg"),
+                                    radius: 28,
+                                  )
+                                : CircleAvatar(
+                                    backgroundImage: NetworkImage(
+                                        ip + userprofile!.imagePath!),
+                                    radius: 28,
+                                  ),
+                          ),
+                          SizedBox(
+                            width: Get.width * 0.02,
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -121,7 +154,7 @@ class _FirstViewState extends State<FirstView> {
                                     ),
                                     TextSpan(
                                       text:
-                                          ' ${(userprofile?.firstName ?? "Helpful Rider").length > 10 ? '${(userprofile?.firstName ?? "Helpful Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Helpful Rider")}',
+                                          ' ${(userprofile?.firstName ?? " Rider").length > 10 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? " Rider")}',
                                       style: GoogleFonts.raleway(
                                         fontSize: constraints.maxWidth / 15,
                                         fontWeight: FontWeight.w800,
@@ -165,7 +198,7 @@ class _FirstViewState extends State<FirstView> {
                                 GestureDetector(
                                   onTap: () async {
                                     await saveLoginState();
-                                    homechk=false;
+                                    homechk = false;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -177,8 +210,8 @@ class _FirstViewState extends State<FirstView> {
                                     print('Image tapped!');
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: Get.height*0.24),
+                                    padding:
+                                        EdgeInsets.only(top: Get.height * 0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [
@@ -205,7 +238,7 @@ class _FirstViewState extends State<FirstView> {
                                 GestureDetector(
                                   onTap: () async {
                                     await saveLoginState();
-                                     homechk=false;
+                                    homechk = false;
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -218,8 +251,8 @@ class _FirstViewState extends State<FirstView> {
                                     print('Image tapped!');
                                   },
                                   child: Padding(
-                                    padding: EdgeInsets.only(
-                                        top: Get.height*0.25),
+                                    padding:
+                                        EdgeInsets.only(top: Get.height * 0.25),
                                     child: Stack(
                                       alignment: Alignment.center,
                                       children: [

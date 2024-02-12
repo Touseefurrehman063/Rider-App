@@ -1,8 +1,8 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/controllers/Notification/dashboardcontroller.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -79,10 +79,7 @@ class _ProfileState extends State<Profile> {
                 dashboardcontroller.j.updatenotification(1);
               });
             },
-            child: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Color(0xff0F64C6),
-            )),
+            child: const Icon(Icons.arrow_back_ios_new, color: Colors.white)),
         // leading: Row(
         //   children: [
         //     InkWell(
@@ -155,7 +152,7 @@ class _ProfileState extends State<Profile> {
                             children: [
                               TextSpan(
                                 text:
-                                    'Hi, ${(userprofile?.firstName ?? "Tabib Rider").length > 15 ? '${(userprofile?.firstName ?? "Tabib Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
+                                    'Hi, ${(userprofile?.firstName ?? " Rider").length > 15 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
                                 style: GoogleFonts.raleway(
                                   fontSize: 23,
                                   fontWeight: FontWeight.w800,
@@ -198,13 +195,13 @@ class _ProfileState extends State<Profile> {
                       borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(30),
                           topRight: Radius.circular(30)),
-                      color: Color(0xFF1272D3)),
+                      color: ColorManager.kDarkBlue),
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         SizedBox(
-                          height: Get.height*0.14,
+                          height: Get.height * 0.14,
                         ),
                         RecordWidget(
                           title: "vehiclenumber".tr,
@@ -263,7 +260,7 @@ class _ProfileState extends State<Profile> {
                         //   style: GoogleFonts.poppins(
                         //       color: Colors.blue,
                         //       fontSize: 16,
-              
+
                         //       fontWeight: FontWeight.bold),
                         //   primcolor: Colors.white,
                         // ),

@@ -221,7 +221,7 @@ class _LoginState extends State<Login> {
                     Row(
                       children: [
                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.07,
+                          width: MediaQuery.of(context).size.width * 0.03,
                         ),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +230,7 @@ class _LoginState extends State<Login> {
                               'welcometo'.tr,
                               style: GoogleFonts.raleway(
                                 textStyle: const TextStyle(
-                                  fontWeight: FontWeight.bold,
+                                  fontWeight: FontWeight.w900,
                                   fontSize: 40,
                                   color: Color(0xFF1272D3),
                                 ),
@@ -270,7 +270,8 @@ class _LoginState extends State<Login> {
                             ),
                             const SizedBox(height: 10),
                             Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 1),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 1),
                               child: AuthTextField(
                                 validator: (value) {
                                   if (value!.isEmpty) {
@@ -319,9 +320,10 @@ class _LoginState extends State<Login> {
                                           userNameController.text.toString());
                                       sharedpref.setString('password',
                                           passwordController.text.toString());
-      
-                                      bool isLoggedIn = loginResult['isLoggedIn'];
-      
+
+                                      bool isLoggedIn =
+                                          loginResult['isLoggedIn'];
+
                                       if (isLoggedIn) {
                                         sharedpref.setString('riderusername',
                                             userNameController.text.toString());
@@ -338,7 +340,8 @@ class _LoginState extends State<Login> {
                                                   )),
                                         );
                                       } else {
-                                        Showtoaster().classtoaster("invalid".tr);
+                                        Showtoaster()
+                                            .classtoaster("invalid".tr);
                                       }
                                     }
                                   }
@@ -384,7 +387,7 @@ class _LoginState extends State<Login> {
                                         ));
                                   },
                                   style: TextButton.styleFrom(
-                                    foregroundColor: const Color(0XFF1272D3 ),
+                                    foregroundColor: const Color(0XFF1272D3),
                                   ),
                                   child: Text("register".tr),
                                 ),

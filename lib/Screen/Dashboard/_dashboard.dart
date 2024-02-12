@@ -101,38 +101,36 @@ class _DashboardState extends State<Dashboard> {
 
   LogoutUser() async {
     var url = '$ip/api/account/Logoff';
-    var headers = {
-      'Content-Type': 'application/json',
-    };
+
     String? DeviceToken = await LocalDB().getDeviceToken();
-    var body = jsonEncode({
-      "UserId": "${widget.user!.empId}",
+    var sharedpref = await SharedPreferences.getInstance();
+    String userid = sharedpref.getString('userId').toString();
+    dynamic body = {
+      "UserId": userid,
       "DeviceToken": DeviceToken,
       "Manufacturer": "Browser",
       "Model": "Infinix-X680B Infinix X680B",
       "AppVersion": "Infinix-X680B Infinix X680B",
       "DeviceVersion":
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/110.0.0.0 Safari/537.36"
-    });
+    };
 
-    var response =
-        await http.post(Uri.parse(url), headers: headers, body: body);
+    var response = await http.post(Uri.parse(url), body: body);
 
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       var status = responseData['Status'];
       dynamic usr = responseData;
-      widget.user = User.fromJson(usr);
+      // userid=User.fromJson(usr);
       var sharedpref = await SharedPreferences.getInstance();
-      sharedpref.setString('Token', widget.user!.token.toString());
+      sharedpref.setString('Token', DeviceToken.toString());
 
       print('API Response: $responseData');
 
       if (status == 1) {
         // ignore: use_build_context_synchronously
 
-        // ignore: unused_local_variable
-        var empId = responseData['Id'];
+        return status;
 
         //          showDialog(context: context, builder: (context){
         //   return const Center(child: CircularProgressIndicator(),);
@@ -153,8 +151,8 @@ class _DashboardState extends State<Dashboard> {
 
       // showShadow: true,
 
-      shadowLayer2Color: const Color(0xFF2157B2),
-      menuBackgroundColor: const Color(0xFF2157B2),
+      shadowLayer2Color: ColorManager.kmenuBlue,
+      menuBackgroundColor: ColorManager.kmenuBlue,
       angle: 0,
       slideWidth: 275,
       menuScreen: const DrawerContent(),
@@ -179,12 +177,12 @@ class _DashboardState extends State<Dashboard> {
                     padding: EdgeInsets.only(left: Get.width * 0.05),
                     child: Padding(
                       padding:
-                          EdgeInsets.symmetric(vertical: Get.height * 0.01),
+                          EdgeInsets.symmetric(vertical: Get.height * 0.015),
                       child: InkWell(
                         child: Container(
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(05),
-                              color: ColorManager.kPrimaryColor),
+                              color: ColorManager.kDarkBlue),
                           child: const Icon(
                             Icons.menu,
                             color: Colors.white,
@@ -248,7 +246,7 @@ class _DashboardState extends State<Dashboard> {
                       child: Icon(Icons.notifications,
                           size: 30,
                           color: dashboardcontroller.j.index == 0
-                              ? ColorManager.kPrimaryColor
+                              ? ColorManager.kDarkBlue
                               : ColorManager.kGreyColor)),
                   const Text("    "),
                   InkWell(
@@ -259,7 +257,7 @@ class _DashboardState extends State<Dashboard> {
                       child: Icon(Icons.person,
                           size: 30,
                           color: dashboardcontroller.j.index == 2
-                              ? ColorManager.kPrimaryColor
+                              ? ColorManager.kDarkBlue
                               : ColorManager.kGreyColor)),
                 ],
               ),
@@ -449,7 +447,7 @@ class _DrawerContentState extends State<DrawerContent> {
                       const VisualDensity(vertical: -4, horizontal: 2),
                   leading: Text(
                     userprofile?.cNICNumber != null
-                        ? "MR.No: ${userprofile?.cNICNumber}"
+                        ? "National Id: ${userprofile?.cNICNumber}"
                         : "",
                     style: const TextStyle(
                         color: Colors.white,
@@ -487,7 +485,7 @@ class _DrawerContentState extends State<DrawerContent> {
                       ),
                     ),
                     Text(
-                      "Biometric",
+                      "biometric".tr,
                       style: Theme.of(context)
                           .textTheme
                           .bodySmall
@@ -1145,26 +1143,25 @@ class _DrawerContentState extends State<DrawerContent> {
                     imageHeight: Get.height * 0.025,
                     title: 'logout'.tr,
                     onTap: () async {
-                      // logout(context);
-                      int ret=await LogoutUser();
-                      if(ret==1)
-                      {
-                         Navigator.pushReplacement(
-                                        context,
-                                        MaterialPageRoute(builder: (context) => const Login(),
+                      logout(context);
+                      setState(() {});
 
-                                        ));
-
-                      }
-                      else{
+                      int ret = await LogoutUser();
+                      if (ret == 1) {
+                        Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const Login(),
+                            ));
+                      } else {
                         ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('Log Out Fail'),
-                                          duration: Duration(seconds: 5),
-                                        ),
-                                      );
-
+                          const SnackBar(
+                            content: Text('Log Out Fail'),
+                            duration: Duration(seconds: 5),
+                          ),
+                        );
                       }
+                      setState(() {});
                     },
                   ),
                 ],
@@ -1387,7 +1384,7 @@ class Mycustomnavbar extends StatelessWidget {
                 child: Icon(Icons.notifications,
                     size: 30,
                     color: dashboardcontroller.j.index == 0
-                        ? ColorManager.kPrimaryColor
+                        ? ColorManager.kDarkBlue
                         : ColorManager.kGreyColor)),
             InkWell(
                 onTap: () {
@@ -1399,7 +1396,7 @@ class Mycustomnavbar extends StatelessWidget {
                 child: Icon(Icons.home,
                     size: 30,
                     color: dashboardcontroller.j.index == 1
-                        ? ColorManager.kPrimaryColor
+                        ? ColorManager.kDarkBlue
                         : ColorManager.kGreyColor)),
             InkWell(
                 onTap: () {
@@ -1411,7 +1408,7 @@ class Mycustomnavbar extends StatelessWidget {
                 child: Icon(Icons.person,
                     size: 30,
                     color: dashboardcontroller.j.index == 2
-                        ? ColorManager.kPrimaryColor
+                        ? ColorManager.kDarkBlue
                         : ColorManager.kGreyColor)),
           ],
         ),

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Models/appointmentdetail.dart';
-import 'package:flutter_riderapp/Models/checkinresponse.dart' as chkinmodel;
 import 'package:flutter_riderapp/Models/checkinresponse.dart';
 import 'package:flutter_riderapp/Models/checkintry.dart' as chkintry;
 import 'package:flutter_riderapp/Models/checkintry.dart';

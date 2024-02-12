@@ -1,4 +1,3 @@
-import 'package:flutter_riderapp/Models/Notification_Model/notification_model.dart';
 import 'package:get/get.dart';
  
 

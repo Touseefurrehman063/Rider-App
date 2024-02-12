@@ -10,6 +10,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:new_version_plus/new_version_plus.dart';
 
 // import '../Models/User.dart';
 
@@ -22,6 +24,32 @@ class Splashscreen extends StatefulWidget {
 
 class SplashscreenState extends State<Splashscreen>
     with SingleTickerProviderStateMixin {
+  advancedStatusCheck(NewVersionPlus newVersion) async {
+    final status = await newVersion.getVersionStatus();
+    if (status != null) {
+      PackageInfo packageInfo = await PackageInfo.fromPlatform();
+      debugPrint(status.releaseNotes);
+      debugPrint(status.appStoreLink);
+      debugPrint(status.localVersion);
+      debugPrint(status.storeVersion);
+      debugPrint(status.canUpdate.toString());
+      if (status.canUpdate) {
+        newVersion.showUpdateDialog(
+          context: context,
+          versionStatus: status,
+          dialogTitle: 'Update Required',
+          dialogText:
+              "${packageInfo.appName} requires a new Update ${status.storeVersion}",
+          launchModeVersion: LaunchModeVersion.external,
+          allowDismissal: false,
+        );
+      } else {
+        checkFirstTime();
+      }
+    } else {
+      checkFirstTime();
+    }
+  }
   // late AnimationController _animationController;
   // late Animation<Offset> _animation;
 
@@ -100,9 +128,12 @@ class SplashscreenState extends State<Splashscreen>
         minimumFetchInterval: const Duration(minutes: 2),
       ),
     );
-    await remoteConfig.fetchAndActivate().then((value)  {
+    await remoteConfig.fetchAndActivate().then((value) {
       if (value) {
-        ip =  remoteConfig.getString('HOMECAREURL');
+        ip = remoteConfig.getString('HOMECAREURL');
+        if (ip == "") {
+          ip = 'https://homecare.helpful.ihealthcure.com/';
+        }
         // ip =  remoteConfig.getString('HOMECAREURLQA');
       } else {
         ip = 'https://homecare.helpful.ihealthcure.com/';
@@ -112,53 +143,15 @@ class SplashscreenState extends State<Splashscreen>
       ip = 'https://homecare.helpful.ihealthcure.com/';
       // ip = 'http://192.168.88.254:377/';
     });
-    // ip = remoteConfig.getString('HOMECAREURLQA');
-    // if (ip == "") {
-    //   // ip = 'http://192.168.88.254:377/';
-    //   // ip = 'https://homecare.helpful.ihealthcure.com/';
-    // }
-    // ip = remoteConfig.getString('HOMECAREURLQA');
-    // if (ip == "") {
-    //   ip = 'http://192.168.88.254:377';
-    // }
   }
 
   @override
   void initState() {
     super.initState();
     instance();
+    NewVersionPlus newVersion = NewVersionPlus();
+    advancedStatusCheck(newVersion);
     // instance();
-    checkFirstTime();
-    // _animationController = AnimationController(
-    //   duration: const Duration(seconds: 5),
-    //   vsync: this,
-
-    // );
-
-    // _animation = Tween<Offset>(
-    //   begin: const Offset(-1.0, 0.0),
-    //   end: const Offset(1.0, 0.0),
-    // ).animate(_animationController);
-
-    // Start the logo animation after a delay
-    // Future.delayed(const Duration(seconds: 5), () {
-    //   _animationController.forward();
-    // });
-
-    // _animationController.addStatusListener((status) {
-    //   if (status == AnimationStatus.completed) {
-    //     WheretoGo(context);
-    //   }
-    // }
-
-    // );
-  }
-
-  @override
-  void dispose() {
-    // _animationController.dispose();
-
-    super.dispose();
   }
 
   @override
@@ -194,26 +187,28 @@ class SplashscreenState extends State<Splashscreen>
 Future<void> WheretoGo(BuildContext context) async {
   var sharedpref = await SharedPreferences.getInstance();
   var isLoggedIn = sharedpref.getBool(SplashscreenState.KEYLOGIN);
-
-  if (isLoggedIn != null && isLoggedIn) {
-    String userid = sharedpref.getString('userId').toString();
-    String username = sharedpref.getString('username').toString();
-    if (userid != "" && username != "") {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-            builder: (context) => Dashboard(userName: username, empId: userid)),
-      );
+  Future.delayed(const Duration(seconds: 8)).then((value) {
+    if (isLoggedIn != null && isLoggedIn) {
+      String userid = sharedpref.getString('userId').toString();
+      String username = sharedpref.getString('username').toString();
+      if (userid != "" && username != "") {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  Dashboard(userName: username, empId: userid)),
+        );
+      } else {
+        Showtoaster().classtoaster("Name or userid is not valid");
+      }
     } else {
-      Showtoaster().classtoaster("Name or userid is not valid");
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => const Login()),
+        (Route<dynamic> route) => false,
+      );
     }
-  } else {
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Login()),
-      (Route<dynamic> route) => false,
-    );
-  }
+  });
 }
 
 Future<int?> getIsOnboarding() async {
@@ -221,10 +216,63 @@ Future<int?> getIsOnboarding() async {
   return preferences.getInt('initScreen');
 }
 
+// class SlideTransitions extends StatefulWidget {
+//   final Widget? image;
+//   const SlideTransitions({super.key, this.image});
+
+//   @override
+//   State<SlideTransitions> createState() => _SlideTransitionsState();
+// }
+
+// class _SlideTransitionsState extends State<SlideTransitions>
+//     with SingleTickerProviderStateMixin {
+//   late final AnimationController _controller = AnimationController(
+//     duration: const Duration(seconds: 20),
+//     vsync: this,
+//   )..addStatusListener((status) {
+//       if (status == AnimationStatus.completed) {
+//         WheretoGo(context);
+//         _controller.forward();
+//       }
+//       // else if (status == AnimationStatus.dismissed) {
+
+//       // }
+//     });
+//   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
+//     begin: Offset.zero,
+//     end: const Offset(1.5, 0.0),
+//   ).animate(CurvedAnimation(
+//     parent: _controller,
+//     curve: Curves.fastLinearToSlowEaseIn,
+//   ));
+//   @override
+//   void initState() {
+//     super.initState();
+//     _controller.forward();
+//   }
+
+//   @override
+//   void dispose() {
+//     // _animationController.dispose();
+//     _controller.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return SlideTransition(
+//       position: _offsetAnimation,
+//       child: Padding(
+//         padding: const EdgeInsets.all(8.0),
+//         child: widget.image,
+//       ),
+//     );
+//   }
+// }
+
 class SlideTransitions extends StatefulWidget {
   final Widget? image;
   const SlideTransitions({super.key, this.image});
-
   @override
   State<SlideTransitions> createState() => _SlideTransitionsState();
 }
@@ -232,32 +280,18 @@ class SlideTransitions extends StatefulWidget {
 class _SlideTransitionsState extends State<SlideTransitions>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 8),
+    duration: const Duration(seconds: 3),
     vsync: this,
-  )..addStatusListener((status) {
-      if (status == AnimationStatus.completed) {
-          WheretoGo(context);
-        _controller.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        _controller.forward();
-      }
-    });
+  )..repeat(reverse: true);
   late final Animation<Offset> _offsetAnimation = Tween<Offset>(
     begin: Offset.zero,
     end: const Offset(1.5, 0.0),
   ).animate(CurvedAnimation(
     parent: _controller,
-    curve: Curves.fastLinearToSlowEaseIn,
+    curve: Curves.easeIn,
   ));
   @override
-  void initState() {
-    super.initState();
-    _controller.forward();
-  }
-
-  @override
   void dispose() {
-    // _animationController.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -266,10 +300,7 @@ class _SlideTransitionsState extends State<SlideTransitions>
   Widget build(BuildContext context) {
     return SlideTransition(
       position: _offsetAnimation,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: widget.image,
-      ),
+      child: Padding(padding: const EdgeInsets.all(8.0), child: widget.image),
     );
   }
 }

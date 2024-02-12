@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/Notificationrepo/notification_repo.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
-import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Widgets/custom_notification.dart';
 import 'package:flutter_riderapp/controllers/Notification/dashboardcontroller.dart';
 import 'package:flutter_riderapp/controllers/Notification/notification_controller.dart';
+import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -59,7 +59,7 @@ class _notificationState extends State<notification> {
               dashboardcontroller.j.updatenotification(1);
             });
             },
-            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+            child: const Icon(Icons.arrow_back_ios_new,color: Colors.white,)),
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
           elevation: 0.0,
@@ -70,9 +70,9 @@ class _notificationState extends State<notification> {
               child: Text(
                 "notification".tr,
                 style: GoogleFonts.poppins(
-                  color: Colors.blue,
+                  color: ColorManager.kDarkBlue,
                   fontWeight: FontWeight.bold,
-                  fontSize: 26,
+                  fontSize: 22,
                 ),
               ),
             ),

@@ -513,12 +513,11 @@ class _SignupState extends State<Signup> {
                             ),
                           ),
 
-                         
-                               mobile_number.text.isEmpty  &&
+                          mobile_number.text.isEmpty &&
                                   chk == true &&
                                   widget.fromlogin == false
                               ? SizedBox(
-                                child: Column(
+                                  child: Column(
                                     children: [
                                       SizedBox(height: Get.height * 0.01),
                                       Row(
@@ -539,7 +538,7 @@ class _SignupState extends State<Signup> {
                                       ),
                                     ],
                                   ),
-                              )
+                                )
                               : const SizedBox.shrink(),
 
                           SizedBox(
@@ -746,11 +745,11 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
-                           selectedGender == null &&
+                          selectedGender == null &&
                                   chk == true &&
                                   widget.fromlogin == false
                               ? SizedBox(
-                                child: Column(
+                                  child: Column(
                                     children: [
                                       SizedBox(height: Get.height * 0.01),
                                       Row(
@@ -771,7 +770,7 @@ class _SignupState extends State<Signup> {
                                       ),
                                     ],
                                   ),
-                              )
+                                )
                               : const SizedBox.shrink(),
 
                           SizedBox(
@@ -866,7 +865,7 @@ class _SignupState extends State<Signup> {
                                   chk == true &&
                                   widget.fromlogin == false
                               ? SizedBox(
-                                child: Column(
+                                  child: Column(
                                     children: [
                                       SizedBox(height: Get.height * 0.01),
                                       Row(
@@ -887,7 +886,7 @@ class _SignupState extends State<Signup> {
                                       ),
                                     ],
                                   ),
-                              )
+                                )
                               : const SizedBox.shrink(),
 
                           SizedBox(
