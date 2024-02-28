@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element
+
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -26,12 +28,12 @@ class _CustomNotificationState extends State<CustomNotification> {
   int length = 10;
   @override
   void initState() {
-    didChangeDependencies(_)
-    {
-      today=0;
-      yesterday=0;
-      before=0;
+    didChangeDependencies(_) {
+      today = 0;
+      yesterday = 0;
+      before = 0;
     }
+
     log(DateTime.now().toString());
     super.initState();
   }
@@ -56,17 +58,18 @@ class _CustomNotificationState extends State<CustomNotification> {
 
   @override
   void dispose() {
-  today=0;
-      yesterday=0;
-      before=0;
-    // TODO: implement dispose
+    today = 0;
+    yesterday = 0;
+    before = 0;
+
     super.dispose();
   }
-  DateTime t1=DateTime.now().subtract(const Duration(days:1));
 
-int today=0;
-int yesterday=0;
-int before=0;
+  DateTime t1 = DateTime.now().subtract(const Duration(days: 1));
+
+  int today = 0;
+  int yesterday = 0;
+  int before = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -76,110 +79,97 @@ int before=0;
           RefreshIndicator(
             onRefresh: _refreshNotifications,
             child: ListView.builder(
-              physics: const AlwaysScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: notificationscontroller.j.notifications.length,
-              itemBuilder: (context, index) {
-                final data = notificationscontroller.j.notifications[index];
-                
-              
-                if(DateTime.now().toString().split(' ')[0]==data.dateTime.toString().split('T')[0] && today==0)
-                {
-                  today+=1;
-                  return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                         const Text("Today"),
-                          customListTile(context, data),
-                        ],
-                      ));
-                }
-                else if(t1.isBefore(DateTime.now()) && yesterday==0)
-                {
-                  yesterday+=1;
-                  return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                           const Text("Yesterday"),
-                          customListTile(context, data),
-                        ],
-                      ));
-                }
-               
-               
-                else
-                {
-                   return Padding(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                physics: const AlwaysScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: notificationscontroller.j.notifications.length,
+                itemBuilder: (context, index) {
+                  final data = notificationscontroller.j.notifications[index];
 
-                          customListTile(context, data),
-                        ],
-                      ));
-                }
-               
+                  if (DateTime.now().toString().split(' ')[0] ==
+                          data.dateTime.toString().split('T')[0] &&
+                      today == 0) {
+                    today += 1;
+                    return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Today"),
+                            customListTile(context, data),
+                          ],
+                        ));
+                  } else if (t1.isBefore(DateTime.now()) && yesterday == 0) {
+                    yesterday += 1;
+                    return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text("Yesterday"),
+                            customListTile(context, data),
+                          ],
+                        ));
+                  } else {
+                    return Padding(
+                        padding: const EdgeInsets.only(top: 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            customListTile(context, data),
+                          ],
+                        ));
+                  }
 
+                  // } else if (DateTime.now().toString().split(' ')[0] !=
+                  //         data.dateTime.toString().split('T')[0] &&
+                  //     chk2) {
+                  //       chk2=false;
+                  //   return Padding(
+                  //       padding: const EdgeInsets.only(top: 10),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           "${DateTime.now().toString().split(' ')[0].split('-')[0]}-${int.parse(DateTime.now().toString().split(' ')[0].split('-')[2]) - 1}${DateTime.now().toString().split(' ')[0].split('-')[2]}" ==
+                  //                   data.dateTime.toString().split('T')[0]
+                  //               ? const Padding(
+                  //                   padding: EdgeInsets.only(left: 8.0),
+                  //                   child: Text("Yesterday"),
+                  //                 )
+                  //               :  const SizedBox.shrink(),
+                  //           customListTile(context, data),
+                  //         ],
+                  //       ));
+                  // } else if (DateTime.now().toString().split(' ')[0] !=
+                  //         data.dateTime.toString().split('T')[0] &&
+                  //     chk2) {
+                  //   return Padding(
+                  //       padding: const EdgeInsets.only(top: 10),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
+                  //           DateTime.now().toString().split(' ')[0] ==
+                  //                   data.dateTime.toString().split('T')[0]
+                  //               ? const Padding(
+                  //                   padding: EdgeInsets.only(left: 8.0),
+                  //                   child: Text("Yesterday"),
+                  //                 )
+                  //               : const SizedBox.shrink(),
+                  //           customListTile(context, data),
+                  //         ],
+                  //       ));
+                  // }
+                  // else{
+                  //    return Padding(
+                  //       padding: const EdgeInsets.only(top: 10),
+                  //       child: Column(
+                  //         crossAxisAlignment: CrossAxisAlignment.start,
+                  //         children: [
 
-
-
-                // } else if (DateTime.now().toString().split(' ')[0] !=
-                //         data.dateTime.toString().split('T')[0] &&
-                //     chk2) {
-                //       chk2=false;
-                //   return Padding(
-                //       padding: const EdgeInsets.only(top: 10),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           "${DateTime.now().toString().split(' ')[0].split('-')[0]}-${int.parse(DateTime.now().toString().split(' ')[0].split('-')[2]) - 1}${DateTime.now().toString().split(' ')[0].split('-')[2]}" ==
-                //                   data.dateTime.toString().split('T')[0]
-                //               ? const Padding(
-                //                   padding: EdgeInsets.only(left: 8.0),
-                //                   child: Text("Yesterday"),
-                //                 )
-                //               :  const SizedBox.shrink(),
-                //           customListTile(context, data),
-                //         ],
-                //       ));
-                // } else if (DateTime.now().toString().split(' ')[0] !=
-                //         data.dateTime.toString().split('T')[0] &&
-                //     chk2) {
-                //   return Padding(
-                //       padding: const EdgeInsets.only(top: 10),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                //           DateTime.now().toString().split(' ')[0] ==
-                //                   data.dateTime.toString().split('T')[0]
-                //               ? const Padding(
-                //                   padding: EdgeInsets.only(left: 8.0),
-                //                   child: Text("Yesterday"),
-                //                 )
-                //               : const SizedBox.shrink(),
-                //           customListTile(context, data),
-                //         ],
-                //       ));
-                // }
-                // else{
-                //    return Padding(
-                //       padding: const EdgeInsets.only(top: 10),
-                //       child: Column(
-                //         crossAxisAlignment: CrossAxisAlignment.start,
-                //         children: [
-                         
-                //           customListTile(context, data),
-                //         ],
-                //       ));
-                // }
-              }
-
-            ),
+                  //           customListTile(context, data),
+                  //         ],
+                  //       ));
+                  // }
+                }),
           ),
         ],
       );

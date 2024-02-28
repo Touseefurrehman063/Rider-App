@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -16,7 +18,6 @@ import 'package:flutter_riderapp/Models/Register.dart';
 import 'package:flutter_riderapp/Models/city.dart';
 import 'package:flutter_riderapp/Models/gender.dart';
 import 'package:flutter_riderapp/Models/vehicle.dart';
-// ignore: unused_import
 import 'package:flutter_riderapp/Screen/Login/_login.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riderapp/Screen/Login/_registered.dart';
@@ -26,6 +27,7 @@ import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:image/image.dart' as img;
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+// ignore: must_be_immutable
 class Signup extends StatefulWidget {
   bool fromlogin;
   Signup({super.key, required this.fromlogin});
@@ -35,6 +37,7 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
+  // ignore: non_constant_identifier_names
   vehicle? Vehicle;
 
   late File _heicImage;
@@ -58,26 +61,37 @@ class _SignupState extends State<Signup> {
   final dateFormat = DateFormat('yyyy-MM-dd');
   DateTime selectedDate = DateTime.now();
 
+  // ignore: non_constant_identifier_names
   TextEditingController Name = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController mobile_number = TextEditingController();
   TextEditingController email = TextEditingController();
   TextEditingController datetimecontroller = TextEditingController();
+  // ignore: non_constant_identifier_names
   final TextEditingController gvt_id = TextEditingController();
   final MaskTextInputFormatter maskFormatter = MaskTextInputFormatter(
     mask: 'XXX-XXXX-XXXXXXXX-X',
     filter: {"X": RegExp(r'[0-9]')},
   );
+  // ignore: non_constant_identifier_names
   TextEditingController v_type = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController L_No = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController Password = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController Re_Password = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController City = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController Address = TextEditingController();
+  // ignore: non_constant_identifier_names
   TextEditingController v_number = TextEditingController();
 
 // final GlobalKey _dropdownKey = GlobalKey();
 
   bool passwordVisible = true;
+  // ignore: non_constant_identifier_names
   bool PasswordVisible = true;
   bool registered = false;
   FocusNode focusNode = FocusNode();
@@ -98,12 +112,14 @@ class _SignupState extends State<Signup> {
   // ignore: unused_field
   bool _isBottomSheetVisible = false;
   bool chk = false;
+  // ignore: unused_element
   void _showBottomSheet() {
     setState(() {
       _isBottomSheetVisible = true;
     });
   }
 
+  // ignore: unused_element
   void _hideBottomSheet() {
     setState(() {
       _isBottomSheetVisible = false;
@@ -138,9 +154,11 @@ class _SignupState extends State<Signup> {
   String? selectedVehicle;
   String? selectedCity;
   String? selectedCountries;
+  // ignore: non_constant_identifier_names
   String? SelectedState;
   String? selectedCountriesName;
   String? selectedCityName;
+  // ignore: non_constant_identifier_names
   String? SelectedStateName;
 
   List<String> cityNameArray = ['Select Vehicle'];
@@ -328,6 +346,7 @@ class _SignupState extends State<Signup> {
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> _register_api(Register register) async {
     var url = '$ip/api/RiderRegistrationRequest/SubmitRegistrationRequest';
     var headers = {
@@ -563,7 +582,7 @@ class _SignupState extends State<Signup> {
                             onTap: () async {
                               DateTime? pickedDate = await showDatePicker(
                                 context: context,
-                                initialDate: selectedDate ?? DateTime.now(),
+                                initialDate: selectedDate,
                                 firstDate: DateTime(1900),
                                 lastDate: DateTime.now(),
                               );
@@ -596,8 +615,7 @@ class _SignupState extends State<Signup> {
                                   onPressed: () async {
                                     DateTime? pickedDate = await showDatePicker(
                                       context: context,
-                                      initialDate:
-                                          selectedDate ?? DateTime.now(),
+                                      initialDate: selectedDate,
                                       firstDate: DateTime(1900),
                                       lastDate: DateTime.now(),
                                     );
@@ -679,6 +697,7 @@ class _SignupState extends State<Signup> {
                               gender.clear();
                               await genderapi();
                               setState(() {});
+                              // ignore: use_build_context_synchronously
                               dynamic generic = await searchableDropdown(
                                   context, constraints, gender);
                               if (generic != null && generic != '') {
@@ -807,6 +826,7 @@ class _SignupState extends State<Signup> {
                               vehicles.clear();
                               await vehicleapi();
                               setState(() {});
+                              // ignore: use_build_context_synchronously
                               dynamic generic = await searchableDropdown(
                                   context, constraints, vehicles);
                               if (generic != null && generic != '') {
@@ -994,10 +1014,12 @@ class _SignupState extends State<Signup> {
                               countries.clear();
                               await countriesapi();
                               setState(() {});
+                              // ignore: use_build_context_synchronously
                               dynamic generic = await searchableDropdown(
                                   context, constraints, countries);
                               selectedCountriesName = null;
                               if (generic != null && generic != '') {
+                                // ignore: prefer_interpolation_to_compose_strings
                                 print('Countries selected Id' + generic.id);
                                 selectedCountries = generic.id;
                                 selectedCountriesName =
@@ -1336,6 +1358,7 @@ class _SignupState extends State<Signup> {
 
                                     await _register_api(register);
 
+                                    // ignore: use_build_context_synchronously
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(builder: ((context) {
@@ -1458,6 +1481,7 @@ class _SignupState extends State<Signup> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   void TakePhoto(ImageSource source) async {
     final XFile? pickedFile = await _picker.pickImage(source: source);
     if (pickedFile != null) {
@@ -1470,6 +1494,7 @@ class _SignupState extends State<Signup> {
 
   bool checkval = true;
 
+  // ignore: non_constant_identifier_names
   Widget ImageProfile() {
     return Stack(
       children: <Widget>[

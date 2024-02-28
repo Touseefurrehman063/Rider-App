@@ -33,6 +33,7 @@ class _LoginState extends State<Login> {
   bool passwordVisible = true;
   bool isLoading = false;
   User? user;
+  // ignore: unused_field
   final bool _obscureText = true;
 
   Future<Map<String, dynamic>> login(String userName, String password) async {
@@ -42,6 +43,7 @@ class _LoginState extends State<Login> {
     var headers = {
       'Content-Type': 'application/json',
     };
+    // ignore: non_constant_identifier_names
     String? DeviceToken = await LocalDB().getDeviceToken();
     var body = jsonEncode({
       'username': userName,
@@ -66,8 +68,6 @@ class _LoginState extends State<Login> {
       // sharedpref.setString('Token',user!.token.toString());
 
       userprofile = userProfile.fromJson(responseData);
-
-      print('API Response: $responseData');
 
       if (status != -5) {
         // ignore: use_build_context_synchronously
@@ -100,11 +100,15 @@ class _LoginState extends State<Login> {
   bool isBiometric = false;
 
   final LocalAuthentication auth = LocalAuthentication();
+  // ignore: unused_field
   List<BiometricType>? _availableBiometrics;
+  // ignore: unused_field
   String _authorized = "Not Authorized";
+  // ignore: unused_field
   bool _isAuthenticating = false;
   bool authentication = false;
 
+  // ignore: unused_element
   Future<bool> _authenticate() async {
     bool authenticated = false;
 
@@ -123,7 +127,6 @@ class _LoginState extends State<Login> {
     } on PlatformException catch (e) {
       _isAuthenticating = false;
       _authorized = "Error - ${e.message}";
-      print(e.message.toString());
 
       return authenticated;
     }
@@ -162,6 +165,7 @@ class _LoginState extends State<Login> {
                 username,
               );
               sharedpref.setString('password', riderpassword);
+              // ignore: use_build_context_synchronously
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
@@ -329,6 +333,7 @@ class _LoginState extends State<Login> {
                                             userNameController.text.toString());
                                         sharedpref.setString('riderpassword',
                                             passwordController.text.toString());
+                                        // ignore: use_build_context_synchronously
                                         Navigator.pushReplacement(
                                           context,
                                           MaterialPageRoute(

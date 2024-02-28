@@ -1,3 +1,5 @@
+// ignore_for_file: non_constant_identifier_names, avoid_print
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
@@ -467,24 +469,23 @@ class _LabinvestigationState extends State<Labinvestigation> {
               ),
               Column(
                 children: [
-                    CupertinoButton(
-                              color: CupertinoColors.activeBlue,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 120, vertical: 0.5),
-                              borderRadius: BorderRadius.circular(8),
-                              onPressed: () async {
-                                 await checkinapi(widget.user.appointmentno ?? "",
-                          widget.user.branchlocationid ?? "");
-                      Get.to(const Labqeue());
-                              },
-                              child: Text(
-                                "checkin".tr,
-                                style: GoogleFonts.poppins(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: CupertinoColors.white),
-                              )),
-                
+                  CupertinoButton(
+                      color: CupertinoColors.activeBlue,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 120, vertical: 0.5),
+                      borderRadius: BorderRadius.circular(8),
+                      onPressed: () async {
+                        await checkinapi(widget.user.appointmentno ?? "",
+                            widget.user.branchlocationid ?? "");
+                        Get.to(const Labqeue());
+                      },
+                      child: Text(
+                        "checkin".tr,
+                        style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: CupertinoColors.white),
+                      )),
                 ],
               ),
             ],

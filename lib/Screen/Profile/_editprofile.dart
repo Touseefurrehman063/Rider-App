@@ -1,3 +1,5 @@
+// ignore_for_file: unused_element, avoid_print, use_build_context_synchronously, non_constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
 
@@ -58,9 +60,9 @@ class _EditProfileState extends State<EditProfile> {
       dynamic data = jsonDecode(await res.stream.bytesToString());
       r = data["Path"];
 
-      print('Upload success: ');
+      // print('Upload success: ');
     } else {
-      print('Upload failed with status ${res.statusCode}');
+      // print('Upload failed with status ${res.statusCode}');
     }
 
     return r;
@@ -86,11 +88,11 @@ class _EditProfileState extends State<EditProfile> {
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       var status = responseData['Status'];
-      print(responseData);
+      // print(responseData);
       dynamic usr = responseData;
       user = User.fromJson(usr);
 
-      print('API Response: $responseData');
+      // print('API Response: $responseData');
       if (status == 1) {}
     }
   }
@@ -98,14 +100,17 @@ class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-     appBar: AppBar(
+      appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
-       leading: InkWell(
-            onTap: (){
+        leading: InkWell(
+            onTap: () {
               Get.back();
             },
-            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Color(0xff0F64C6),
+            )),
         title: Text(
           'Edit Profile',
           textAlign: TextAlign.center,
@@ -118,108 +123,105 @@ class _EditProfileState extends State<EditProfile> {
         ),
         centerTitle: true,
       ),
-      body: Container(
-        child: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-          SizedBox(
-            child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 110, vertical: 35),
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: 140,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        ImageProfile(),
-                      ],
-                    ),
+      body: Column(mainAxisAlignment: MainAxisAlignment.start, children: [
+        SizedBox(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 110, vertical: 35),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 140,
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      ImageProfile(),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  SizedBox(
-                    //  height: MediaQuery.of(context).size.height*0.08,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: customFormField(
-                        hinttext: " Full Name",
-                        val: fname.text.toString(),
-                        controller: fname,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  Padding(
+        ),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                SizedBox(
+                  //  height: MediaQuery.of(context).size.height*0.08,
+                  child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
-                    child: IntlPhoneField(
-                      initialCountryCode: 'SA',
-                      focusNode: focusNode,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: ' Phone Number',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(),
-                        ),
-                      ),
-                      languageCode: "en",
-                      onChanged: (phone) {
-                        print(phone.completeNumber);
-                        phoneno.text = phone.number.toString();
-                      },
-                      onCountryChanged: (country) {
-                        print('Country changed to: ${country.name}');
-                        print(phoneno.text);
-                      },
-                      validator: (value) {
-                        if (value == null) {
-                          return 'Please enter a valid number';
-                        }
-                        return null;
-                      },
+                    child: customFormField(
+                      hinttext: " Full Name",
+                      val: fname.text.toString(),
+                      controller: fname,
                     ),
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  CustomButton(
-                    onPressed: () async {
-                      String str = await uploadPicture(_imageFile!);
-                      userProfile update = userProfile();
-                      update.fullName = fname.text.toString();
-                      update.cellNumber = phoneno.text.toString();
-                      update.imagePath =
-                          str.toString().split('=')[1].split('"')[0];
-
-                      await updateaccount();
-                      userprofile!.fullName = fname.text.toString();
-                      userprofile!.cellNumber = phoneno.text.toString();
-                      userprofile!.imagePath =
-                          str.toString().split('=')[1].split('"')[0];
-                      Navigator.pop(context);
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: IntlPhoneField(
+                    initialCountryCode: 'SA',
+                    focusNode: focusNode,
+                    keyboardType: TextInputType.text,
+                    decoration: const InputDecoration(
+                      labelText: ' Phone Number',
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(),
+                      ),
+                    ),
+                    languageCode: "en",
+                    onChanged: (phone) {
+                      // print(phone.completeNumber);
+                      phoneno.text = phone.number.toString();
                     },
-                    title: "Update ",
-                    radius: 20,
-                    style: GoogleFonts.poppins(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold),
-                    primcolor: const Color(0xFF1272D3),
-                    width: MediaQuery.of(context).size.width * 0.8,
+                    onCountryChanged: (country) {
+                      // print('Country changed to: ${country.name}');
+                      print(phoneno.text);
+                    },
+                    validator: (value) {
+                      if (value == null) {
+                        return 'Please enter a valid number';
+                      }
+                      return null;
+                    },
                   ),
-                ],
-              ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+                CustomButton(
+                  onPressed: () async {
+                    String str = await uploadPicture(_imageFile!);
+                    userProfile update = userProfile();
+                    update.fullName = fname.text.toString();
+                    update.cellNumber = phoneno.text.toString();
+                    update.imagePath =
+                        str.toString().split('=')[1].split('"')[0];
+
+                    await updateaccount();
+                    userprofile!.fullName = fname.text.toString();
+                    userprofile!.cellNumber = phoneno.text.toString();
+                    userprofile!.imagePath =
+                        str.toString().split('=')[1].split('"')[0];
+                    Navigator.pop(context);
+                  },
+                  title: "Update ",
+                  radius: 20,
+                  style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
+                  primcolor: const Color(0xFF1272D3),
+                  width: MediaQuery.of(context).size.width * 0.8,
+                ),
+              ],
             ),
           ),
-        ]),
-      ),
+        ),
+      ]),
     );
   }
 

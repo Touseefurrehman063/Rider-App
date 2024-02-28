@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class CheckInModel {
   List<PatientCheckIn>? patientCheckIn;
   String? patientServiceAppointmentId;
@@ -21,7 +23,7 @@ class CheckInModel {
   String? jobTradeId;
   String? agentId;
   String? countryToVisitId;
- dynamic referenceType;
+  dynamic referenceType;
   String? referenceNumber;
   String? bookingRemarks;
   bool? includeFitToTravelCertificate;
@@ -32,20 +34,20 @@ class CheckInModel {
   String? sampleReceivedFromRemarks;
   String? patientLabBookingSlipAttachmentPath;
   String? gCCSlipNo;
- dynamic sampleReceivedFromPanelOrganizationId;
- dynamic discountReferenceId;
+  dynamic sampleReceivedFromPanelOrganizationId;
+  dynamic discountReferenceId;
   bool? isBookingHasTestWithoutSpecimenAndAutoNumber;
   bool? canRebookTest;
   String? paymentMethodId;
- dynamic prescribedById;
+  dynamic prescribedById;
   String? paymentMethodRemarks;
   String? outDoorDoctor;
   bool? isCreditPaymentPending;
- dynamic creditPaymentRemarks;
- dynamic creditPaymentType;
+  dynamic creditPaymentRemarks;
+  dynamic creditPaymentType;
   int? creditPaymentAmount;
   bool? isReferralPanelBooking;
- dynamic referralPanelBookingRemarks;
+  dynamic referralPanelBookingRemarks;
   String? advanceSecurityPaidAmount;
   String? patientPassportImagePath;
   String? patientPicturePath;
@@ -136,9 +138,7 @@ class CheckInModel {
     }
     if (json['MiscellaneousServicesList'] != dynamic) {
       miscellaneousServicesList = <dynamic>[];
-      json['MiscellaneousServicesList'].forEach((v) {
-       
-      });
+      json['MiscellaneousServicesList'].forEach((v) {});
     }
     discountReference = json['DiscountReference'];
     discountRemarks = json['DiscountRemarks'];
@@ -199,17 +199,19 @@ class CheckInModel {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    // ignore: unrelated_type_equality_checks
     if (patientCheckIn != dynamic) {
-      data['PatientCheckIn'] =
-          patientCheckIn!.map((v) => v.toJson()).toList();
+      data['PatientCheckIn'] = patientCheckIn!.map((v) => v.toJson()).toList();
     }
     data['PatientServiceAppointmentId'] = patientServiceAppointmentId;
     data['PaymentNo'] = paymentNo;
     data['DoctorCheckInType'] = doctorCheckInType;
+    // ignore: unrelated_type_equality_checks
     if (patientServicelist != dynamic) {
       data['patientServicelist'] =
           patientServicelist!.map((v) => v.toJson()).toList();
     }
+    // ignore: unrelated_type_equality_checks
     if (miscellaneousServicesList != dynamic) {
       // data['MiscellaneousServicesList'] =
       //     this.miscellaneousServicesList!.map((v) => v.toJson()).toList();
@@ -275,7 +277,7 @@ class CheckInModel {
 
 class PatientCheckIn {
   String? patientId;
- dynamic tokenNumber;
+  dynamic tokenNumber;
   String? increasedPaymentAmountRemarks;
   String? increasedPaymentAmount;
   String? customPanelEntitleLetterB;
@@ -403,8 +405,7 @@ class PatientCheckIn {
     data['CustomPanelEntitleLetterB'] = customPanelEntitleLetterB;
     data['CustomPanelEntitleLetterA'] = customPanelEntitleLetterA;
     data['CustomPanelEmployeeNo'] = customPanelEmployeeNo;
-    data['CustomPanelOrganizationPackageId'] =
-        customPanelOrganizationPackageId;
+    data['CustomPanelOrganizationPackageId'] = customPanelOrganizationPackageId;
     data['CustomPanelOrganizationId'] = customPanelOrganizationId;
     data['VoucherCouponAmount'] = voucherCouponAmount;
     data['VoucherCouponDiscountType'] = voucherCouponDiscountType;
@@ -443,13 +444,13 @@ class PatientServicelist {
   String? subServiceId;
   String? charges;
   String? typeBit;
- dynamic discountType;
- dynamic discountRate;
+  dynamic discountType;
+  dynamic discountRate;
   String? totalCharges;
   int? paidAmount;
   int? isUrgent;
   String? executionDateTime;
- dynamic urgentDateTime;
+  dynamic urgentDateTime;
   int? governmentCharges;
   int? subServiceCount;
   int? preference;

@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types
+
 class checkintry {
   List<PatientCheckIn>? patientCheckIn;
   String? paymentNo;
@@ -36,8 +38,7 @@ class checkintry {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
     if (patientCheckIn != null) {
-      data['PatientCheckIn'] =
-          patientCheckIn!.map((v) => v.toJson()).toList();
+      data['PatientCheckIn'] = patientCheckIn!.map((v) => v.toJson()).toList();
     }
     data['PaymentNo'] = paymentNo;
     data['DoctorCheckInType'] = doctorCheckInType;
@@ -74,13 +75,13 @@ class PatientServicelist {
   String? subServiceId;
   String? charges;
   String? typeBit;
- dynamic discountType;
- dynamic discountRate;
+  dynamic discountType;
+  dynamic discountRate;
   String? totalCharges;
   int? paidAmount;
   int? isUrgent;
   String? executionDateTime;
- dynamic urgentDateTime;
+  dynamic urgentDateTime;
   int? governmentCharges;
   int? subServiceCount;
   int? preference;

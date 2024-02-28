@@ -1,4 +1,6 @@
-class userProfile{
+// ignore_for_file: camel_case_types
+
+class userProfile {
   String? id;
   String? cNICNumber;
   String? email;
@@ -57,12 +59,12 @@ class userProfile{
       this.employeeNumber,
       this.token,
       this.vehicleTypeId,
-      this.vehicleNumber="",
+      this.vehicleNumber = "",
       this.licenseNo,
       this.vehicleTypeName,
-      this.dateofBirth=""});
+      this.dateofBirth = ""});
 
- userProfile.fromJson(Map<String, dynamic> json) {
+  userProfile.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     cNICNumber = json['CNICNumber'];
     email = json['Email'];

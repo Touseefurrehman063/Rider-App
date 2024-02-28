@@ -1,3 +1,4 @@
+// ignore: camel_case_types
 class apointmentdetail {
   dynamic id;
   dynamic subServiceId;
@@ -34,8 +35,8 @@ class apointmentdetail {
     userId = json['UserId'];
     patientId = json['PatientId'];
     appointmentNo = json['AppointmentNo'];
-    vatamount=json['VATAmount'];
-    vatpercentage=json['VATPercentage'];
+    vatamount = json['VATAmount'];
+    vatpercentage = json['VATPercentage'];
   }
 
   Map<String, dynamic> toJson() {
@@ -49,8 +50,8 @@ class apointmentdetail {
     data['UserId'] = userId;
     data['PatientId'] = patientId;
     data['AppointmentNo'] = appointmentNo;
-    data['VATPercentage']=vatpercentage;
-    data['VATAmount']=vatamount;
+    data['VATPercentage'] = vatpercentage;
+    data['VATAmount'] = vatamount;
     return data;
   }
 }

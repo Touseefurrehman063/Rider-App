@@ -1,12 +1,14 @@
-class vehicle{
+// ignore_for_file: camel_case_types
+
+class vehicle {
   String? id;
   String? name;
   String? type;
   String? description;
 
- vehicle({this.id, this.name, this.type, this.description});
+  vehicle({this.id, this.name, this.type, this.description});
 
- vehicle.fromJson(Map<String, dynamic> json) {
+  vehicle.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
     name = json['Name'];
     type = json['Type'];

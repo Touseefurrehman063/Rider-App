@@ -207,7 +207,7 @@ class _FirstViewState extends State<FirstView> {
                                         ),
                                       ),
                                     );
-                                    print('Image tapped!');
+                                    // print('Image tapped!');
                                   },
                                   child: Padding(
                                     padding:
@@ -248,7 +248,7 @@ class _FirstViewState extends State<FirstView> {
                                         ),
                                       ),
                                     );
-                                    print('Image tapped!');
+                                    // print('Image tapped!');
                                   },
                                   child: Padding(
                                     padding:
@@ -362,7 +362,7 @@ class _FirstViewState extends State<FirstView> {
                                 InkWell(
                                   onTap: () {
                                     Get.to(const NoDataFound());
-                                    print("Image Tapped");
+                                    // print("Image Tapped");
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,

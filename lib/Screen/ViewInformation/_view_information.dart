@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -54,14 +56,18 @@ class ViewInformation extends StatefulWidget {
 }
 
 class _ViewInformationState extends State<ViewInformation> {
+  // ignore: non_constant_identifier_names
   String? Selectpayment;
+  // ignore: non_constant_identifier_names
   String? SelectLab;
   String? selectedLabsName;
   LabsModel? _selectedlab;
+  // ignore: non_constant_identifier_names
   List<LabsModel> Labs = [];
   bool isLoading = false;
   List<PaymentMethod> payments = [];
   List<apointmentdetail> appointments = [];
+  // ignore: non_constant_identifier_names
   InrouteModel Inroute = InrouteModel();
   List<PatientServicelist> lst1 = [];
   double distance = 0.0;
@@ -137,6 +143,7 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
+    // ignore: no_leading_underscores_for_local_identifiers
     _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("poly$_polylineCount");
       Polyline polyline = Polyline(
@@ -200,6 +207,7 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
+    // ignore: no_leading_underscores_for_local_identifiers
     _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("$timeInHours");
       Polyline polyline = Polyline(
@@ -251,8 +259,7 @@ class _ViewInformationState extends State<ViewInformation> {
     ltlg.add(LatLng(double.parse(widget.user.latitude.toString()),
         double.parse(widget.user.longitude.toString())));
 // widget.user.latitude ==null && widget.user.longitude== null?"":
-    print(widget.user.latitude);
-    print(widget.user.longitude);
+
     _markers.add(
       Marker(
         markerId: const MarkerId('Patient Location'),
@@ -489,8 +496,8 @@ class _ViewInformationState extends State<ViewInformation> {
       if (widget.user.status == "In Route") {
         _getPolylinesWithLocationforlab(
             _currentLatLng,
-            LatLng(double.parse(widget.user.inroutelat.toString() ?? ""),
-                double.parse(widget.user.inroutelon.toString() ?? "")));
+            LatLng(double.parse(widget.user.inroutelat.toString()),
+                double.parse(widget.user.inroutelon.toString())));
       }
       CameraPosition cameraPosition = CameraPosition(
         target: LatLng(double.parse(locationData.latitude.toString()),
@@ -668,6 +675,7 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> CancelRide(User user, String remarks) async {
     var url = '$ip/api/account/CancelRide';
     var headers = {
@@ -707,6 +715,7 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> EndRide(User user) async {
     var url = '$ip/api/account/EndRide';
     var headers = {
@@ -745,6 +754,7 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> CompleteRide(User user) async {
     var url = '$ip/api/account/CompleteRide';
     var headers = {
@@ -781,6 +791,7 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  // ignore: non_constant_identifier_names
   Future<void> InRouteapi() async {
     var url = '$ip/api/account/InRouteSampleDelivery';
     var headers = {
@@ -1081,6 +1092,7 @@ class _ViewInformationState extends State<ViewInformation> {
                           }
                           setState(() {});
 
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
@@ -1203,6 +1215,7 @@ class _ViewInformationState extends State<ViewInformation> {
                               });
                             }
                           }
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
@@ -1223,6 +1236,7 @@ class _ViewInformationState extends State<ViewInformation> {
                       ElevatedButton(
                         onPressed: () async {
                           await EndRide(widget.user);
+                          // ignore: use_build_context_synchronously
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1246,12 +1260,15 @@ class _ViewInformationState extends State<ViewInformation> {
 
   Color activeIconColor = Colors.white;
   Color inactiveIconColor = Colors.grey;
+  // ignore: unused_element
   void _launchGoogleMaps(
       double destinationLatitude, double destinationLongitude) async {
     final String googleMapsUrl =
         "https://www.google.com/maps/dir/?api=1&destination=$destinationLatitude,$destinationLongitude";
 
+    // ignore: deprecated_member_use
     if (await canLaunch(googleMapsUrl)) {
+      // ignore: deprecated_member_use
       await launch(googleMapsUrl);
     } else {
       throw 'Could not launch Google Maps';
@@ -1265,6 +1282,7 @@ class _ViewInformationState extends State<ViewInformation> {
         inAsyncCall: isLoading,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
+          // ignore: use_full_hex_values_for_flutter_colors
           color: Color(0xfff1272d3),
           size: 60,
         ),
@@ -1687,6 +1705,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                       () {});
                                                                   _remarksController
                                                                       .clear();
+                                                                  // ignore: use_build_context_synchronously
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
@@ -1913,6 +1932,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                       () {});
                                                                   _remarksController
                                                                       .clear();
+                                                                  // ignore: use_build_context_synchronously
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
@@ -2150,6 +2170,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                         () {});
                                                                     _remarksController
                                                                         .clear();
+                                                                    // ignore: use_build_context_synchronously
                                                                     Navigator.of(
                                                                             context)
                                                                         .pop();
@@ -2514,6 +2535,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           ),
                                                         ),
                                                         Obx(
+                                                          // ignore: unrelated_type_equality_checks
                                                           () => _selectedOption ==
                                                                   'yes'.tr
                                                               ? Row(
@@ -2678,6 +2700,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           await labsapi();
                                                           setState(() {});
                                                           dynamic generic =
+                                                              // ignore: use_build_context_synchronously
                                                               await custom_dropdown(
                                                             context,
                                                             Labs,
@@ -3105,6 +3128,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           if (widget.user.status ==
                                               "Ride Arrived")
                                             Obx(
+                                              // ignore: unrelated_type_equality_checks
                                               () => _selectedOption == 'yes'.tr
                                                   ? Center(
                                                       child: SizedBox(

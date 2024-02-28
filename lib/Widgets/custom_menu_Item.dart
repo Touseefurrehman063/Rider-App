@@ -1,11 +1,10 @@
-// ignore_for_file: use_build_context_synchronously, unrelated_type_equality_checks, unused_local_variable
+// ignore_for_file: file_names
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:get/get.dart';
-
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -17,7 +16,6 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       backgroundColor: Colors.blue,
       body: SafeArea(
@@ -28,7 +26,7 @@ class _MenuScreenState extends State<MenuScreen> {
               SizedBox(
                 height: Get.height * 0.08,
               ),
-             
+
               SizedBox(
                 height: Get.height * 0.02,
               ),
@@ -45,7 +43,6 @@ class _MenuScreenState extends State<MenuScreen> {
                   SizedBox(
                     width: Get.width * 0.15,
                   ),
-                  
                 ],
               ),
 
@@ -66,7 +63,6 @@ class _MenuScreenState extends State<MenuScreen> {
                 color: Colors.white,
                 thickness: 1,
               ),
-              
 
               customListTile(context, onTap: () {
                 Get.to(() => const NoDataFound());
@@ -78,10 +74,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     color: Colors.white,
                   ),
                   title: 'History'),
-            
-             
-            
-             
+
               // customListTile(context, onTap: () {
               //   Get.to(() => const NoDataFound());
               // }, imagePath: Images.lock, title: 'changePassword'.tr,imageHeight: Get.height*0.038),
@@ -90,18 +83,18 @@ class _MenuScreenState extends State<MenuScreen> {
                 onTap: () {
                   Get.to(() => const NoDataFound());
                 },
-                 icon: const Icon(
-                    Icons.fingerprint,
-                    size: 30,
-                    color: Colors.white,
-                  ),
+                icon: const Icon(
+                  Icons.fingerprint,
+                  size: 30,
+                  color: Colors.white,
+                ),
                 title: 'Biometric',
                 togglebutton: true,
               ),
-               customListTile(
+              customListTile(
                 context,
                 isIcon: true,
-                icon:  const Icon(
+                icon: const Icon(
                   Icons.password,
                   color: Colors.white,
                   size: 30,
@@ -140,12 +133,11 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
               InkWell(
                 onTap: () {
-                  print('Pressed');
+                  // print('Pressed');
                 },
                 child: Text(
                   'privacyPolicy'.tr,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 14),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ),
               SizedBox(
@@ -153,12 +145,11 @@ class _MenuScreenState extends State<MenuScreen> {
               ),
               InkWell(
                 onTap: () {
-                  print('Pressed');
+                  // print('Pressed');
                 },
                 child: Text(
                   'termsAndConditions'.tr,
-                  style: const TextStyle(
-                      color: Colors.white, fontSize: 14),
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
                 ),
               ),
               SizedBox(height: Get.height * 0.03),
@@ -178,11 +169,7 @@ class _MenuScreenState extends State<MenuScreen> {
               //       )
               //     : const SizedBox.shrink(),
 
-             
-                     
-                    
-                
-                customListTile(
+              customListTile(
                 context,
                 isIcon: true,
                 icon: const Icon(

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
@@ -53,6 +55,7 @@ class SplashscreenState extends State<Splashscreen>
   // late AnimationController _animationController;
   // late Animation<Offset> _animation;
 
+  // ignore: constant_identifier_names
   static const String KEYLOGIN = "login";
 
   String? username;

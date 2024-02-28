@@ -1,3 +1,5 @@
+// ignore_for_file: camel_case_types, library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/Notificationrepo/notification_repo.dart';
@@ -45,21 +47,21 @@ class _notificationState extends State<notification> {
     return formatter.format(lastMonth);
   }
 
- 
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
           leading: InkWell(
-            onTap: (){
-            setState(() {
-              
-              dashboardcontroller.j.updatenotification(1);
-            });
-            },
-            child: const Icon(Icons.arrow_back_ios_new,color: Colors.white,)),
+              onTap: () {
+                setState(() {
+                  dashboardcontroller.j.updatenotification(1);
+                });
+              },
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.white,
+              )),
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
           elevation: 0.0,
@@ -83,7 +85,6 @@ class _notificationState extends State<notification> {
             return const SingleChildScrollView(
               child: Column(
                 children: [
-                 
                   Padding(
                     padding: EdgeInsets.only(left: 10.0),
                     child: CustomNotification(),

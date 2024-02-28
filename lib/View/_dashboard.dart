@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
@@ -30,11 +32,13 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  // ignore: non_constant_identifier_names
   LogoutUser() async {
     var url = '$ip/api/account/Logoff';
     var headers = {
       'Content-Type': 'application/json',
     };
+    // ignore: non_constant_identifier_names
     String? DeviceToken = await LocalDB().getDeviceToken();
     var body = jsonEncode({
       "UserId": "${widget.user!.empId}",
@@ -62,6 +66,7 @@ class _DashboardState extends State<Dashboard> {
       if (status == 1) {
         // ignore: use_build_context_synchronously
 
+        // ignore: unused_local_variable
         var empId = responseData['Id'];
 
         //          showDialog(context: context, builder: (context){
@@ -88,6 +93,7 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  // ignore: unused_element
   String _getGreetingMessage() {
     var now = DateTime.now();
     var hour = now.hour;
@@ -186,9 +192,11 @@ class _DashboardState extends State<Dashboard> {
   }
 }
 
+// ignore: non_constant_identifier_names
 LogoutUser() async {
   var url = '$ip/api/account/Logoff';
 
+  // ignore: non_constant_identifier_names
   String? DeviceToken = await LocalDB().getDeviceToken();
   var sharedpref = await SharedPreferences.getInstance();
   String userid = sharedpref.getString('userId').toString();
@@ -207,6 +215,7 @@ LogoutUser() async {
   if (response.statusCode == 200) {
     var responseData = jsonDecode(response.body);
     var status = responseData['Status'];
+    // ignore: unused_local_variable
     dynamic usr = responseData;
     // userid=User.fromJson(usr);
     var sharedpref = await SharedPreferences.getInstance();
@@ -344,6 +353,7 @@ Future<void> logout(BuildContext context) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   prefs.setBool(SplashscreenState.KEYLOGIN, false);
   prefs.clear();
+  // ignore: use_build_context_synchronously
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => const Login()),

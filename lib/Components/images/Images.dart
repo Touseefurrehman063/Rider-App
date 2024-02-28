@@ -1,3 +1,5 @@
+// ignore_for_file: file_names
+
 class Images {
   static const String path = 'assets';
   static const String lock = '$path/lock.png';
@@ -8,5 +10,5 @@ class Images {
 
   static const String logoBackground = '$path/helpbackgraound.png';
   // static const String logo='$path/help.png';
-   static const String logo='$path/Helpful.png';
+  static const String logo = '$path/Helpful.png';
 }

@@ -83,7 +83,7 @@
 //   Future<void> handleBackgroundMessage(RemoteMessage message) async {}
 // }
 
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, file_names, avoid_print
 
 import 'dart:developer';
 import 'dart:math' as dm;
@@ -115,8 +115,8 @@ class NotificationsRepo {
       // print foreground message here.
       await showNotifications(message);
       await handleBackgroundMessage(message);
-      print('Handling a foreground message ${message.messageId}');
-      print('Notification Message: ${message.data}');
+      // print('Handling a foreground message ${message.messageId}');
+      // print('Notification Message: ${message.data}');
 
       if (message.notification != null) {
         print('Message also contained a notification: ${message.notification}');
@@ -128,7 +128,7 @@ class NotificationsRepo {
     AndroidNotificationChannel channel = AndroidNotificationChannel(
         dm.Random.secure().nextInt(100000).toString(),
         'High Importance Notification');
-         var iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
+    var iOSPlatformChannelSpecifics = const DarwinNotificationDetails();
     var platformChannelSpecifics = NotificationDetails(
       // android: androidPlatformChannelSpecifics,
       iOS: iOSPlatformChannelSpecifics,
