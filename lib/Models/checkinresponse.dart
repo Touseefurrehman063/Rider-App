@@ -1,4 +1,3 @@
-// ignore: camel_case_types
 class checkinresponse {
   dynamic id;
   dynamic visitNo;

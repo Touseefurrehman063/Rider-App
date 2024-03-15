@@ -34,7 +34,7 @@ class _Welcome3State extends State<Welcome3> {
                     horizontal: 10.0, vertical: Get.height * 0.045),
                 child: TextButton(
                   onPressed: () {
-                    // print("button pressed");
+                    print("button pressed");
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const Login()),

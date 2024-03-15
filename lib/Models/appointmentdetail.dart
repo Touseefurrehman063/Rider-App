@@ -1,4 +1,3 @@
-// ignore: camel_case_types
 class apointmentdetail {
   dynamic id;
   dynamic subServiceId;

@@ -1,5 +1,3 @@
-// ignore_for_file: camel_case_types
-
 class pass {
   String? userId;
   String? oldPassword;

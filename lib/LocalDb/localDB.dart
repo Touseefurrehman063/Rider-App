@@ -1,10 +1,13 @@
-// ignore_for_file: file_names
+
+// ignore_for_file: non_constant_identifier_names
 
 import 'dart:convert';
 import 'package:flutter_riderapp/Models/languages_Model/languagesmodel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalDb {
+  
+
   setLanguage(LanguageModel? language) async {
     SharedPreferences s = await SharedPreferences.getInstance();
     s.setString('language', jsonEncode(language));

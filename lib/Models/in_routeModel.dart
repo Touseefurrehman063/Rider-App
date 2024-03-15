@@ -1,14 +1,12 @@
-// ignore_for_file: file_names
-
 class InrouteModel {
-  dynamic patientId;
-  dynamic branchLocationId;
-  dynamic labNo;
+ dynamic patientId;
+ dynamic branchLocationId;
+ dynamic labNo;
   dynamic riderLatitude;
   dynamic riderLongitude;
-  dynamic userId;
-  dynamic deliveryBranchLocationId;
-  dynamic inRouteDeliveryBranchLocationId;
+ dynamic userId;
+ dynamic deliveryBranchLocationId;
+ dynamic inRouteDeliveryBranchLocationId;
 
   InrouteModel(
       {this.patientId,
@@ -40,7 +38,8 @@ class InrouteModel {
     data['RiderLongitude'] = riderLongitude;
     data['UserId'] = userId;
     data['DeliveryBranchLocationId'] = deliveryBranchLocationId;
-    data['InRouteDeliveryBranchLocationId'] = inRouteDeliveryBranchLocationId;
+    data['InRouteDeliveryBranchLocationId'] =
+        inRouteDeliveryBranchLocationId;
     return data;
   }
 }

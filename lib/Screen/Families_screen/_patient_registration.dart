@@ -135,6 +135,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -169,6 +170,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -185,7 +187,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
+        // ignore: avoid_print
         print(data);
         if (data['Status'] != null &&
             data['Status'] == 1 &&
@@ -204,6 +206,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -237,6 +240,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -281,11 +285,11 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
 
-  // ignore: non_constant_identifier_names
   Future<void> _register_api(PatientRegistrationModal patientregister) async {
     var url = '$ip/api/SignUp';
     var headers = {
@@ -303,7 +307,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
       print("Response data: $data");
 
-      // ignore: unused_local_variable
       var status = data["Status"];
     } else {
       throw Exception('Failed to Register Patient');
@@ -329,7 +332,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
+        // ignore: avoid_print
         print(data);
         if (data['Status'] != null &&
             data['Status'] == 1 &&
@@ -347,6 +350,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
         throw Exception('Failed to fetch data from the server.');
       }
     } catch (e) {
+      // ignore: avoid_print
       print('Error: $e');
     }
   }
@@ -514,7 +518,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                               onTap: () async {
                                 DateTime? pickedDate = await showDatePicker(
                                   context: context,
-                                  initialDate: selectedDate,
+                                  initialDate: selectedDate ?? DateTime.now(),
                                   firstDate: DateTime(1900),
                                   lastDate: DateTime.now(),
                                 );
@@ -548,7 +552,8 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                       DateTime? pickedDate =
                                           await showDatePicker(
                                         context: context,
-                                        initialDate: selectedDate,
+                                        initialDate:
+                                            selectedDate ?? DateTime.now(),
                                         firstDate: DateTime(1900),
                                         lastDate: DateTime.now(),
                                       );
@@ -578,7 +583,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 gender.clear();
                                 await genderapi();
                                 setState(() {});
-                                // ignore: use_build_context_synchronously
                                 dynamic generic = await searchableDropdown(
                                     context, constraints, gender);
                                 if (generic != null && generic != '') {
@@ -682,7 +686,6 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 relations.clear();
                                 await relationapi();
                                 setState(() {});
-                                // ignore: use_build_context_synchronously
                                 dynamic generic = await searchableDropdown(
                                     context, constraints, relations);
                                 if (generic != null && generic != '') {
@@ -752,7 +755,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                 ),
                               ),
                             ),
-                            selectedRelation == null && chk == true
+                              selectedRelation == null && chk == true
                                 ? SizedBox(
                                     child: Column(
                                       children: [
@@ -794,295 +797,283 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
-
-                            InkWell(
-                              onTap: () async {
-                                selectedCountries = null;
-                                countries.clear();
-                                await countriesapi();
-                                setState(() {});
-                                // ignore: use_build_context_synchronously
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, countries);
-                                selectedCountriesName = null;
-                                if (generic != null && generic != '') {
-                                  // ignore: prefer_interpolation_to_compose_strings
-                                  print('Countries selected Id' + generic.id);
-                                  selectedCountries = generic.id;
-                                  selectedCountriesName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                  state.clear();
-                                  cities.clear();
-                                  await stateapi(generic.id);
-                                  selectedCity = null;
-                                  selectedCityName = null;
-                                  SelectedState = null;
-                                  SelectedStateName = null;
-                                  setState(() {});
-                                }
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.height *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height:
-                                      MediaQuery.of(context).size.height * 0.07,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          //"${selectedCountriesName?? "Country"}",
-                                          "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "country".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color:
-                                                  selectedCountriesName != null
-                                                      ? Colors.black
-                                                      : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: selectedCountriesName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            selectedCountries == null && chk == true
-                                ? Column(
-                                    children: [
-                                      SizedBox(height: Get.height * 0.01),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: Get.width * 0.05),
-                                            child: Text(
-                                              "selectcountry".tr,
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                // fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                : const SizedBox.shrink(),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                SelectedState = null;
-                                setState(() {});
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, state);
-                                SelectedStateName = null;
-                                if (generic != null && generic != '') {
-                                  SelectedState = generic.id;
-                                  SelectedStateName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                  cities.clear();
-                                  selectedCity = null;
-                                  selectedCityName = null;
-                                  await cityapi();
-                                }
-                                setState(() {});
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.065,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          // "${SelectedStateName?? "State"}",
-                                          "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "state".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: SelectedStateName != null
-                                                  ? Colors.black
-                                                  : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: SelectedStateName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SelectedState == null && chk == true
-                                ? Column(
-                                    children: [
-                                      SizedBox(height: Get.height * 0.01),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: Get.width * 0.05),
-                                            child: Text(
-                                              "selectstate".tr,
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                // fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  )
-                                : const SizedBox.shrink(),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 0.02,
-                            ),
-                            InkWell(
-                              onTap: () async {
+                           
+                          InkWell(
+                            onTap: () async {
+                              selectedCountries = null;
+                              countries.clear();
+                              await countriesapi();
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, countries);
+                              selectedCountriesName = null;
+                              if (generic != null && generic != '') {
+                                print('Countries selected Id' + generic.id);
+                                selectedCountries = generic.id;
+                                selectedCountriesName =
+                                    (generic.name == '') ? null : generic.name;
+                                state.clear();
+                                cities.clear();
+                                await stateapi(generic.id);
                                 selectedCity = null;
-                                // cities.clear();
-                                setState(() {});
-                                dynamic generic = await searchableDropdown(
-                                    context, constraints, cities);
                                 selectedCityName = null;
-                                if (generic != null && generic != '') {
-                                  selectedCity = generic.id;
-                                  selectedCityName = (generic.name == '')
-                                      ? null
-                                      : generic.name;
-                                }
+                                SelectedState = null;
+                                SelectedStateName = null;
                                 setState(() {});
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.001),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: Colors.grey, width: 0.8),
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.transparent,
-                                  ),
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.9,
-                                  height: MediaQuery.of(context).size.height *
-                                      0.065,
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right:
-                                            MediaQuery.of(context).size.width *
-                                                0.04,
-                                        left:
-                                            MediaQuery.of(context).size.width *
-                                                0.05),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          // "${selectedCityName?? "City"}",
-                                          "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "city".tr}",
-                                          style: TextStyle(
-                                              fontSize: 12,
-                                              color: selectedCityName != null
-                                                  ? Colors.black
-                                                  : Colors.grey),
-                                        ),
-                                        Icon(
-                                          Icons.arrow_drop_down,
-                                          size: 20,
-                                          color: selectedCityName != null
-                                              ? Colors.black
-                                              : Colors.black,
-                                        )
-                                      ],
-                                    ),
+                              }
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.height *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.07,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        //"${selectedCountriesName?? "Country"}",
+                                        "${(selectedCountriesName != null) ? (selectedCountriesName!.length > 30 ? ('${selectedCountriesName!.substring(0, 30)}...') : selectedCountriesName) : "country".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedCountriesName != null
+                                                ? Colors.black
+                                                : Colors.grey),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: selectedCountriesName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
-                            selectedCity == null && chk == true
-                                ? Column(
-                                    children: [
-                                      SizedBox(height: Get.height * 0.01),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: Get.width * 0.05),
-                                            child: Text(
-                                              "selectcity".tr,
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                // fontWeight: FontWeight.w500,
-                                              ),
+                          ),
+                          selectedCountries == null &&
+                                  chk == true 
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcountry".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
                                             ),
                                           ),
-                                        ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
+                            InkWell(
+                            onTap: () async {
+                              SelectedState = null;
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, state);
+                              SelectedStateName = null;
+                              if (generic != null && generic != '') {
+                                SelectedState = generic.id;
+                                SelectedStateName =
+                                    (generic.name == '') ? null : generic.name;
+                                cities.clear();
+                                selectedCity = null;
+                                selectedCityName = null;
+                                await cityapi();
+                              }
+                              setState(() {});
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        // "${SelectedStateName?? "State"}",
+                                        "${(SelectedStateName != null) ? (SelectedStateName!.length > 15 ? ('${SelectedStateName!.substring(0, 15)}...') : SelectedStateName) : "state".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: SelectedStateName != null
+                                                ? Colors.black
+                                                : Colors.grey),
                                       ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: SelectedStateName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
                                     ],
-                                  )
-                                : const SizedBox.shrink(),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SelectedState == null &&
+                                  chk == true
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectstate".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.02,
+                            ),
+                            InkWell(
+                            onTap: () async {
+                              selectedCity = null;
+                              // cities.clear();
+                              setState(() {});
+                              dynamic generic = await searchableDropdown(
+                                  context, constraints, cities);
+                              selectedCityName = null;
+                              if (generic != null && generic != '') {
+                                selectedCity = generic.id;
+                                selectedCityName =
+                                    (generic.name == '') ? null : generic.name;
+                              }
+                              setState(() {});
+                            },
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal:
+                                      MediaQuery.of(context).size.width *
+                                          0.001),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.grey, width: 0.8),
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: Colors.transparent,
+                                ),
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.065,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      right: MediaQuery.of(context).size.width *
+                                          0.04,
+                                      left: MediaQuery.of(context).size.width *
+                                          0.05),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        // "${selectedCityName?? "City"}",
+                                        "${(selectedCityName != null) ? (selectedCityName!.length > 30 ? ('${selectedCityName!.substring(0, 30)}...') : selectedCityName) : "city".tr}",
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            color: selectedCityName != null
+                                                ? Colors.black
+                                                : Colors.grey),
+                                      ),
+                                      Icon(
+                                        Icons.arrow_drop_down,
+                                        size: 20,
+                                        color: selectedCityName != null
+                                            ? Colors.black
+                                            : Colors.black,
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          selectedCity == null &&
+                                  chk == true 
+                              ? Column(
+                                  children: [
+                                    SizedBox(height: Get.height * 0.01),
+                                    Row(
+                                      children: [
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: Get.width * 0.05),
+                                          child: Text(
+                                            "selectcity".tr,
+                                            style: const TextStyle(
+                                              color: Colors.red,
+                                              fontSize: 12,
+                                              // fontWeight: FontWeight.w500,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                )
+                              : const SizedBox.shrink(),
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.02,
                             ),
@@ -1105,11 +1096,12 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                     horizontal: 120, vertical: 0.5),
                                 borderRadius: BorderRadius.circular(8),
                                 onPressed: () async {
-                                  chk = true;
-                                  setState(() {});
+                                     chk = true;
+                                setState(() {});
                                   if (formkey.currentState!.validate()) {
                                     PatientRegistrationModal patientregister =
                                         PatientRegistrationModal();
+                                      
 
                                     patientregister.firstName =
                                         Name.text.toString();
@@ -1139,6 +1131,7 @@ class _PatientRegistrationState extends State<PatientRegistration> {
                                         mobile_number.text.toString();
                                     patientregister.patientTypeId =
                                         "BEB03D33-E8AA-E711-80C1-A0B3CCE147BA";
+                                        
 
                                     print(patientregister.countryId);
                                     await _register_api(patientregister);

@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, avoid_print
-
 import 'dart:convert';
 
 import 'package:flutter_riderapp/Models/Notification_Model/notification_model.dart';
@@ -25,6 +23,7 @@ class NotificationRepository {
 
   getnotifications(String empId, String StartDate, String EndDate, int length,
       int start) async {
+    // notificationscontroller().setIsLoadingNotification(true);
     var url = '$ip/api/account/GetUserNotifications';
     var headers = {
       'Content-Type': 'application/json',
@@ -34,19 +33,22 @@ class NotificationRepository {
       'UserId': userprofile!.id,
       'BranchId': userprofile?.branchId,
       'FromDate': formatLastMonthDate().toString(),
-      'ToDate': formatDate(DateTime.now()),
-      'length': 6,
+      'ToDate': formatDate(DateTime.now().add(const Duration(days: 1))),
+      'length': 100,
       'start': 0,
       'Search': '',
       'OrderDir': "desc",
       'OrderColumn': 0,
       'Token': DeviceToken,
     };
+
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(requestBody));
+    print("Response: ${response.body}");
 
     if (response.statusCode == 200) {
       try {
+        // notificationscontroller().setIsLoadingNotification(true);
         var data = jsonDecode(response.body);
         print("Response data: $data");
         List<RiderNotifications> ulist = [];
@@ -60,21 +62,22 @@ class NotificationRepository {
           //  notificationscontroller.j.notifications.clear();
 
           notificationscontroller.j.updatenotification(ulist);
+          // notificationscontroller().setIsLoadingNotification(false);
         }
         print(ulist);
 
-        isLoadingData = false;
-        isLoadingmoreData = false;
+        // isLoadingData = false;
+        // isLoadingmoreData = false;
       } catch (e) {
         isLoadingData = false;
         isLoadingmoreData = false;
-
+        notificationscontroller().setIsLoadingNotification(false);
         throw Exception('Failed to load appointments');
       }
     } else {
       isLoadingData = false;
       isLoadingmoreData = false;
-
+      notificationscontroller().setIsLoadingNotification(false);
       throw Exception('Failed to load appointments');
     }
   }

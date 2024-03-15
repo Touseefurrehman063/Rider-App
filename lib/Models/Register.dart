@@ -1,6 +1,7 @@
-// ignore_for_file: file_names
+// TODO Implement this library.
 
-class Register {
+
+class Register{
   String? id;
   String? fullName;
   String? mobileNo;
@@ -88,3 +89,5 @@ class Register {
     return data;
   }
 }
+
+

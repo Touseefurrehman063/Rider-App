@@ -6,8 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:get/get.dart';
 
-
-
 class AuthController extends GetxController implements GetxService {
   File? file;
   late TextEditingController fullname;
@@ -19,8 +17,6 @@ class AuthController extends GetxController implements GetxService {
   late TextEditingController street;
 
   User? user;
-
-
 
   bool _isChecked = false;
   bool get isChecked => _isChecked;
@@ -52,11 +48,6 @@ class AuthController extends GetxController implements GetxService {
 
 // ===========>
 
-
-
-
-
-
   // Login Password Visibility
   bool _isLoginPasswordVisible = false;
   bool get isLoginPasswordVisible => _isLoginPasswordVisible;
@@ -66,14 +57,9 @@ class AuthController extends GetxController implements GetxService {
     update();
   }
 
-
 //===========================> Provinces
 
-
-
   //=========================> Cities
-
- 
 
   updateFile(File? value) {
     file = value;

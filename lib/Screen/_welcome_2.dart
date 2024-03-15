@@ -33,7 +33,7 @@ class _Welcome2State extends State<Welcome2> {
                     const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
                 child: TextButton(
                   onPressed: () {
-                    // print("button pressed");
+                    print("button pressed");
                     Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(builder: (context) => const Login()),

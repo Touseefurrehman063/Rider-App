@@ -1,5 +1,3 @@
-// ignore_for_file: non_constant_identifier_names, use_build_context_synchronously
-
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -36,7 +34,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   }
 
   void _showSnackBar(String message) {
-    Showtoaster().classtoaster(message);
+          Showtoaster().classtoaster(message);
   }
 
   Future<bool> changepass() async {
@@ -59,7 +57,7 @@ class _ChangePasswordState extends State<ChangePassword> {
       var responseData = jsonDecode(response.body);
       var status = responseData['Status'];
 
-      // print('API Response: $responseData');
+      print('API Response: $responseData');
       if (status == 1) {
         SharedPreferences prefs = await SharedPreferences.getInstance();
         prefs.setString('pass', newpass.text.toString());
@@ -76,24 +74,23 @@ class _ChangePasswordState extends State<ChangePassword> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0.0,
-        centerTitle: true,
-        shadowColor: Colors.white,
-        title: Padding(
-          padding: EdgeInsets.only(left: Get.width * 0.01),
-          child: Image.asset(
-            Images.logo,
-            height: Get.height * 0.07,
-            alignment: Alignment.center,
-          ),
-        ),
-        leading: InkWell(
-            onTap: () {
+         centerTitle: true,
+                    shadowColor: Colors.white,
+                    
+                    title: Padding(
+                      padding: EdgeInsets.only(left: Get.width * 0.01),
+                      child: Image.asset(
+                        Images.logo,
+                        height: Get.height * 0.07,
+                        alignment: Alignment.center,
+                      ),
+                    ),
+       leading: InkWell(
+            onTap: (){
               Get.back();
             },
-            child: const Icon(
-              Icons.arrow_back_ios_new,
-              color: Color(0xff0F64C6),
-            )),
+            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+      
       ),
       body: Container(
         height: MediaQuery.of(context).size.height,
@@ -117,7 +114,7 @@ class _ChangePasswordState extends State<ChangePassword> {
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.15,
             ),
-
+            
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -128,26 +125,25 @@ class _ChangePasswordState extends State<ChangePassword> {
                     textStyle: const TextStyle(
                       fontWeight: FontWeight.w500,
                       fontSize: 28,
+                     
                     ),
                   ),
                 ),
-                SizedBox(
-                  height: Get.height * 0.03,
-                ),
+                SizedBox(height: Get.height*0.03,),
                 Text(
                   'Kindly enter a unique password'.tr,
                   style: GoogleFonts.raleway(
                     textStyle: const TextStyle(
                       // fontWeight: FontWeight.bold,
                       fontSize: 20,
+                    
                     ),
                   ),
                 ),
+                
               ],
             ),
-            SizedBox(
-              height: Get.height * 0.06,
-            ),
+            SizedBox(height: Get.height*0.06,),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -168,8 +164,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(10)),
                                   labelText: 'oldpassword'.tr,
-                                  labelStyle:
-                                      const TextStyle(color: Colors.grey),
+                                  labelStyle: const TextStyle(color: Colors.grey),
                                   suffixIcon: IconButton(
                                     icon: Icon(_Password_Visible
                                         ? Icons.visibility
@@ -191,7 +186,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                               ),
                             ),
                           ),
-                          SizedBox(
+                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.01),
                           Padding(
@@ -204,6 +199,7 @@ class _ChangePasswordState extends State<ChangePassword> {
                                     borderRadius: BorderRadius.circular(10)),
                                 labelText: 'newpassword'.tr,
                                 labelStyle: const TextStyle(color: Colors.grey),
+                                
                                 suffixIcon: IconButton(
                                   icon: Icon(PasswordVisible
                                       ? Icons.visibility
@@ -326,14 +322,14 @@ class _ChangePasswordState extends State<ChangePassword> {
     );
   }
 
-  void logout(BuildContext context) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool(SplashscreenState.KEYLOGIN, false);
-    prefs.clear();
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Login()),
-      (Route<dynamic> route) => false,
-    );
-  }
+void logout(BuildContext context) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setBool(SplashscreenState.KEYLOGIN, false);
+  prefs.clear();
+  Navigator.pushAndRemoveUntil(
+    context,
+    MaterialPageRoute(builder: (context) => const Login()),
+    (Route<dynamic> route) => false,
+  );
+}
 }

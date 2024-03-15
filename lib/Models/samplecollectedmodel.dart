@@ -1,25 +1,23 @@
-// ignore_for_file: camel_case_types
-
 class samplecollectedModel {
-  dynamic isInvestigationQueue;
-  dynamic patientId;
-  dynamic visitNo;
-  dynamic statusBit;
-  dynamic departmentId;
-  dynamic subDepartmentId;
-  dynamic doctorId;
-  dynamic subServiceId;
-  dynamic roleId;
-  dynamic designationId;
-  dynamic userId;
-  dynamic patientCheckInId;
+ dynamic  isInvestigationQueue;
+dynamic  patientId;
+dynamic  visitNo;
+  dynamic  statusBit;
+dynamic  departmentId;
+dynamic  subDepartmentId;
+dynamic  doctorId;
+dynamic  subServiceId;
+dynamic  roleId;
+dynamic  designationId;
+dynamic  userId;
+dynamic  patientCheckInId;
   List<ListLabServiceDataDetail>? listLabServiceDataDetail;
-  dynamic paidAmount;
-  dynamic subDepartmentManualCodeString;
-  dynamic sampleCollectionStickerCount;
-  dynamic autoNumberGenerated;
-  dynamic autoNumberGenerationLabelText;
-  dynamic sessionUserId;
+  dynamic  paidAmount;
+dynamic  subDepartmentManualCodeString;
+  dynamic  sampleCollectionStickerCount;
+dynamic  autoNumberGenerated;
+dynamic  autoNumberGenerationLabelText;
+dynamic  sessionUserId;
 
   samplecollectedModel(
       {this.isInvestigationQueue,
@@ -98,37 +96,37 @@ class samplecollectedModel {
 }
 
 class ListLabServiceDataDetail {
-  dynamic srNo;
-  dynamic id;
-  dynamic patientLabCheckInId;
-  dynamic patientId;
-  dynamic departmentId;
-  dynamic subDepartmentId;
-  dynamic userId;
-  dynamic designationId;
-  dynamic roleId;
-  dynamic isInPatient;
-  dynamic patientVisitNo;
-  dynamic subserviceName;
-  dynamic prescribedbyName;
-  dynamic charges;
-  dynamic prescribedQuantity;
-  dynamic totalCharges;
-  dynamic visitTime;
-  dynamic total;
-  dynamic patientStatusId;
-  dynamic subServiceId;
-  dynamic patientStatusValue;
-  dynamic serviceTotal;
-  dynamic isOutsideSample;
-  dynamic outSourcedBranchId;
-  dynamic outSideSampleComments;
-  dynamic consumtionItems;
-  dynamic html;
-  dynamic prescribedBy;
-  dynamic patientEntitled;
-  dynamic autoNumberGenerated;
-  dynamic autoNumberGenerationLabelText;
+  dynamic  srNo;
+dynamic  id;
+dynamic  patientLabCheckInId;
+dynamic  patientId;
+dynamic  departmentId;
+dynamic  subDepartmentId;
+dynamic  userId;
+dynamic  designationId;
+dynamic  roleId;
+ dynamic  isInPatient;
+dynamic  patientVisitNo;
+dynamic  subserviceName;
+dynamic  prescribedbyName;
+ dynamic  charges;
+  dynamic  prescribedQuantity;
+ dynamic  totalCharges;
+dynamic  visitTime;
+ dynamic  total;
+dynamic  patientStatusId;
+dynamic  subServiceId;
+  dynamic  patientStatusValue;
+ dynamic  serviceTotal;
+ dynamic  isOutsideSample;
+dynamic  outSourcedBranchId;
+dynamic  outSideSampleComments;
+dynamic  consumtionItems;
+dynamic  html;
+dynamic  prescribedBy;
+  dynamic  patientEntitled;
+dynamic  autoNumberGenerated;
+dynamic  autoNumberGenerationLabelText;
 
   ListLabServiceDataDetail(
       {this.srNo,

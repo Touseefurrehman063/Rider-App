@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_print
-
 import 'dart:async';
 import 'dart:collection';
 import 'dart:convert';
@@ -23,6 +21,7 @@ import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_riderapp/Widgets/Customdropdown.dart';
 import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:flutter_riderapp/helpers/color_manager.dart';
+import 'package:flutter_riderapp/helpers/pdf_view/pdf_view.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -56,20 +55,17 @@ class ViewInformation extends StatefulWidget {
 }
 
 class _ViewInformationState extends State<ViewInformation> {
-  // ignore: non_constant_identifier_names
   String? Selectpayment;
-  // ignore: non_constant_identifier_names
   String? SelectLab;
   String? selectedLabsName;
   LabsModel? _selectedlab;
-  // ignore: non_constant_identifier_names
   List<LabsModel> Labs = [];
   bool isLoading = false;
   List<PaymentMethod> payments = [];
   List<apointmentdetail> appointments = [];
-  // ignore: non_constant_identifier_names
   InrouteModel Inroute = InrouteModel();
   List<PatientServicelist> lst1 = [];
+  List<MiscellaneousServicesList> lst2 = [];
   double distance = 0.0;
   double time = 0.0;
   bool ispaymentselected = false;
@@ -143,7 +139,6 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
-    // ignore: no_leading_underscores_for_local_identifiers
     _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("poly$_polylineCount");
       Polyline polyline = Polyline(
@@ -207,7 +202,6 @@ class _ViewInformationState extends State<ViewInformation> {
         PatternItem.gap(20.0)
       ],
     ];
-    // ignore: no_leading_underscores_for_local_identifiers
     _addPolyline(List<LatLng>? coordinates) {
       PolylineId id = PolylineId("$timeInHours");
       Polyline polyline = Polyline(
@@ -259,7 +253,8 @@ class _ViewInformationState extends State<ViewInformation> {
     ltlg.add(LatLng(double.parse(widget.user.latitude.toString()),
         double.parse(widget.user.longitude.toString())));
 // widget.user.latitude ==null && widget.user.longitude== null?"":
-
+    print(widget.user.latitude);
+    print(widget.user.longitude);
     _markers.add(
       Marker(
         markerId: const MarkerId('Patient Location'),
@@ -496,8 +491,8 @@ class _ViewInformationState extends State<ViewInformation> {
       if (widget.user.status == "In Route") {
         _getPolylinesWithLocationforlab(
             _currentLatLng,
-            LatLng(double.parse(widget.user.inroutelat.toString()),
-                double.parse(widget.user.inroutelon.toString())));
+            LatLng(double.parse(widget.user.inroutelat.toString() ?? ""),
+                double.parse(widget.user.inroutelon.toString() ?? "")));
       }
       CameraPosition cameraPosition = CameraPosition(
         target: LatLng(double.parse(locationData.latitude.toString()),
@@ -583,7 +578,7 @@ class _ViewInformationState extends State<ViewInformation> {
       tempobj.subServiceId = detail.subServiceId;
       tempobj.charges = detail.price.toString();
       tempobj.isAutoNumberGenerationEnabled = false;
-      tempobj.typeBit = "2";
+      tempobj.typeBit = widget.user.TypeBit;
       tempobj.totalCharges = detail.price.toString();
       tempobj.subServiceCount = 1;
       tempobj.preference = 1;
@@ -631,6 +626,88 @@ class _ViewInformationState extends State<ViewInformation> {
 
   List<checkinresponse> checkinreponselist = [];
   // ignore: unused_field
+
+  // late Future<List<checkintry>> checkin;
+
+  checkinapidoctor() async {
+    var url = '$ip/api/Booking/CheckInPatientAppointment';
+    var header = {
+      'Content-Type': 'application/json',
+    };
+    apointmentdetail? detail;
+    PatientCheckIn patientcheckinobj =
+        PatientCheckIn(patientId: widget.user.patientid);
+    List<PatientCheckIn> lst = [];
+    lst.add(patientcheckinobj);
+    lst[0].checkInTypeId = "0F02A4F2-4787-47DF-BADD-32807F6C13ED";
+    lst[0].chargerate = "";
+    lst[0].paidamount = "";
+    lst[0].smssendto = 0;
+    lst[0].isonline = 0;
+    lst[0].patientserviceappointmentid = "";
+
+    // ignore: unused_local_variable
+    PatientCheckIn patientserviceobj =
+        PatientCheckIn(patientId: widget.user.patientid);
+
+    for (apointmentdetail detail in appointments) {
+      MiscellaneousServicesList obj = MiscellaneousServicesList();
+      obj.subServiceId = detail.subServiceId;
+      obj.charges = detail.price.toString();
+      obj.isAutoNumberGenerationEnabled = false;
+      obj.typeBit = "0";
+      obj.totalCharges = detail.price.toString();
+      obj.subServiceCount = 1;
+      obj.preference = 1;
+      obj.specimenName = "Serum";
+      obj.vatpercentage = detail.vatpercentage;
+      obj.vatamount = detail.vatamount;
+
+      if (appointments.contains(detail)) {
+        lst2.add(obj);
+      }
+    }
+
+    checkintry checkin = checkintry(
+      patientCheckIn: lst,
+      isbooking: "1",
+      paymentNo: widget.user.LabNo,
+      doctorCheckInType: "3",
+      typebit: widget.user.TypeBit.toString(),
+      paymentmethodid: payments.toString(),
+      miscellaneousserviceslist: lst2,
+      userId: widget.empId,
+      branchLocationIds: widget.user.branchlocationid,
+    );
+
+    final response = await http.post(Uri.parse(url),
+        headers: header, body: jsonEncode(checkin));
+    print(checkin);
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print("Response data: $data");
+
+      // Assuming you have a status field in the response indicating ride start success
+      var status = data["Status"];
+      dynamic detail = data["Detail"];
+      if (status != null && status == 1 && detail != null) {
+        checkinreponselist.add(checkinresponse.fromJson(detail));
+
+        ischeckin = true;
+        debugPrint(response.body);
+      } else {
+        ischeckin = false;
+        debugPrint("Data is null");
+      }
+    } else {
+      throw Exception('Failed to checkin');
+    }
+  }
+
+  // List<checkinresponse> checkinreponselist = [];
+
   late Future<List<User>> _startride;
 
   Future<void> startRide() async {
@@ -675,7 +752,6 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
-  // ignore: non_constant_identifier_names
   Future<void> CancelRide(User user, String remarks) async {
     var url = '$ip/api/account/CancelRide';
     var headers = {
@@ -715,7 +791,6 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
-  // ignore: non_constant_identifier_names
   Future<void> EndRide(User user) async {
     var url = '$ip/api/account/EndRide';
     var headers = {
@@ -754,7 +829,6 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
-  // ignore: non_constant_identifier_names
   Future<void> CompleteRide(User user) async {
     var url = '$ip/api/account/CompleteRide';
     var headers = {
@@ -791,7 +865,6 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
-  // ignore: non_constant_identifier_names
   Future<void> InRouteapi() async {
     var url = '$ip/api/account/InRouteSampleDelivery';
     var headers = {
@@ -1092,7 +1165,6 @@ class _ViewInformationState extends State<ViewInformation> {
                           }
                           setState(() {});
 
-                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
@@ -1215,7 +1287,6 @@ class _ViewInformationState extends State<ViewInformation> {
                               });
                             }
                           }
-                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                           // Navigator.push(
                           //   context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
@@ -1236,7 +1307,6 @@ class _ViewInformationState extends State<ViewInformation> {
                       ElevatedButton(
                         onPressed: () async {
                           await EndRide(widget.user);
-                          // ignore: use_build_context_synchronously
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1260,15 +1330,12 @@ class _ViewInformationState extends State<ViewInformation> {
 
   Color activeIconColor = Colors.white;
   Color inactiveIconColor = Colors.grey;
-  // ignore: unused_element
   void _launchGoogleMaps(
       double destinationLatitude, double destinationLongitude) async {
     final String googleMapsUrl =
         "https://www.google.com/maps/dir/?api=1&destination=$destinationLatitude,$destinationLongitude";
 
-    // ignore: deprecated_member_use
     if (await canLaunch(googleMapsUrl)) {
-      // ignore: deprecated_member_use
       await launch(googleMapsUrl);
     } else {
       throw 'Could not launch Google Maps';
@@ -1282,7 +1349,6 @@ class _ViewInformationState extends State<ViewInformation> {
         inAsyncCall: isLoading,
         blurEffectIntensity: 4,
         progressIndicator: const SpinKitSpinningLines(
-          // ignore: use_full_hex_values_for_flutter_colors
           color: Color(0xfff1272d3),
           size: 60,
         ),
@@ -1705,7 +1771,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                       () {});
                                                                   _remarksController
                                                                       .clear();
-                                                                  // ignore: use_build_context_synchronously
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
@@ -1932,7 +1997,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                       () {});
                                                                   _remarksController
                                                                       .clear();
-                                                                  // ignore: use_build_context_synchronously
                                                                   Navigator.of(
                                                                           context)
                                                                       .pop();
@@ -1991,7 +2055,27 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     isLoading = false;
                                                     setState(() {});
                                                     try {
-                                                      await checkinapi();
+                                                      if (widget.user.TypeBit ==
+                                                              2 ||
+                                                          widget.user.TypeBit ==
+                                                              3) {
+                                                        await checkinapi();
+                                                      } else if (widget
+                                                                  .user.TypeBit ==
+                                                              8 ||
+                                                          widget.user.TypeBit ==
+                                                              25 ||
+                                                          widget.user.TypeBit ==
+                                                              26 ||
+                                                          widget.user.TypeBit ==
+                                                              27 ||
+                                                          widget.user.TypeBit ==
+                                                              28 ||
+                                                          widget.user.TypeBit ==
+                                                              29) {
+                                                        await checkinapidoctor();
+                                                      }
+
                                                       // _polylines.clear();
                                                       //  _markers.remove(0);
                                                       // await callback();
@@ -2000,6 +2084,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                         isLoading = false;
                                                       });
                                                     } catch (e) {
+                                                      log(e.toString());
                                                       setState(() {
                                                         isLoading = false;
                                                       });
@@ -2041,178 +2126,228 @@ class _ViewInformationState extends State<ViewInformation> {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    // crossAxisAlignment:
+                                    //     CrossAxisAlignment.center,
                                     children: [
                                       // if(chk)
-                                      SizedBox(
-                                        width: Get.width * 0.43,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 0),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                showDialog<void>(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
+                                      widget.user.status == "Booked" &&
+                                              (widget.user.TypeBit == 2 ||
+                                                  widget.user.TypeBit == 3)
+                                          ? SizedBox(
+                                              width: Get.width * 0.43,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 0),
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      showDialog<void>(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30),
+                                                            ),
+                                                            content: SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.23,
+                                                              child: Column(
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      const Text(
+                                                                          ""),
+                                                                      Text('cancelride'
+                                                                          .tr),
+                                                                      InkWell(
+                                                                          onTap:
+                                                                              () {
+                                                                            Get.back();
+                                                                          },
+                                                                          child:
+                                                                              const Icon(CupertinoIcons.clear)),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height: Get
+                                                                              .height *
+                                                                          0.02),
+                                                                  TextFormField(
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      labelText:
+                                                                          'remarks'
+                                                                              .tr,
+                                                                      enabledBorder: const OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              width: 1,
+                                                                              color: Colors.black)),
+                                                                      disabledBorder:
+                                                                          InputBorder
+                                                                              .none,
+                                                                      border: const OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              width: 1,
+                                                                              color: Colors.black)),
+                                                                    ),
+                                                                    controller:
+                                                                        _remarksController,
+                                                                    // placeholder:
+                                                                    //     'enterremarks'
+                                                                    //         .tr,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        Get.height *
+                                                                            0.03,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                        Get.width *
+                                                                            0.7,
+                                                                    child:
+                                                                        CupertinoButton(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      borderRadius: const BorderRadius
+                                                                          .all(
+                                                                          Radius.circular(
+                                                                              15.0)),
+                                                                      child:
+                                                                          Text(
+                                                                        'ok'.tr,
+                                                                      ),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        widget
+                                                                            .user
+                                                                            .status = "Ride Started";
+                                                                        if (_remarksController
+                                                                            .text
+                                                                            .isNotEmpty) {
+                                                                          chk =
+                                                                              false;
+                                                                          String
+                                                                              remarks =
+                                                                              _remarksController.text;
+                                                                          isRideCancel =
+                                                                              true;
+                                                                          if (isRideCancel) {
+                                                                            setState(() {
+                                                                              message = 'Ride Cancel successfully!';
+                                                                            });
+                                                                          }
+                                                                          await CancelRide(
+                                                                              widget.user,
+                                                                              remarks);
+                                                                          isRideCancel =
+                                                                              true;
+                                                                          setState(
+                                                                              () {});
+                                                                          _remarksController
+                                                                              .clear();
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        } else {
+                                                                          Showtoaster()
+                                                                              .classtoaster("pleaseenterremarks".tr);
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      fixedSize:
+                                                          const Size(140, 4),
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
+                                                            BorderRadius.circular(
+                                                                15), // Set the border radius here
                                                       ),
-                                                      content: SizedBox(
-                                                        height:
-                                                            Get.height * 0.23,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                const Text(""),
-                                                                Text(
-                                                                    'cancelride'
-                                                                        .tr),
-                                                                InkWell(
-                                                                    onTap: () {
-                                                                      Get.back();
-                                                                    },
-                                                                    child: const Icon(
-                                                                        CupertinoIcons
-                                                                            .clear)),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                                height:
-                                                                    Get.height *
-                                                                        0.02),
-                                                            TextFormField(
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                labelText:
-                                                                    'remarks'
-                                                                        .tr,
-                                                                enabledBorder: const OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .black)),
-                                                                disabledBorder:
-                                                                    InputBorder
-                                                                        .none,
-                                                                border: const OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .black)),
-                                                              ),
-                                                              controller:
-                                                                  _remarksController,
-                                                              // placeholder:
-                                                              //     'enterremarks'
-                                                              //         .tr,
-                                                            ),
-                                                            SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      0.03,
-                                                            ),
-                                                            SizedBox(
-                                                              width: Get.width *
-                                                                  0.7,
-                                                              child:
-                                                                  CupertinoButton(
-                                                                color:
-                                                                    Colors.blue,
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .all(
-                                                                        Radius.circular(
-                                                                            15.0)),
-                                                                child: Text(
-                                                                  'ok'.tr,
-                                                                ),
-                                                                onPressed:
-                                                                    () async {
-                                                                  widget.user
-                                                                          .status =
-                                                                      "Ride Started";
-                                                                  if (_remarksController
-                                                                      .text
-                                                                      .isNotEmpty) {
-                                                                    chk = false;
-                                                                    String
-                                                                        remarks =
-                                                                        _remarksController
-                                                                            .text;
-                                                                    isRideCancel =
-                                                                        true;
-                                                                    if (isRideCancel) {
-                                                                      setState(
-                                                                          () {
-                                                                        message =
-                                                                            'Ride Cancel successfully!';
-                                                                      });
-                                                                    }
-                                                                    await CancelRide(
-                                                                        widget
-                                                                            .user,
-                                                                        remarks);
-                                                                    isRideCancel =
-                                                                        true;
-                                                                    setState(
-                                                                        () {});
-                                                                    _remarksController
-                                                                        .clear();
-                                                                    // ignore: use_build_context_synchronously
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  } else {
-                                                                    Showtoaster()
-                                                                        .classtoaster(
-                                                                            "pleaseenterremarks".tr);
-                                                                  }
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                fixedSize: const Size(140, 4),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15), // Set the border radius here
-                                                ),
+                                                    ),
+                                                    child: Text(
+                                                      "cancel".tr,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
+                                                    )),
                                               ),
-                                              child: Text(
-                                                "cancel".tr,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
-                                              )),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 0.01,
-                                      ),
+                                            )
+                                          :
+                                          // const SizedBox(
+                                          //   width: 0.01,
+                                          // // ),
+                                          // if (widget.user.status == "Booked" &&
+                                          //     (widget.user.TypeBit == 8 ||
+                                          //         widget.user.TypeBit == 25))
+                                          SizedBox(
+                                              width: Get.width * 0.43,
+                                              child: ElevatedButton(
+                                                  onPressed: () async {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PdfViewerPage(
+                                                                  url: widget
+                                                                      .user
+                                                                      .InvoiceURL,
+                                                                )));
+                                                    log("Image tapped");
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    // fixedSize: const Size(140, 4),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15), // Set the border radius here
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    "Print".tr,
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  )),
+                                            ),
                                       // if(!isRideEnd && !isRideCancel)
-                                      if (widget.user.status == "Booked")
-                                        SizedBox(
+                                      // if (widget.user.status == "Booked")
+                                      Visibility(
+                                        visible:
+                                            widget.user.status == "Booked" &&
+                                                (widget.user.TypeBit == 2 ||
+                                                    widget.user.TypeBit == 3),
+                                        child: SizedBox(
                                           width: Get.width * 0.43,
                                           child: ElevatedButton(
                                               onPressed: () async {
@@ -2238,6 +2373,123 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     color: Colors.blue),
                                               )),
                                         ),
+                                      ),
+                                      if (widget.user.status == "Booked" &&
+                                          (widget.user.TypeBit == 8 ||
+                                              widget.user.TypeBit == 25 ||
+                                              widget.user.TypeBit == 26 ||
+                                              widget.user.TypeBit == 27 ||
+                                              widget.user.TypeBit == 28 ||
+                                              widget.user.TypeBit == 29))
+                                        SizedBox(
+                                          // height: Get.height * 0.04,
+                                          width: Get.width * 0.43,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                isLoading = true;
+                                                setState(() {});
+                                                try {
+                                                  CompleteRide(widget.user);
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
+                                                } catch (e) {
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
+                                                }
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: Get.height *
+                                                              0.15),
+                                                      child:
+                                                          CupertinoAlertDialog(
+                                                        content: Column(
+                                                          children: [
+                                                            const SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                            Image.asset(
+                                                                'assets/show.png'),
+                                                            const SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .bottomCenter,
+                                                              child: Text(
+                                                                'thankyou'.tr,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .poppins(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        actions: <Widget>[
+                                                          CupertinoButton(
+                                                            color: ColorManager
+                                                                .kDarkBlue,
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .all(
+                                                                    Radius.circular(
+                                                                        10.0)),
+                                                            child: Text(
+                                                              'backhome'.tr,
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          Dashboard(
+                                                                            empId:
+                                                                                widget.empId,
+                                                                            userName:
+                                                                                userprofile?.fullName ?? "",
+                                                                          )));
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15), // Set the border radius here
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Completed".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
+                                              )),
+                                        )
                                     ],
                                   ),
                                 ),
@@ -2535,7 +2787,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           ),
                                                         ),
                                                         Obx(
-                                                          // ignore: unrelated_type_equality_checks
                                                           () => _selectedOption ==
                                                                   'yes'.tr
                                                               ? Row(
@@ -2700,7 +2951,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           await labsapi();
                                                           setState(() {});
                                                           dynamic generic =
-                                                              // ignore: use_build_context_synchronously
                                                               await custom_dropdown(
                                                             context,
                                                             Labs,
@@ -2959,7 +3209,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                             timeInSecForIosWeb:
                                                                 1,
                                                             backgroundColor:
-                                                                Colors.red,
+                                                                Colors.green,
                                                             textColor:
                                                                 Colors.white,
                                                             fontSize: 16.0);
@@ -3035,63 +3285,73 @@ class _ViewInformationState extends State<ViewInformation> {
                                                           context: context,
                                                           builder: (BuildContext
                                                               context) {
-                                                            return CupertinoAlertDialog(
-                                                              content: Column(
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    height: 30,
-                                                                  ),
-                                                                  Image.asset(
-                                                                      'assets/show.png'),
-                                                                  const SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                  Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    child: Text(
-                                                                      'thankyou'
-                                                                          .tr,
-                                                                      style: GoogleFonts
-                                                                          .poppins(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
+                                                            return Padding(
+                                                              padding: EdgeInsets
+                                                                  .only(
+                                                                      top: Get.height *
+                                                                          0.15),
+                                                              child:
+                                                                  CupertinoAlertDialog(
+                                                                content: Column(
+                                                                  children: [
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          30,
+                                                                    ),
+                                                                    Image.asset(
+                                                                        'assets/show.png'),
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          20,
+                                                                    ),
+                                                                    Align(
+                                                                      alignment:
+                                                                          Alignment
+                                                                              .bottomCenter,
+                                                                      child:
+                                                                          Text(
+                                                                        'thankyou'
+                                                                            .tr,
+                                                                        style: GoogleFonts
+                                                                            .poppins(
+                                                                          fontSize:
+                                                                              20,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                        ),
                                                                       ),
                                                                     ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                    height: 30,
+                                                                    const SizedBox(
+                                                                      height:
+                                                                          30,
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                actions: <Widget>[
+                                                                  CupertinoButton(
+                                                                    color: ColorManager
+                                                                        .kDarkBlue,
+                                                                    borderRadius:
+                                                                        const BorderRadius
+                                                                            .all(
+                                                                            Radius.circular(10.0)),
+                                                                    child: Text(
+                                                                      'backhome'
+                                                                          .tr,
+                                                                    ),
+                                                                    onPressed:
+                                                                        () async {
+                                                                      Navigator.push(
+                                                                          context,
+                                                                          MaterialPageRoute(
+                                                                              builder: (context) => Dashboard(
+                                                                                    empId: widget.empId,
+                                                                                    userName: userprofile?.fullName ?? "",
+                                                                                  )));
+                                                                    },
                                                                   ),
                                                                 ],
                                                               ),
-                                                              actions: <Widget>[
-                                                                CupertinoButton(
-                                                                  color: ColorManager
-                                                                      .kDarkBlue,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                          Radius.circular(
-                                                                              5.0)),
-                                                                  child: Text(
-                                                                    'backhome'
-                                                                        .tr,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => Dashboard(
-                                                                                  empId: widget.empId,
-                                                                                  userName: userprofile?.fullName ?? "",
-                                                                                )));
-                                                                  },
-                                                                ),
-                                                              ],
                                                             );
                                                           },
                                                         );
@@ -3128,7 +3388,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                           if (widget.user.status ==
                                               "Ride Arrived")
                                             Obx(
-                                              // ignore: unrelated_type_equality_checks
                                               () => _selectedOption == 'yes'.tr
                                                   ? Center(
                                                       child: SizedBox(

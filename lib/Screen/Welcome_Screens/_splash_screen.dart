@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously, non_constant_identifier_names
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Controller/api.dart';
@@ -55,7 +53,6 @@ class SplashscreenState extends State<Splashscreen>
   // late AnimationController _animationController;
   // late Animation<Offset> _animation;
 
-  // ignore: constant_identifier_names
   static const String KEYLOGIN = "login";
 
   String? username;
@@ -133,9 +130,10 @@ class SplashscreenState extends State<Splashscreen>
     );
     await remoteConfig.fetchAndActivate().then((value) {
       if (value) {
-        ip = remoteConfig.getString('HOMECAREURL');
+        ip = remoteConfig.getString('URL');
         if (ip == "") {
           ip = 'https://homecare.helpful.ihealthcure.com/';
+          // ip = 'http://192.168.88.254:377/';
         }
         // ip =  remoteConfig.getString('HOMECAREURLQA');
       } else {

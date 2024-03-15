@@ -107,7 +107,6 @@ class _TodayAppoinmentsState extends State<TodayAppoinments> {
   // ignore: non_constant_identifier_names
   Future<List<User>> getappointments(
       String empId,
-      // ignore: non_constant_identifier_names
       String StartDate,
       // ignore: non_constant_identifier_names
       String EndDate,
@@ -229,7 +228,8 @@ class _TodayAppoinmentsState extends State<TodayAppoinments> {
             actions: [
               InkWell(
                 onTap: () {
-                  // print('Image tapped');
+                  // ignore: avoid_print
+                  print('Image tapped');
                 },
                 child: PopupMenuButton<int>(
                   shape: const RoundedRectangleBorder(

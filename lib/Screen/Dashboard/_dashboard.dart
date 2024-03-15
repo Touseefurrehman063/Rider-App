@@ -58,7 +58,6 @@ class _DashboardState extends State<Dashboard> {
     const Icon(Icons.person, size: 30, color: Colors.white),
   ];
 
-  // ignore: unused_element
   List<PersistentBottomNavBarItem> _navBarsItems() {
     return [
       PersistentBottomNavBarItem(
@@ -100,11 +99,9 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  // ignore: non_constant_identifier_names
   LogoutUser() async {
     var url = '$ip/api/account/Logoff';
 
-    // ignore: non_constant_identifier_names
     String? DeviceToken = await LocalDB().getDeviceToken();
     var sharedpref = await SharedPreferences.getInstance();
     String userid = sharedpref.getString('userId').toString();
@@ -123,13 +120,12 @@ class _DashboardState extends State<Dashboard> {
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       var status = responseData['Status'];
-      // ignore: unused_local_variable
       dynamic usr = responseData;
       // userid=User.fromJson(usr);
       var sharedpref = await SharedPreferences.getInstance();
       sharedpref.setString('Token', DeviceToken.toString());
 
-      // print('API Response: $responseData');
+      print('API Response: $responseData');
 
       if (status == 1) {
         // ignore: use_build_context_synchronously
@@ -385,6 +381,7 @@ class _DrawerContentState extends State<DrawerContent> {
   @override
   void initState() {
     instance();
+    // TODO: implement initState
     super.initState();
   }
 
@@ -1151,14 +1148,12 @@ class _DrawerContentState extends State<DrawerContent> {
 
                       int ret = await LogoutUser();
                       if (ret == 1) {
-                        // ignore: use_build_context_synchronously
                         Navigator.pushReplacement(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const Login(),
                             ));
                       } else {
-                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text('Log Out Fail'),
@@ -1225,9 +1220,9 @@ class _DrawerContentState extends State<DrawerContent> {
     if (response.statusCode == 200) {
       var responseData = jsonDecode(response.body);
       var status = responseData['Status'];
-      // print(responseData);
+      print(responseData);
 
-      // print('API Response: $responseData');
+      print('API Response: $responseData');
       if (status == 1) {}
     }
   }
@@ -1299,14 +1294,10 @@ class _DrawerContentState extends State<DrawerContent> {
 bool isBiometric = false;
 
 final LocalAuthentication auth = LocalAuthentication();
-// ignore: unused_element
 List<BiometricType>? _availableBiometrics;
-// ignore: unused_element
 String _authorized = "Not Authorized";
-// ignore: unused_element
 bool _isAuthenticating = false;
 bool authentication = false;
-// ignore: unused_element
 Future<bool> _authenticate() async {
   bool authenticated = false;
   try {
@@ -1324,7 +1315,7 @@ Future<bool> _authenticate() async {
   } on PlatformException catch (e) {
     _isAuthenticating = false;
     _authorized = "Error - ${e.message}";
-    // print(e.message.toString());
+    print(e.message.toString());
 
     return authenticated;
   }
@@ -1342,7 +1333,6 @@ void logout(BuildContext context) async {
   userprofile = userProfile();
   prefs.setString('userId', '').toString();
   prefs.setString('username', '').toString();
-  // ignore: use_build_context_synchronously
   Navigator.pushAndRemoveUntil(
     context,
     MaterialPageRoute(builder: (context) => const Login()),
@@ -1352,7 +1342,6 @@ void logout(BuildContext context) async {
 
 bool homechk = false;
 // int selectedPage = 1;
-// ignore: non_constant_identifier_names
 String UserName = "YourUsername";
 String empId = "YourEmpId";
 

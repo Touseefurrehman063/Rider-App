@@ -1,5 +1,3 @@
-// ignore_for_file: avoid_unnecessary_containers
-
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
@@ -33,7 +31,7 @@ class _ProfileState extends State<Profile> {
   // @override
   // void initState() {
   //   instance();
-
+  //   // TODO: implement initState
   //   super.initState();
   // }
   String _getGreetingMessage() {
@@ -112,165 +110,167 @@ class _ProfileState extends State<Profile> {
         centerTitle: true,
       ),
       // drawer:  DrawerContent(zoomController: zoomController,),
-      body: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
-                child: Row(
-                  children: [
-                    Stack(alignment: Alignment.center, children: [
-                      CircleAvatar(
-                        radius: 31,
-                        backgroundColor: Colors.blue,
-                        child: userprofile?.imagePath == null
-                            ? const CircleAvatar(
-                                backgroundImage: AssetImage("assets/pp.jpg"),
-                                radius: 25,
-                              )
-                            : CircleAvatar(
-                                backgroundImage:
-                                    NetworkImage(ip + userprofile!.imagePath!),
-                                radius: 29,
-                              ),
+      body: Container(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                child: Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 35, vertical: 15),
+                  child: Row(
+                    children: [
+                      Stack(alignment: Alignment.center, children: [
+                        CircleAvatar(
+                          radius: 31,
+                          backgroundColor: Colors.blue,
+                          child: userprofile?.imagePath == null
+                              ? const CircleAvatar(
+                                  backgroundImage: AssetImage("assets/pp.jpg"),
+                                  radius: 25,
+                                )
+                              : CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      ip + userprofile!.imagePath!),
+                                  radius: 29,
+                                ),
+                        ),
+                      ]),
+                      SizedBox(
+                        width: Get.width * 0.02,
                       ),
-                    ]),
-                    SizedBox(
-                      width: Get.width * 0.02,
-                    ),
-                    Container(
-                      child: RichText(
-                        text: TextSpan(
-                          style: GoogleFonts.readexPro(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700,
-                            height: 1.25,
-                            color: const Color(0xff1272d3),
+                      Container(
+                        child: RichText(
+                          text: TextSpan(
+                            style: GoogleFonts.readexPro(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              height: 1.25,
+                              color: const Color(0xff1272d3),
+                            ),
+                            children: [
+                              TextSpan(
+                                text:
+                                    'Hi, ${(userprofile?.firstName ?? " Rider").length > 15 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
+                                style: GoogleFonts.raleway(
+                                  fontSize: 23,
+                                  fontWeight: FontWeight.w800,
+                                  height: 1.175,
+                                  color: const Color(0xff1272d3),
+                                ),
+                              ),
+                              TextSpan(
+                                text: '\n',
+                                style: GoogleFonts.readexPro(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xff1272d3),
+                                ),
+                              ),
+                              TextSpan(
+                                text: _getGreetingMessage(),
+                                style: GoogleFonts.raleway(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w700,
+                                  // letterSpacing: 4.5,
+                                  color: const Color(0xff1272d3),
+                                ),
+                              ),
+                            ],
                           ),
-                          children: [
-                            TextSpan(
-                              text:
-                                  'Hi, ${(userprofile?.firstName ?? " Rider").length > 15 ? '${(userprofile?.firstName ?? " Rider").substring(0, 15)}...' : (userprofile?.firstName ?? "Tabib Rider")}',
-                              style: GoogleFonts.raleway(
-                                fontSize: 23,
-                                fontWeight: FontWeight.w800,
-                                height: 1.175,
-                                color: const Color(0xff1272d3),
-                              ),
-                            ),
-                            TextSpan(
-                              text: '\n',
-                              style: GoogleFonts.readexPro(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xff1272d3),
-                              ),
-                            ),
-                            TextSpan(
-                              text: _getGreetingMessage(),
-                              style: GoogleFonts.raleway(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700,
-                                // letterSpacing: 4.5,
-                                color: const Color(0xff1272d3),
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                alignment: Alignment.topCenter,
-                // width: Get.width,
-                // height: Get.height,
-                // padding: EdgeInsets.symmetric(vertical: Get.height * 0.14),
-                decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(30),
-                        topRight: Radius.circular(30)),
-                    color: ColorManager.kDarkBlue),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      SizedBox(
-                        height: Get.height * 0.14,
-                      ),
-                      RecordWidget(
-                        title: "vehiclenumber".tr,
-                        name: userprofile?.vehicleNumber ?? "_",
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.03,
-                      ),
-                      RecordWidget(
-                        title: "govid".tr,
-                        name: userprofile?.cNICNumber ?? "_",
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.03,
-                      ),
-                      RecordWidget(
-                        title: "contact".tr,
-                        name: userprofile?.cellNumber ?? "_",
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.03,
-                      ),
-                      RecordWidget(
-                        title: "dob".tr,
-                        name: userprofile?.dateofBirth != null
-                            ? DateFormat('dd MMMM yyyy').format(
-                                DateTime.parse(userprofile!.dateofBirth!))
-                            : '_',
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.03,
-                      ),
-                      RecordWidget(
-                        title: "address".tr,
-                        name: userprofile?.userAddress ?? "_",
-                      ),
-                      SizedBox(
-                        height: Get.height * 0.03,
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      // CustomButton(
-                      //   width: Get.width*0.7,
-                      //   onPressed: () async {
-                      //     await Navigator.push(
-                      //         context,
-                      //         MaterialPageRoute(
-                      //             builder: (context) => const EditProfile()));
-                      //     setState(() {
-                      //       userprofile;
-                      //     });
-                      //   },
-                      //   title: "Edit Profile",
-                      //   radius: 20,
-                      //   style: GoogleFonts.poppins(
-                      //       color: Colors.blue,
-                      //       fontSize: 16,
-
-                      //       fontWeight: FontWeight.bold),
-                      //   primcolor: Colors.white,
-                      // ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ]),
+              Expanded(
+                child: Container(
+                  alignment: Alignment.topCenter,
+                  // width: Get.width,
+                  // height: Get.height,
+                  // padding: EdgeInsets.symmetric(vertical: Get.height * 0.14),
+                  decoration: const BoxDecoration(
+                      borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30)),
+                      color: ColorManager.kDarkBlue),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: Get.height * 0.14,
+                        ),
+                        RecordWidget(
+                          title: "vehiclenumber".tr,
+                          name: userprofile?.vehicleNumber ?? "_",
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.03,
+                        ),
+                        RecordWidget(
+                          title: "govid".tr,
+                          name: userprofile?.cNICNumber ?? "_",
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.03,
+                        ),
+                        RecordWidget(
+                          title: "contact".tr,
+                          name: userprofile?.cellNumber ?? "_",
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.03,
+                        ),
+                        RecordWidget(
+                          title: "dob".tr,
+                          name: userprofile?.dateofBirth != null
+                              ? DateFormat('dd MMMM yyyy').format(
+                                  DateTime.parse(userprofile!.dateofBirth!))
+                              : '_',
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.03,
+                        ),
+                        RecordWidget(
+                          title: "address".tr,
+                          name: userprofile?.userAddress ?? "_",
+                        ),
+                        SizedBox(
+                          height: Get.height * 0.03,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        // CustomButton(
+                        //   width: Get.width*0.7,
+                        //   onPressed: () async {
+                        //     await Navigator.push(
+                        //         context,
+                        //         MaterialPageRoute(
+                        //             builder: (context) => const EditProfile()));
+                        //     setState(() {
+                        //       userprofile;
+                        //     });
+                        //   },
+                        //   title: "Edit Profile",
+                        //   radius: 20,
+                        //   style: GoogleFonts.poppins(
+                        //       color: Colors.blue,
+                        //       fontSize: 16,
+
+                        //       fontWeight: FontWeight.bold),
+                        //   primcolor: Colors.white,
+                        // ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ]),
+      ),
     );
   }
 

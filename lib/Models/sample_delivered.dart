@@ -1,11 +1,9 @@
-// ignore_for_file: camel_case_types
-
 class sampledeliveredModel {
   dynamic patientId;
   dynamic branchLocationId;
   dynamic labNo;
-  dynamic riderLatitude;
-  dynamic riderLongitude;
+ dynamic riderLatitude;
+ dynamic riderLongitude;
   dynamic riderAddress;
   dynamic riderRemarks;
   dynamic userId;
