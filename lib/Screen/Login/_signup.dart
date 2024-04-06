@@ -7,8 +7,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/countrymodel.dart';
 import 'package:flutter_riderapp/Models/statemodel.dart';
+import 'package:flutter_riderapp/Widgets/Utils/mask.dart';
 import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
 import 'package:flutter_riderapp/Widgets/custom_dropdown.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -328,6 +330,7 @@ class _SignupState extends State<Signup> {
     }
   }
 
+  String? msg;
   Future<void> _register_api(Register register) async {
     var url = '$ip/api/RiderRegistrationRequest/SubmitRegistrationRequest';
     var headers = {
@@ -345,8 +348,27 @@ class _SignupState extends State<Signup> {
 
       // ignore: unused_local_variable
       var status = data["Status"];
+      var message = data["ErrorMessage"];
+      if (status != null && status == 1) {
+        Fluttertoast.showToast(
+            msg: msg ?? message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: ((context) {
+            return const Registered();
+          })),
+        );
+      } else {
+        Showtoaster().classtoaster(message);
+      }
     } else {
-      throw Exception('Failed to end ride');
+      throw Exception('Registration Failed');
     }
   }
 
@@ -475,7 +497,7 @@ class _SignupState extends State<Signup> {
                               ],
                               controller: mobile_number,
                               disableLengthCheck: true,
-                              initialCountryCode: 'SA',
+                              initialCountryCode: 'AE',
                               keyboardType: TextInputType.number,
                               decoration: InputDecoration(
                                 hintStyle: const TextStyle(
@@ -745,38 +767,40 @@ class _SignupState extends State<Signup> {
                               ),
                             ),
                           ),
-                          selectedGender == null &&
-                                  chk == true &&
-                                  widget.fromlogin == false
-                              ? SizedBox(
-                                  child: Column(
-                                    children: [
-                                      SizedBox(height: Get.height * 0.01),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: Get.width * 0.05),
-                                            child: Text(
-                                              "selectgender".tr,
-                                              style: const TextStyle(
-                                                color: Colors.red,
-                                                fontSize: 12,
-                                                // fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              : const SizedBox.shrink(),
+                          // selectedGender == null &&
+                          //         chk == true &&
+                          //         widget.fromlogin == false
+                          //     ? SizedBox(
+                          //         child: Column(
+                          //           children: [
+                          //             SizedBox(height: Get.height * 0.01),
+                          //             Row(
+                          //               children: [
+                          //                 Padding(
+                          //                   padding: EdgeInsets.symmetric(
+                          //                       horizontal: Get.width * 0.05),
+                          //                   child: Text(
+                          //                     "selectgender".tr,
+                          //                     style: const TextStyle(
+                          //                       color: Colors.red,
+                          //                       fontSize: 12,
+                          //                       // fontWeight: FontWeight.w500,
+                          //                     ),
+                          //                   ),
+                          //                 ),
+                          //               ],
+                          //             ),
+                          //           ],
+                          //         ),
+                          //       )
+                          //     : const SizedBox.shrink(),
 
                           SizedBox(
                             height: MediaQuery.of(context).size.height * 0.02,
                           ),
                           AuthTextField(
+                            keyboardType: TextInputType.number,
+
                             validator: (p0) {
                               if (p0!.isEmpty) {
                                 return 'enterid'.tr;
@@ -784,7 +808,9 @@ class _SignupState extends State<Signup> {
                               return null;
                             },
                             controller: gvt_id,
+                            // maxLength: 15,
                             hintText: 'nationalid'.tr,
+                            formatters: [Masks().maskFormatter],
                           ),
 
                           // Padding(
@@ -1312,6 +1338,19 @@ class _SignupState extends State<Signup> {
                                         mobile_number.text.toString();
                                     register.email = email.text.toString();
                                     register.dateOfBirth = dateTime.toString();
+                                    String titleText = '';
+
+                                    if (register.genderId ==
+                                        '4cae3d33-e8aa-e711-80c1-a0b3cce147ba') {
+                                      titleText = 'Mr';
+                                    } else if (register.genderId ==
+                                        "4dae3d33-e8aa-e711-80c1-a0b3cce147ba") {
+                                      titleText = 'Miss';
+                                    } else {
+                                      titleText = "All";
+                                    }
+
+                                    register.title = titleText.toString();
                                     register.genderId =
                                         selectedGender.toString();
                                     register.identityNo =
@@ -1327,6 +1366,7 @@ class _SignupState extends State<Signup> {
                                         Re_Password.text.toString();
                                     register.cityId = selectedCity.toString();
                                     register.address = Address.text.toString();
+
                                     str != ""
                                         ? register.profilePictureImagePath = str
                                             .toString()
@@ -1336,12 +1376,12 @@ class _SignupState extends State<Signup> {
 
                                     await _register_api(register);
 
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(builder: ((context) {
-                                        return const Registered();
-                                      })),
-                                    );
+                                    // Navigator.push(
+                                    //   context,
+                                    //   MaterialPageRoute(builder: ((context) {
+                                    //     return const Registered();
+                                    //   })),
+                                    // );
                                   } else {
                                     Showtoaster()
                                         .classtoaster("passnotmatch".tr);
@@ -1510,6 +1550,8 @@ class AuthTextField extends StatelessWidget {
   final Widget? suffixIcon;
   final String? hintText;
   final bool? readOnly;
+  final int? maxLength;
+
   const AuthTextField({
     super.key,
     this.hintText,
@@ -1521,6 +1563,7 @@ class AuthTextField extends StatelessWidget {
     this.obscureText,
     this.keyboardType,
     this.function,
+    this.maxLength,
   });
 
   @override
@@ -1528,6 +1571,7 @@ class AuthTextField extends StatelessWidget {
     return TextFormField(
       onChanged: function,
       keyboardType: keyboardType,
+      maxLength: maxLength,
       obscureText: obscureText ?? false,
       inputFormatters: formatters,
       readOnly: readOnly ?? false,

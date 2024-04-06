@@ -1,20 +1,22 @@
 import 'dart:developer';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:flutter_riderapp/Utilities.dart';
-import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'dart:io';
-import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import 'package:share/share.dart';
 
 class PdfViewerPage extends StatefulWidget {
   final String? testName;
   final String? url;
-  const PdfViewerPage({super.key, this.url, this.testName});
+
+  const PdfViewerPage({Key? key, this.url, this.testName}) : super(key: key);
+
   @override
   _PdfViewerPageState createState() => _PdfViewerPageState();
 }
@@ -25,21 +27,23 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   int _totalPages = 0;
   int _currentPage = 0;
   bool pdfReady = false;
-  // PDFViewController? _pdfViewController;
   bool loaded = false;
+  void sharePdfFile(String filePath) {
+    Share.shareFiles([filePath], text: 'Sharing PDF file');
+  }
+
   Future<File> getFileFromUrl(String url, {name}) async {
     var fileName = '${widget.testName}';
     if (name != null) {
       fileName = name;
     }
     try {
-      await requestPersmission();
+      await requestPermission();
       await requestManagement();
       var data = await http.get(Uri.parse(url));
       var bytes = data.bodyBytes;
       var dir = await getApplicationDocumentsDirectory();
       log(dir.path);
-      log(dir.path.toString());
       File file = File("${dir.path}/${fileName.trim()}.pdf");
       log(file.path.toString());
       File urlFile = await file.writeAsBytes(bytes);
@@ -55,7 +59,7 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
     }
   }
 
-  requestPersmission() async {
+  requestPermission() async {
     Permission permission = Permission.storage;
     if (await permission.isGranted) {
       log('test1');
@@ -87,22 +91,18 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
   @override
   void initState() {
     log(widget.url.toString());
-    getFileFromUrl(
-      "$ip2/${widget.url}",
-    ).then(
-      (value) => {
-        log('$ip2/${widget.url}'),
-        setState(() {
-          if (value != null) {
-            urlPDFPath = value.path;
-            loaded = true;
-            exists = true;
-          } else {
-            exists = false;
-          }
-        })
-      },
-    );
+    getFileFromUrl("$ip2/${widget.url}").then((value) => {
+          log('$ip2/${widget.url}'),
+          setState(() {
+            if (value != null) {
+              urlPDFPath = value.path;
+              loaded = true;
+              exists = true;
+            } else {
+              exists = false;
+            }
+          })
+        });
     super.initState();
   }
 
@@ -112,13 +112,29 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
       return Scaffold(
         appBar: AppBar(
           leading: InkWell(
-              onTap: () {
-                Navigator.of(context).pop();
+            onTap: () {
+              Navigator.of(context).pop();
+            },
+            child: const Icon(
+              Icons.arrow_back_ios_new,
+              color: Colors.blue,
+            ),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.share),
+              color: Colors.blue,
+              onPressed: () {
+                // Implement your sharing functionality here
+                // For example:
+                if (urlPDFPath != "") {
+                  sharePdfFile(urlPDFPath);
+                } else {
+                  const ScaffoldMessenger(child: Text("URL is not available"));
+                }
               },
-              child: const Icon(
-                Icons.arrow_back_ios_new,
-                color: Colors.blue,
-              )),
+            ),
+          ],
           shadowColor: Colors.white,
           backgroundColor: Colors.white,
           elevation: 0.0,
@@ -136,11 +152,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
               setState(() {
                 _totalPages = pages!;
                 pdfReady = true;
-              });
-            },
-            onViewCreated: (PDFViewController vc) {
-              setState(() {
-                // _pdfViewController = vc;
               });
             },
             onPageChanged: (int? page, int? total) {
@@ -164,7 +175,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 setState(() {
                   if (_currentPage > 0) {
                     _currentPage--;
-                    // _pdfViewController?.setPage(_currentPage);
                   }
                 });
               },
@@ -181,7 +191,6 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
                 setState(() {
                   if (_currentPage < _totalPages - 1) {
                     _currentPage++;
-                    // _pdfViewController?.setPage(_currentPage);
                   }
                 });
               },
@@ -197,12 +206,11 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
           ),
         );
       } else {
-        //Replace Error UI
-        return Scaffold(
+        return const Scaffold(
           body: Center(
             child: Text(
-              "pdfnotavail".tr,
-              style: const TextStyle(fontSize: 20),
+              "PDF Not Available",
+              style: TextStyle(fontSize: 20),
             ),
           ),
         );

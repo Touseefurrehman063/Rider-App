@@ -1,15 +1,13 @@
 import 'dart:convert';
-import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riderapp/AppConstants.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Repositeries/authentication.dart';
 import 'package:flutter_riderapp/Repositeries/localdb.dart';
 import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
-import 'package:flutter_riderapp/controllers/Auth_Controller/auth_controller.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
@@ -35,7 +33,6 @@ class _LoginState extends State<Login> {
   TextEditingController passwordController = TextEditingController();
   bool passwordVisible = true;
   bool isLoading = false;
-  bool isLoadingData = false;
   User? user;
   final bool _obscureText = true;
 
@@ -245,7 +242,7 @@ class _LoginState extends State<Login> {
                                 ),
                               ),
                               Text(
-                                'helpful'.tr,
+                                'SIDRA HEALTHCARE',
                                 style: GoogleFonts.raleway(
                                   textStyle: const TextStyle(
                                     fontWeight: FontWeight.bold,
@@ -310,9 +307,6 @@ class _LoginState extends State<Login> {
                                   color: CupertinoColors.activeBlue,
                                   onPressed: () async {
                                     if (formkey.currentState!.validate()) {
-                                      setState(() {
-                                        isLoadingData = true;
-                                      });
                                       var sharedpref =
                                           await SharedPreferences.getInstance();
                                       sharedpref.setBool(
@@ -356,13 +350,7 @@ class _LoginState extends State<Login> {
                                                       user: user,
                                                     )),
                                           );
-                                          setState(() {
-                                            isLoadingData = false;
-                                          });
                                         } else {
-                                          setState(() {
-                                            isLoadingData = false;
-                                          });
                                           Showtoaster()
                                               .classtoaster("invalid".tr);
                                         }
@@ -371,16 +359,14 @@ class _LoginState extends State<Login> {
                                   },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Center(
-                                    child: !isLoadingData
-                                        ? Text(
-                                            'login'.tr,
-                                            style: const TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.bold,
-                                              color: Colors.white,
-                                            ),
-                                          )
-                                        : const CircularProgressIndicator(),
+                                    child: Text(
+                                      'login'.tr,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -409,6 +395,9 @@ class _LoginState extends State<Login> {
                                   Text("dontaccount".tr),
                                   TextButton(
                                     onPressed: () async {
+                                      print('phone');
+                                      print(AppConstants().contact);
+                                      print('phone');
                                       Get.to(() => Signup(
                                             fromlogin: true,
                                           ));

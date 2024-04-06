@@ -18,10 +18,10 @@ class _HomeNotificationState extends State<HomeNotification> {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // const Text(
-            //   "Today",
-            //   style: TextStyle(fontSize: 16, color: Colors.black),
-            // ),
+            const Text(
+              "Today",
+              style: TextStyle(fontSize: 16, color: Colors.black),
+            ),
             SizedBox(
               height: Get.height * 0.05,
             ),

@@ -21,16 +21,20 @@ class RegisterPatient extends StatefulWidget {
 }
 
 class _RegisterPatientState extends State<RegisterPatient> {
-    bool isLoadingData = false;
-     bool isLoadingmoreData = false;
-     int TotalRecordsData = 0;
-     String StartDate = formatDate(DateTime.now());
-          // ignore: non_constant_identifier_names
-          String EndDate = formatDate(DateTime.now());
-   // ignore: non_constant_identifier_names
-  Future<List<User>> getappointments(String empId, String StartDate,
+  bool isLoadingData = false;
+  bool isLoadingmoreData = false;
+  int TotalRecordsData = 0;
+  String StartDate = formatDate(DateTime.now());
+  // ignore: non_constant_identifier_names
+  String EndDate = formatDate(DateTime.now());
+  // ignore: non_constant_identifier_names
+  Future<List<User>> getappointments(
+      String empId,
+      String StartDate,
       // ignore: non_constant_identifier_names
-      String EndDate, int length, int start) async {
+      String EndDate,
+      int length,
+      int start) async {
     if (start == 0) {
       isLoadingData = true;
       setState(() {});
@@ -74,7 +78,7 @@ class _RegisterPatientState extends State<RegisterPatient> {
           for (var element in ulist) {
             _appointments.add(element);
           }
-                }
+        }
         // ignore: avoid_print
         print(ulist);
 
@@ -97,31 +101,29 @@ class _RegisterPatientState extends State<RegisterPatient> {
   }
 
   final ScrollController _scrollController = ScrollController();
-    List<User> _appointments = [];
- 
-      int start=0;
+  List<User> _appointments = [];
 
+  int start = 0;
 
+  callvback() async {
+    _appointments = await getappointments(
+        userprofile!.id!,
+        StartDate.toString().split(" ")[0],
+        EndDate.toString().split(" ")[0],
+        AppConstants.maximumDataTobeFetched,
+        start);
+    setState(() {});
+  }
 
-callvback()async
-{
-  _appointments = await getappointments(userprofile!.id!, StartDate.toString().split(" ")[0], EndDate.toString().split(" ")[0],AppConstants.maximumDataTobeFetched, start);
-setState(() {
-  
-});
-}
   @override
- void initState() {
-   if(_appointments.isEmpty)
-    {
-callvback();
+  void initState() {
+    if (_appointments.isEmpty) {
+      callvback();
     }
     // TODO: implement initState
     super.initState();
-
   }
-  
-    
+
   @override
   Widget build(BuildContext context) {
     return BlurryModalProgressHUD(
@@ -139,10 +141,13 @@ callvback();
             backgroundColor: Colors.white,
             elevation: 0,
             leading: InkWell(
-            onTap: (){
-              Get.back();
-            },
-            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+                onTap: () {
+                  Get.back();
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Color(0xff0F64C6),
+                )),
             title: Text(
               'registerpatient'.tr,
               textAlign: TextAlign.center,
@@ -165,116 +170,99 @@ callvback();
                 height: MediaQuery.of(context).size.height * 0.9,
                 width: MediaQuery.of(context).size.width * 1,
                 child: Column(
-              
                   children: [
-                     Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: ((_appointments.isNotEmpty)
-                                ? _appointments.length
-                                : 0),
-                            itemBuilder: (context, index) {
-                              
-                                User user = _appointments[index];
-                                        
-                                
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, right: 15, left: 15),
-                                    child: Card(
-                                      color: const Color(0xFF1272D3),
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15),
-                                      ),
-                                        
-                                      child: ListTile(
-                                          title: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          ListTile(
-                                            title: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? "" } | "+971 2345 6789" | "Mr # 0001',
-                                                  style: const TextStyle(
-                                                      fontSize: 8,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                Text(
-                                                  user.patientName?.toString().trim().replaceAll(' ', '') ?? "",
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 20,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                               
-                                                
-                                               
-                                                
-                                              ],
-                                            ),
-                                            
-                                          ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: ElevatedButton(
-                                              onPressed: () async {
-                                             
-                                                Get.to( Labinvestigation(user:_appointments[index]));
-                                              
-                                                
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                fixedSize: const Size(380, 4),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15), // Set the border radius here
-                                                ),
-                                              ),
-                                              child: Text(
-                                                'checkin'.tr,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color: Colors.blue),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                      // child: ListTile(
-                                        
-                                      //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                      //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
-                                        
-                                      // ),
-                                    ),
-                                  );
-                                },
-                              
-                              
-                           
-                        
-                ))],
-                
-            )),
-          ),
+                    Expanded(
+                        child: ListView.builder(
+                      controller: _scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: ((_appointments.isNotEmpty)
+                          ? _appointments.length
+                          : 0),
+                      itemBuilder: (context, index) {
+                        User user = _appointments[index];
 
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, right: 15, left: 15),
+                          child: Card(
+                            color: const Color(0xFF1272D3),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+
+                            child: ListTile(
+                                title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? ""} | "+971 2345 6789" | "Mr # 0001',
+                                        style: const TextStyle(
+                                            fontSize: 8,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        user.patientName
+                                                ?.toString()
+                                                .trim()
+                                                .replaceAll(' ', '') ??
+                                            "",
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Align(
+                                  alignment: Alignment.bottomCenter,
+                                  child: ElevatedButton(
+                                    onPressed: () async {
+                                      Get.to(LabInvestigations(
+                                        patientid: user.patientid,
+                                      ));
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      fixedSize: const Size(380, 4),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                            15), // Set the border radius here
+                                      ),
+                                    ),
+                                    child: Text(
+                                      'checkin'.tr,
+                                      style: GoogleFonts.poppins(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.blue),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )),
+                            // child: ListTile(
+
+                            //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
+                            //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
+
+                            // ),
+                          ),
+                        );
+                      },
+                    ))
+                  ],
+                )),
+          ),
         ));
   }
 }
-

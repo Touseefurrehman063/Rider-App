@@ -1,7 +1,6 @@
 // TODO Implement this library.
 
-
-class Register{
+class Register {
   String? id;
   String? fullName;
   String? mobileNo;
@@ -21,6 +20,7 @@ class Register{
   String? branchId;
   String? action;
   int? isActive;
+  String? title;
 
   Register(
       {this.id,
@@ -41,7 +41,8 @@ class Register{
       this.address,
       this.branchId,
       this.action,
-      this.isActive});
+      this.isActive = 1,
+      this.title});
 
   Register.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -63,6 +64,7 @@ class Register{
     branchId = json['BranchId'];
     action = json['Action'];
     isActive = json['IsActive'];
+    title = json['Title'];
   }
 
   Map<String, dynamic> toJson() {
@@ -86,8 +88,7 @@ class Register{
     data['BranchId'] = branchId;
     data['Action'] = action;
     data['IsActive'] = isActive;
+    data['Title'] = title;
     return data;
   }
 }
-
-

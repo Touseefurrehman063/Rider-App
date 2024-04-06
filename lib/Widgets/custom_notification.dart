@@ -1,18 +1,12 @@
-import 'dart:async';
 import 'dart:developer';
 
-import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/Notification_Model/notification_model.dart';
 import 'package:flutter_riderapp/Models/User.dart';
-import 'package:flutter_riderapp/Models/userprofile.dart';
 import 'package:flutter_riderapp/Repositeries/Notificationrepo/notification_repo.dart';
-import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart'
-    hide formatDate;
-import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/controllers/Notification/notification_controller.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 // Import intl for date formatting
@@ -32,10 +26,12 @@ class _CustomNotificationState extends State<CustomNotification> {
   int length = 10;
   @override
   void initState() {
-    // newnotification();
-    today = 0;
-    yesterday = 0;
-    before = 0;
+    didChangeDependencies(_)
+    {
+      today=0;
+      yesterday=0;
+      before=0;
+    }
     log(DateTime.now().toString());
     super.initState();
   }
@@ -48,154 +44,168 @@ class _CustomNotificationState extends State<CustomNotification> {
     return formatter.format(lastMonth);
   }
 
-  // Future<void> newnotification() async {
-  //   await notificationscontroller.j.getnotifications();
-  // }
+  Future<void> _refreshNotifications() async {
+    await NotificationRepository().getnotifications(
+      userprofile!.id.toString(),
+      formatLastMonthDate().toString(),
+      formatDate(DateTime.now()).toString(),
+      length,
+      start,
+    );
+  }
 
   @override
   void dispose() {
-    today = 0;
-    yesterday = 0;
-    before = 0;
+  today=0;
+      yesterday=0;
+      before=0;
     // TODO: implement dispose
     super.dispose();
   }
+  DateTime t1=DateTime.now().subtract(const Duration(days:1));
 
-  DateTime t1 = DateTime.now().subtract(const Duration(days: 1));
-
-  int today = 0;
-  int yesterday = 0;
-  int before = 0;
+int today=0;
+int yesterday=0;
+int before=0;
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<notificationscontroller>(builder: (cont) {
-      return SizedBox(
-        height: MediaQuery.of(context).size.height,
-        child: ListView.builder(
-            physics: const AlwaysScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: notificationscontroller.j.notifications.length,
-            itemBuilder: (context, index) {
-              final data = notificationscontroller.j.notifications[index];
+      return Column(
+        children: [
+          RefreshIndicator(
+            onRefresh: _refreshNotifications,
+            child: ListView.builder(
+              physics: const AlwaysScrollableScrollPhysics(),
+              shrinkWrap: true,
+              itemCount: notificationscontroller.j.notifications.length,
+              itemBuilder: (context, index) {
+                final data = notificationscontroller.j.notifications[index];
+                
+              
+                if(DateTime.now().toString().split(' ')[0]==data.dateTime.toString().split('T')[0] && today==0)
+                {
+                  today+=1;
+                  return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                         const Text("Today"),
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+                else if(t1.isBefore(DateTime.now()) && yesterday==0)
+                {
+                  yesterday+=1;
+                  return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                           const Text("Yesterday"),
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+               
+               
+                else
+                {
+                   return Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
 
-              if (DateTime.now().toString().split(' ')[0] ==
-                      data.dateTime.toString().split('T')[0] &&
-                  today == 0) {
-                today += 1;
-                return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Today"),
-                        customListTile(context, data),
-                      ],
-                    ));
-              } else if (t1.isBefore(DateTime.now()) && yesterday == 0) {
-                yesterday += 1;
-                return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text("Yesterday"),
-                        customListTile(context, data),
-                      ],
-                    ));
-              } else {
-                return Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        customListTile(context, data),
-                      ],
-                    ));
+                          customListTile(context, data),
+                        ],
+                      ));
+                }
+               
+
+
+
+
+                // } else if (DateTime.now().toString().split(' ')[0] !=
+                //         data.dateTime.toString().split('T')[0] &&
+                //     chk2) {
+                //       chk2=false;
+                //   return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           "${DateTime.now().toString().split(' ')[0].split('-')[0]}-${int.parse(DateTime.now().toString().split(' ')[0].split('-')[2]) - 1}${DateTime.now().toString().split(' ')[0].split('-')[2]}" ==
+                //                   data.dateTime.toString().split('T')[0]
+                //               ? const Padding(
+                //                   padding: EdgeInsets.only(left: 8.0),
+                //                   child: Text("Yesterday"),
+                //                 )
+                //               :  const SizedBox.shrink(),
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // } else if (DateTime.now().toString().split(' ')[0] !=
+                //         data.dateTime.toString().split('T')[0] &&
+                //     chk2) {
+                //   return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                //           DateTime.now().toString().split(' ')[0] ==
+                //                   data.dateTime.toString().split('T')[0]
+                //               ? const Padding(
+                //                   padding: EdgeInsets.only(left: 8.0),
+                //                   child: Text("Yesterday"),
+                //                 )
+                //               : const SizedBox.shrink(),
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // }
+                // else{
+                //    return Padding(
+                //       padding: const EdgeInsets.only(top: 10),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         children: [
+                         
+                //           customListTile(context, data),
+                //         ],
+                //       ));
+                // }
               }
 
-              // } else if (DateTime.now().toString().split(' ')[0] !=
-              //         data.dateTime.toString().split('T')[0] &&
-              //     chk2) {
-              //       chk2=false;
-              //   return Padding(
-              //       padding: const EdgeInsets.only(top: 10),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           "${DateTime.now().toString().split(' ')[0].split('-')[0]}-${int.parse(DateTime.now().toString().split(' ')[0].split('-')[2]) - 1}${DateTime.now().toString().split(' ')[0].split('-')[2]}" ==
-              //                   data.dateTime.toString().split('T')[0]
-              //               ? const Padding(
-              //                   padding: EdgeInsets.only(left: 8.0),
-              //                   child: Text("Yesterday"),
-              //                 )
-              //               :  const SizedBox.shrink(),
-              //           customListTile(context, data),
-              //         ],
-              //       ));
-              // } else if (DateTime.now().toString().split(' ')[0] !=
-              //         data.dateTime.toString().split('T')[0] &&
-              //     chk2) {
-              //   return Padding(
-              //       padding: const EdgeInsets.only(top: 10),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-              //           DateTime.now().toString().split(' ')[0] ==
-              //                   data.dateTime.toString().split('T')[0]
-              //               ? const Padding(
-              //                   padding: EdgeInsets.only(left: 8.0),
-              //                   child: Text("Yesterday"),
-              //                 )
-              //               : const SizedBox.shrink(),
-              //           customListTile(context, data),
-              //         ],
-              //       ));
-              // }
-              // else{
-              //    return Padding(
-              //       padding: const EdgeInsets.only(top: 10),
-              //       child: Column(
-              //         crossAxisAlignment: CrossAxisAlignment.start,
-              //         children: [
-
-              //           customListTile(context, data),
-              //         ],
-              //       ));
-              // }
-            }),
+            ),
+          ),
+        ],
       );
     });
   }
 
   customListTile(BuildContext context, RiderNotifications data) {
-    return GestureDetector(
-      onTap: () {
-        Get.to(TodayAppoinments(
-          empId: userprofile?.id ?? "",
-        ));
-      },
-      child: Card(
-        child: ListTile(
-          minVerticalPadding: 0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
-          tileColor: Colors.transparent,
-          title: Text(
-            data.title.toString(),
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                ),
-          ),
-          subtitle: Text(
-            "${data.body!.split(" at ").first}\n${calculateTimeAgo(data.dateTime)}",
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Colors.grey,
-                  fontSize: 10,
-                ),
-          ),
+    return Card(
+      child: ListTile(
+        minVerticalPadding: 0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
+        tileColor: Colors.transparent,
+        title: Text(
+          data.title.toString(),
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.black,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+        ),
+        subtitle: Text(
+          "${data.body!.split(" at ").first}\n${calculateTimeAgo(data.dateTime)}",
+          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Colors.grey,
+                fontSize: 10,
+              ),
         ),
       ),
     );

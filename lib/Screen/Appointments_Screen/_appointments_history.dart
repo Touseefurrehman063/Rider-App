@@ -5,6 +5,7 @@ import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
+import 'package:flutter_riderapp/controllers/edit_patient_controller.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -98,7 +99,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
 
     StartDate = formatDateFromLastYear(
         DateTime.now().subtract(const Duration(days: 30)));
-    EndDate = formatEndOfMonth(DateTime.now());
+    EndDate = formatDateWithTime(DateTime.now(), isEndOfDay: true);
     resetAllDataValues();
     _appointmentsFuture = getappointments(widget.empId, StartDate, EndDate,
         AppConstants.maximumDataTobeFetched, start);
@@ -136,6 +137,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
     }
   }
 
+  int Filterstatus = 0;
   // ignore: non_constant_identifier_names
   Future<List<User>> getappointments(
       String empId,
@@ -163,6 +165,7 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
       'EndDate': EndDate,
       'length': length,
       'start': start,
+      'HistoryFilterStatus': Filterstatus,
     };
 
     final response = await http.post(Uri.parse(url),
@@ -265,19 +268,90 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                   onSelected: (value) {
                     setState(() {
                       if (value == 1) {
-                        selectedStatusFilter = "";
+                        Filterstatus = 0;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+
                         setState(() {});
                       } else if (value == 2) {
-                        selectedStatusFilter = "Pending";
+                        Filterstatus = 1;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
                         setState(() {});
                       } else if (value == 3) {
-                        selectedStatusFilter = "Completed";
+                        Filterstatus = 2;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
                         setState(() {});
                       } else if (value == 4) {
-                        selectedStatusFilter = "Cancelled";
+                        Filterstatus = 3;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
                         setState(() {});
                       } else if (value == 5) {
-                        selectedStatusFilter = "Refunded";
+                        Filterstatus = 4;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 6) {
+                        Filterstatus = 5;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 7) {
+                        Filterstatus = 6;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 8) {
+                        Filterstatus = 7;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 9) {
+                        Filterstatus = 8;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 10) {
+                        Filterstatus = 9;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 11) {
+                        Filterstatus = 10;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 12) {
+                        Filterstatus = 11;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 13) {
+                        Filterstatus = 12;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 14) {
+                        Filterstatus = 13;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 15) {
+                        Filterstatus = 14;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 16) {
+                        Filterstatus = 15;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
+                        setState(() {});
+                      } else if (value == 17) {
+                        Filterstatus = 16;
+                        getappointments(
+                            widget.empId, StartDate, EndDate, 25, start);
                         setState(() {});
                       }
                     });
@@ -289,19 +363,67 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                     ),
                     const PopupMenuItem<int>(
                       value: 2,
-                      child: Text('Pending'),
+                      child: Text('Pending Payments'),
                     ),
                     const PopupMenuItem<int>(
                       value: 3,
-                      child: Text('Completed'),
+                      child: Text('Booked'),
                     ),
                     const PopupMenuItem<int>(
                       value: 4,
-                      child: Text('Cancelled'),
+                      child: Text('Completed'),
                     ),
                     const PopupMenuItem<int>(
                       value: 5,
+                      child: Text('Cancelled'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 6,
                       child: Text('Refunded'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 7,
+                      child: Text('Provider assigned'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 8,
+                      child: Text('In progress'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 9,
+                      child: Text('Consent Received'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 10,
+                      child: Text('Removed'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 11,
+                      child: Text('In Route'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 12,
+                      child: Text('Sample Delivered'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 13,
+                      child: Text('Sample Collected'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 14,
+                      child: Text('Ride Started'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 15,
+                      child: Text('Ride Arrived'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 16,
+                      child: Text('Phone Called'),
+                    ),
+                    const PopupMenuItem<int>(
+                      value: 17,
+                      child: Text('Pending'),
                     ),
                   ],
                   child: Padding(
@@ -694,6 +816,9 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                           alignment: Alignment.bottomCenter,
                                           child: ElevatedButton(
                                             onPressed: () async {
+                                              EditPatientController.i
+                                                  .UpdatePatientId(
+                                                      user.patientid);
                                               await Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
@@ -704,6 +829,9 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                                             labid:
                                                                 user.labTestChallanNo ??
                                                                     "",
+                                                            startdate:
+                                                                StartDate,
+                                                            enddate: EndDate,
                                                           )));
                                               await getappointments(
                                                   widget.empId,
@@ -864,6 +992,9 @@ class _AppointmentHistoryState extends State<AppointmentHistory> {
                                                             labid:
                                                                 user.labTestChallanNo ??
                                                                     "",
+                                                            startdate:
+                                                                StartDate,
+                                                            enddate: EndDate,
                                                           )));
                                               await getappointments(
                                                   widget.empId,
@@ -956,4 +1087,14 @@ String formatEndOfMonth(DateTime dateTime) {
 
 String formatDate(DateTime dateTime) {
   return DateFormat("yyyy-MM-dd").format(dateTime);
+}
+
+String formatDateWithTime(DateTime dateTime, {bool isEndOfDay = false}) {
+  if (isEndOfDay) {
+    return DateFormat("yyyy-MM-dd HH:mm:ss").format(
+        DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59));
+  } else {
+    return DateFormat("yyyy-MM-dd HH:mm:ss")
+        .format(DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0));
+  }
 }
