@@ -3,10 +3,17 @@ import 'dart:convert';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/AppConstants.dart';
+import 'package:flutter_riderapp/Components/image_container/image_container.dart';
+import 'package:flutter_riderapp/Components/images/Images.dart';
 import 'package:flutter_riderapp/Models/User.dart';
+import 'package:flutter_riderapp/Models/patient_model/patient_model.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
+import 'package:flutter_riderapp/Screen/Login/_signup.dart';
+import 'package:flutter_riderapp/Screen/ViewInformation/edit_patient.dart';
+import 'package:flutter_riderapp/Screen/register_patient/add_lab_investigation.dart';
 import 'package:flutter_riderapp/Screen/register_patient/lab_investigation.dart';
 import 'package:flutter_riderapp/Utilities.dart';
+import 'package:flutter_riderapp/data/Notification_repo/auth_repo.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,16 +28,24 @@ class RegisterPatient extends StatefulWidget {
 }
 
 class _RegisterPatientState extends State<RegisterPatient> {
-    bool isLoadingData = false;
-     bool isLoadingmoreData = false;
-     int TotalRecordsData = 0;
-     String StartDate = formatDate(DateTime.now());
-          // ignore: non_constant_identifier_names
-          String EndDate = formatDate(DateTime.now());
-   // ignore: non_constant_identifier_names
-  Future<List<User>> getappointments(String empId, String StartDate,
+  bool isLoadingData = false;
+  bool isLoadingmoreData = false;
+  User? user2;
+  int TotalRecordsData = 0;
+  String StartDate = formatDate(DateTime.now());
+  // ignore: non_constant_identifier_names
+  String EndDate = formatDate(DateTime.now());
+  // ignore: non_constant_identifier_names
+  List<dynamic> transferredList = [];
+  TextEditingController searchController = TextEditingController();
+  Future<List<PatientModel>> getPatients(
+      String empId,
+
       // ignore: non_constant_identifier_names
-      String EndDate, int length, int start) async {
+      String? search,
+      String? regular,
+      String length,
+      String? start) async {
     if (start == 0) {
       isLoadingData = true;
       setState(() {});
@@ -39,17 +54,17 @@ class _RegisterPatientState extends State<RegisterPatient> {
       setState(() {});
     }
 
-    var url = '$ip/api/account/GetAppointmentRequestList';
+    var url = '$ip/api/account/GetPatient';
     var headers = {
       'Content-Type': 'application/json',
     };
 
     var requestBody = {
-      'UserId': empId,
-      'StartDate': StartDate,
-      'EndDate': EndDate,
-      'length': length.toString(),
-      'start': start.toString(),
+      "Start": 0,
+      "Length": 1000,
+      "search": search,
+      "Regular": 1,
+      "UserId": userprofile!.id!
     };
     final response = await http.post(Uri.parse(url),
         headers: headers, body: jsonEncode(requestBody));
@@ -58,70 +73,74 @@ class _RegisterPatientState extends State<RegisterPatient> {
 
     if (response.statusCode == 200) {
       try {
-        var data = jsonDecode(response.body);
+        // var data = jsonDecode(response.body);
         // ignore: avoid_print
-        print("Response data: $data");
-        List<User> ulist = [];
-        if (data['TotalRecord'] != null) {
-          TotalRecordsData = data['TotalRecord'].toInt();
+        // print("Response data: $data");
+        // List<PatientModel> ulist = [];
+        // if (data['value'] != null) {
+        //   TotalRecordsData = data['value'].toInt();
+        // }
+        // if (data != null) {
+        //   var decode = data["Data"];
+
+        //   if (start == 0) {
+        //     _appointments.clear();
+        //   }
+        //   for (var element in decode) {
+        //     var patientModel = PatientModel.fromJson(element);
+        //     _appointments.add(patientModel);
+        //   }
+        // }
+        // ignore: avoid_print
+        // print(ulist);
+
+        Map<String, dynamic> apiResponse = jsonDecode(response.body);
+        List<dynamic> dataList = apiResponse['Data'];
+
+        for (var dataObject in dataList) {
+          transferredList.add(dataObject);
         }
-        if (data != null) {
-          var decode = data["Data"];
-          ulist = List<User>.from(decode.map((e) => User.fromJson(e)));
-          if (start == 0) {
-            _appointments.clear();
-          }
-          for (var element in ulist) {
-            _appointments.add(element);
-          }
-                }
-        // ignore: avoid_print
-        print(ulist);
 
         isLoadingData = false;
         isLoadingmoreData = false;
         setState(() {});
-        return ulist;
+        return _appointments;
       } catch (e) {
         isLoadingData = false;
         isLoadingmoreData = false;
         setState(() {});
-        throw Exception('Failed to load appointments');
+        throw Exception('Failed to load Patients');
       }
     } else {
       isLoadingData = false;
       isLoadingmoreData = false;
       setState(() {});
-      throw Exception('Failed to load appointments');
+      throw Exception('Failed to load Patients');
     }
   }
 
   final ScrollController _scrollController = ScrollController();
-    List<User> _appointments = [];
- 
-      int start=0;
+  List<PatientModel> _appointments = [];
 
+  String start = "0";
+  String regular = "1";
+  String search = "";
 
+  callvback() async {
+    _appointments = await getPatients(userprofile!.id!, start,
+        AppConstants.maximumDataTobeFetched2, regular, search);
+    setState(() {});
+  }
 
-callvback()async
-{
-  _appointments = await getappointments(userprofile!.id!, StartDate.toString().split(" ")[0], EndDate.toString().split(" ")[0],AppConstants.maximumDataTobeFetched, start);
-setState(() {
-  
-});
-}
   @override
- void initState() {
-   if(_appointments.isEmpty)
-    {
-callvback();
+  void initState() {
+    if (_appointments.isEmpty) {
+      callvback();
     }
     // TODO: implement initState
     super.initState();
-
   }
-  
-    
+
   @override
   Widget build(BuildContext context) {
     return BlurryModalProgressHUD(
@@ -139,12 +158,15 @@ callvback();
             backgroundColor: Colors.white,
             elevation: 0,
             leading: InkWell(
-            onTap: (){
-              Get.back();
-            },
-            child: const Icon(Icons.arrow_back_ios_new,color: Color(0xff0F64C6),)),
+                onTap: () {
+                  Get.back();
+                },
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Color(0xff0F64C6),
+                )),
             title: Text(
-              'registerpatient'.tr,
+              'Patient Vault'.tr,
               textAlign: TextAlign.center,
               style: GoogleFonts.raleway(
                 fontSize: 20,
@@ -165,116 +187,155 @@ callvback();
                 height: MediaQuery.of(context).size.height * 0.9,
                 width: MediaQuery.of(context).size.width * 1,
                 child: Column(
-              
                   children: [
-                     Expanded(
-                          child: ListView.builder(
-                            controller: _scrollController,
-                            physics: const BouncingScrollPhysics(),
-                            shrinkWrap: true,
-                            itemCount: ((_appointments.isNotEmpty)
-                                ? _appointments.length
-                                : 0),
-                            itemBuilder: (context, index) {
-                              
-                                User user = _appointments[index];
-                                        
-                                
-                                  return Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 10, right: 15, left: 15),
-                                    child: Card(
-                                      color: const Color(0xFF1272D3),
-                                      elevation: 0,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(15),
-                                      ),
-                                        
-                                      child: ListTile(
-                                          title: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                    // Padding(
+                    //   padding: const EdgeInsets.all(15.0),
+                    //   child: AuthTextField(
+                    //     controller: searchController,
+                    //     hintText: 'Search',
+                    //     function: (p0) {
+                    //       getPatients(
+                    //           userprofile!.id!,
+                    //           start,
+                    //           AppConstants.maximumDataTobeFetched2,
+                    //           regular,
+                    //           searchController.text);
+                    //       setState(() {});
+                    //     },
+                    //   ),
+                    // ),
+                    Expanded(
+                        child: ListView.builder(
+                      controller: _scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: ((transferredList.isNotEmpty)
+                          ? transferredList.length
+                          : 0),
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, right: 15, left: 15),
+                          child: Card(
+                            color: const Color(0xFF1272D3),
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: ListTile(
+                                title: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                ListTile(
+                                  title: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
                                         children: [
-                                          ListTile(
-                                            title: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
-                                                  '${DateFormat('d MMMM y').format(DateTime.parse(user.StartDate!))} | ${_appointments[index].time ?? "" } | "+971 2345 6789" | "Mr # 0001',
-                                                  style: const TextStyle(
-                                                      fontSize: 8,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                                const SizedBox(height: 5),
-                                                Text(
-                                                  user.patientName?.toString().trim().replaceAll(' ', '') ?? "",
-                                                  style: GoogleFonts.poppins(
-                                                      fontSize: 20,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold),
-                                                ),
-                                               
-                                                
-                                               
-                                                
-                                              ],
-                                            ),
-                                            
+                                          Text(
+                                            " MR. No | ${transferredList[index]['MRNo']}",
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
                                           ),
-                                          Align(
-                                            alignment: Alignment.bottomCenter,
-                                            child: ElevatedButton(
-                                              onPressed: () async {
-                                             
-                                                Get.to( Labinvestigation(user:_appointments[index]));
-                                              
-                                                
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                fixedSize: const Size(380, 4),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15), // Set the border radius here
+                                          SizedBox(
+                                            width: Get.width * 0.17,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.end,
+                                            children: [
+                                              IconButton(
+                                                icon: const Icon(Icons.edit,
+                                                    color: Colors.white),
+                                                onPressed: () async {
+                                                  await AuthRepo()
+                                                      .getPatientBasicInfo(
+                                                          transferredList[index]
+                                                              ['Id']);
+                                                  Get.to(() => EditPatientNew(
+                                                      pid:
+                                                          transferredList[index]
+                                                              ['Id']));
+                                                },
+                                              ),
+                                              SizedBox(
+                                                width: Get.width * 0.01,
+                                              ),
+                                              Center(
+                                                child: GestureDetector(
+                                                  onTap: () async {
+                                                    Get.to(AddLabInvestigation(
+                                                      patientid:
+                                                          transferredList[index]
+                                                              ['Id'],
+                                                    ));
+                                                  },
+                                                  child: Image.asset(
+                                                    Images.add,
+                                                    width: 20,
+                                                    height: 20,
+                                                    // color: Colors.blue,
+                                                  ),
                                                 ),
                                               ),
-                                              child: Text(
-                                                'checkin'.tr,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                    color: Colors.blue),
-                                              ),
-                                            ),
-                                          ),
+                                            ],
+                                          )
                                         ],
-                                      )),
-                                      // child: ListTile(
-                                        
-                                      //   title: Text(user.patientName ?? "",style: GoogleFonts.poppins(fontSize: 20,color: Colors.white,),),
-                                      //   subtitle: Text('Test  | ${user.test ?? ""}' ,style: GoogleFonts.poppins(fontSize: 12,color: Colors.white,)),
-                                        
-                                      // ),
-                                    ),
-                                  );
-                                },
-                              
-                              
-                           
-                        
-                ))],
-                
-            )),
+                                      ),
+                                      const SizedBox(height: 5),
+                                      Text(
+                                        transferredList[index]['Name'],
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 20,
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: Get.height * 0.04,
+                                )
+                                // Align(
+                                //   alignment: Alignment.bottomCenter,
+                                //   child: ElevatedButton(
+                                //       onPressed: () async {
+                                //         Get.to(AddLabInvestigation(
+                                //           patientid: transferredList[index]
+                                //               ['Id'],
+                                //         ));
+                                //       },
+                                //       style: ElevatedButton.styleFrom(
+                                //         backgroundColor: Colors.white,
+                                //         fixedSize: const Size(380, 4),
+                                //         shape: RoundedRectangleBorder(
+                                //           borderRadius:
+                                //               BorderRadius.circular(15),
+                                //         ),
+                                //       ),
+                                //       child: Center(
+                                //         child: Image.asset(
+                                //           Images.add,
+                                //           width: 20,
+                                //           height: 20,
+                                //           color: Colors.blue,
+                                //         ),
+                                //       )),
+                                // ),
+                              ],
+                            )),
+                          ),
+                        );
+                      },
+                    ))
+                  ],
+                )),
           ),
-
         ));
   }
 }
-

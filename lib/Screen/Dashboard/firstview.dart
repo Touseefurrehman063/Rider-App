@@ -4,12 +4,15 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riderapp/Models/User.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
+import 'package:flutter_riderapp/Screen/Families_screen/_patient_registration.dart';
+import 'package:flutter_riderapp/Screen/register_patient/register_patient.dart';
 import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/Screen/Nodata/Nodata.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
 import 'package:flutter_riderapp/Screen/Welcome_Screens/_splash_screen.dart';
 import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
 import 'package:flutter_riderapp/Widgets/registration_selection.dart';
+import 'package:flutter_riderapp/controllers/Auth_Controller/auth_controller.dart';
 import 'package:flutter_riderapp/controllers/internet_connectivity/connectivity_controller.dart';
 import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:get/get.dart';
@@ -123,7 +126,7 @@ class _FirstViewState extends State<FirstView> {
                                   )
                                 : CircleAvatar(
                                     backgroundImage: NetworkImage(
-                                        ip + userprofile!.imagePath!),
+                                        ip2 + userprofile!.imagePath!),
                                     radius: 28,
                                   ),
                           ),
@@ -197,6 +200,7 @@ class _FirstViewState extends State<FirstView> {
                               children: [
                                 GestureDetector(
                                   onTap: () async {
+                                    AuthController.i.updateScreen("today");
                                     await saveLoginState();
                                     homechk = false;
                                     Navigator.push(
@@ -237,6 +241,7 @@ class _FirstViewState extends State<FirstView> {
                                 ),
                                 GestureDetector(
                                   onTap: () async {
+                                    AuthController.i.updateScreen("history");
                                     await saveLoginState();
                                     homechk = false;
                                     Navigator.push(
@@ -308,8 +313,9 @@ class _FirstViewState extends State<FirstView> {
                               children: [
                                 GestureDetector(
                                   onTap: () {
-                                    RegistrationSelectionPopup(
-                                        context, constraints);
+                                    Get.to(const PatientRegistration());
+                                    // RegistrationSelectionPopup(
+                                    //     context, constraints);
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
@@ -361,26 +367,26 @@ class _FirstViewState extends State<FirstView> {
                                 // ),
                                 InkWell(
                                   onTap: () {
-                                    Get.to(const NoDataFound());
+                                    Get.to(() => const RegisterPatient());
                                     print("Image Tapped");
                                   },
                                   child: Stack(
                                     alignment: Alignment.center,
                                     children: [
                                       Image.asset(
-                                        'assets/cont4.png',
+                                        'assets/cont2.jpg',
                                         height: Get.height * 0.20,
                                       ),
                                       Positioned(
-                                        top: Get.height * 0.08,
+                                        top: Get.height * 0.13,
                                         child: Text(
-                                          'comingsoon'.tr,
-                                          style: const TextStyle(
+                                          'Patient Vault'.tr,
+                                          style: GoogleFonts.raleway(
                                             fontSize: 15,
                                             color: Colors.white,
                                             fontWeight: FontWeight.bold,
                                           ),
-                                          textAlign: TextAlign.center,
+                                          textAlign: TextAlign.start,
                                         ),
                                       ),
                                     ],

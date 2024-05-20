@@ -62,71 +62,73 @@ class PatientRegistrationModal {
   String? dependentStatus;
   String? password;
   String? confirmPassword;
+  bool? isfromrider;
 
   PatientRegistrationModal(
       {this.firstName,
-        this.middleName,
-        this.lastName,
-        this.guardianName,
-        this.CNICNumber,
-        this.otherIdentity,
-        this.passport,
-        this.identityRelation,
-        this.dateOfBirth,
-        this.address,
-        this.cellNumber,
-        this.telephoneNumber,
-        this.email,
-        this.nOKFirstName,
-        this.nOKLastName,
-        this.nOKCNICNumber,
-        this.nOKCellNumber,
-        this.picturePath,
-        this.panelEntitleLetter,
-        this.panelEntitleLetterB,
-        this.occupationId,
-        this.panelOrganizationPackageId,
-        this.genderId,
-        this.relationshipTypeId,
-        this.personTitleId,
-        this.patientTypeId,
-        this.maritalStatusId,
-        this.bloodGroupId,
-        this.countryId,
-        this.stateOrProvinceId,
-        this.cityId,
-        this.nOKRelationId,
-        this.prefix,
-        this.identityTypeId,
-        this.organizationId,
-        this.branchId,
-        this.referenceId,
-        this.panelOrganizationId,
-        this.panelType,
-        this.panelValidDate,
-        this.panelEmployeeCardNo,
-        this.panelDepartment,
-        this.panelDesignation,
-        this.panelRelation,
-        this.panelEmployeeCardNoDependent,
-        this.onPanelValidDate,
-        this.onPanelEmployeeNo,
-        this.onPanelDepartment,
-        this.onPanelDesignation,
-        this.onPanelRelationId,
-        this.onPanelOrganizationId,
-        this.onPanelOrganizationPackageId,
-        this.onPanelEmployeeCardNoDependent,
-        this.isTakeRegistrationFee,
-        this.workingSessionId,
-        this.patientAppointmentId,
-        this.discountType,
-        this.discount,
-        this.reference,
-        this.remarks,
-        this.dependentStatus,
-        this.password,
-        this.confirmPassword});
+      this.middleName,
+      this.lastName,
+      this.guardianName,
+      this.CNICNumber,
+      this.otherIdentity,
+      this.passport,
+      this.identityRelation,
+      this.dateOfBirth,
+      this.address,
+      this.cellNumber,
+      this.telephoneNumber,
+      this.email,
+      this.nOKFirstName,
+      this.nOKLastName,
+      this.nOKCNICNumber,
+      this.nOKCellNumber,
+      this.picturePath,
+      this.panelEntitleLetter,
+      this.panelEntitleLetterB,
+      this.occupationId,
+      this.panelOrganizationPackageId,
+      this.genderId,
+      this.relationshipTypeId,
+      this.personTitleId,
+      this.patientTypeId,
+      this.maritalStatusId,
+      this.bloodGroupId,
+      this.countryId,
+      this.stateOrProvinceId,
+      this.cityId,
+      this.nOKRelationId,
+      this.prefix,
+      this.identityTypeId,
+      this.organizationId,
+      this.branchId,
+      this.referenceId,
+      this.panelOrganizationId,
+      this.panelType,
+      this.panelValidDate,
+      this.panelEmployeeCardNo,
+      this.panelDepartment,
+      this.panelDesignation,
+      this.panelRelation,
+      this.panelEmployeeCardNoDependent,
+      this.onPanelValidDate,
+      this.onPanelEmployeeNo,
+      this.onPanelDepartment,
+      this.onPanelDesignation,
+      this.onPanelRelationId,
+      this.onPanelOrganizationId,
+      this.onPanelOrganizationPackageId,
+      this.onPanelEmployeeCardNoDependent,
+      this.isTakeRegistrationFee,
+      this.workingSessionId,
+      this.patientAppointmentId,
+      this.discountType,
+      this.discount,
+      this.reference,
+      this.remarks,
+      this.dependentStatus,
+      this.password,
+      this.confirmPassword,
+      this.isfromrider = true});
 
   PatientRegistrationModal.fromJson(Map<String, dynamic> json) {
     firstName = json['FirstName'];
@@ -192,6 +194,7 @@ class PatientRegistrationModal {
     dependentStatus = json['DependentStatus'];
     password = json['Password'];
     confirmPassword = json['ConfirmPassword'];
+    isfromrider = json['IsFromRiderApp'];
   }
 
   Map<String, dynamic> toJson() {
@@ -248,8 +251,7 @@ class PatientRegistrationModal {
     data['OnPanelRelationId'] = onPanelRelationId;
     data['OnPanelOrganizationId'] = onPanelOrganizationId;
     data['OnPanelOrganizationPackageId'] = onPanelOrganizationPackageId;
-    data['OnPanelEmployeeCardNoDependent'] =
-        onPanelEmployeeCardNoDependent;
+    data['OnPanelEmployeeCardNoDependent'] = onPanelEmployeeCardNoDependent;
     data['IsTakeRegistrationFee'] = isTakeRegistrationFee;
     data['WorkingSessionId'] = workingSessionId;
     data['PatientAppointmentId'] = patientAppointmentId;
@@ -260,6 +262,7 @@ class PatientRegistrationModal {
     data['DependentStatus'] = dependentStatus;
     data['Password'] = password;
     data['ConfirmPassword'] = confirmPassword;
+    data['IsFromRiderApp'] = isfromrider;
     return data;
   }
 }

@@ -1,115 +1,64 @@
 {
   "project_info": {
-    "project_number": "855190962263",
-    "project_id": "tabib-al-bait-patient-care",
-    "storage_bucket": "tabib-al-bait-patient-care.appspot.com"
+    "project_number": "748082907734",
+    "project_id": "sidra-8556b",
+    "storage_bucket": "sidra-8556b.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:855190962263:android:5aad03692382a75e2ba312",
+        "mobilesdk_app_id": "1:748082907734:android:a6b4ee5120c0640ede49f7",
         "android_client_info": {
-          "package_name": "com.emedicare.tabib.rider"
+          "package_name": "com.riayatech.sidradoctor"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDToxhzpb_S00PFbK0UlOHRfW-s6MZMTEE"
+          "current_key": "AIzaSyANlwd-VsehuGpXLKYjzSqdpjg2n5YkYEw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "855190962263-fhdqpvha5q0q5dm16lrlfs8emptn0ptj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tabibAlBaitRider"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:855190962263:android:88ab75d2c8c501402ba312",
+        "mobilesdk_app_id": "1:748082907734:android:7981d457659d56cbde49f7",
         "android_client_info": {
-          "package_name": "com.riayatech.tabibalbait.patient"
+          "package_name": "com.riayatech.sidrapatient"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDToxhzpb_S00PFbK0UlOHRfW-s6MZMTEE"
+          "current_key": "AIzaSyANlwd-VsehuGpXLKYjzSqdpjg2n5YkYEw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "855190962263-fhdqpvha5q0q5dm16lrlfs8emptn0ptj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tabibAlBaitRider"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:855190962263:android:e447bf9b759d1a362ba312",
+        "mobilesdk_app_id": "1:748082907734:android:a92797fde2700345de49f7",
         "android_client_info": {
-          "package_name": "com.tabib.emedicare.doctor"
+          "package_name": "com.riayatech.sidrarider"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDToxhzpb_S00PFbK0UlOHRfW-s6MZMTEE"
+          "current_key": "AIzaSyANlwd-VsehuGpXLKYjzSqdpjg2n5YkYEw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "855190962263-6g3s2c8fqa374g439u3j9sihsvqgtp5e.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "855190962263-fhdqpvha5q0q5dm16lrlfs8emptn0ptj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.tabibAlBaitRider"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

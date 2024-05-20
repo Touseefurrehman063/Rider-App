@@ -1,0 +1,122 @@
+class LabTestsModelHome {
+  int? status;
+  List<LabTestHome>? data;
+  String? errorMessage;
+  LabTestsModelHome({this.status, this.data, this.errorMessage});
+  LabTestsModelHome.fromJson(Map<String, dynamic> json) {
+    status = json['Status'];
+    if (json['Data'] != null) {
+      data = <LabTestHome>[];
+      json['Data'].forEach((v) {
+        data!.add(LabTestHome.fromJson(v));
+      });
+    }
+    errorMessage = json['ErrorMessage'];
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['Status'] = status;
+    if (this.data != null) {
+      data['Data'] = this.data!.map((v) => v.toJson()).toList();
+    }
+    data['ErrorMessage'] = errorMessage;
+    return data;
+  }
+}
+
+class LabTestHome {
+  String? labtestId;
+  String? id;
+  String? name;
+  dynamic price;
+  double? actualPrice;
+  bool? isForSampleCollectionCharges;
+  bool? isForAdditionalCharges;
+  bool? isForUrgentCharges;
+  bool? isAdditionalChargesForPassenger;
+  bool? isForCovid;
+  bool? isForAdditionalChargesForCovid;
+  String? typeId;
+  String? appointmentnotes;
+  String? specialityid;
+  int? IsOnlineAppointment;
+  String? branchlocationid;
+  dynamic quantity;
+  String? appointmentno;
+  String? typebit;
+  List<LabTestHome>? dTOlabGroupDetail;
+  LabTestHome(
+      {this.id,
+      this.labtestId,
+      this.name,
+      this.price,
+      this.actualPrice,
+      this.isForSampleCollectionCharges,
+      this.isForAdditionalCharges,
+      this.isForUrgentCharges,
+      this.isAdditionalChargesForPassenger,
+      this.isForCovid,
+      this.isForAdditionalChargesForCovid,
+      this.appointmentnotes,
+      this.specialityid,
+      this.IsOnlineAppointment,
+      this.quantity,
+      this.dTOlabGroupDetail,
+      this.branchlocationid,
+      this.appointmentno,
+      this.typebit});
+  LabTestHome.fromJson(Map<String, dynamic> json) {
+    typeId = '2';
+    id = json['Id'];
+    labtestId = json['LabTestId'];
+    name = json['Name'];
+    price = json['Price'];
+    actualPrice = json['ActualPrice'];
+    isForSampleCollectionCharges = json['IsForSampleCollectionCharges'];
+    isForAdditionalCharges = json['IsForAdditionalCharges'];
+    isForUrgentCharges = json['IsForUrgentCharges'];
+    isAdditionalChargesForPassenger = json['IsAdditionalChargesForPassenger'];
+    isForCovid = json['IsForCovid'];
+    isForAdditionalChargesForCovid = json['IsForAdditionalChargesForCovid'];
+    appointmentnotes = json['AppointmentNotes'];
+    specialityid = json['SpecialityId'];
+    IsOnlineAppointment = json['IsOnlineAppointment'];
+    quantity = json['SubServiceQuantity'];
+    branchlocationid = json["BranchLocationId"];
+    appointmentno = json["AppointmentNo"];
+    typebit = json["TypeBit"];
+    if (json['LabTests'] != null) {
+      dTOlabGroupDetail = <LabTestHome>[];
+      json['LabTests'].forEach((v) {
+        dTOlabGroupDetail!.add(LabTestHome.fromJson(v));
+      });
+    }
+  }
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['TypeBit'] = typeId;
+    data['Id'] = id;
+    data['LabTestId'] = id;
+    data['Name'] = name;
+    data['Price'] = price;
+    data['ActualPrice'] = actualPrice;
+    data['IsForSampleCollectionCharges'] = isForSampleCollectionCharges;
+    data['IsForAdditionalCharges'] = isForAdditionalCharges;
+    data['IsForUrgentCharges'] = isForUrgentCharges;
+    data['IsAdditionalChargesForPassenger'] = isAdditionalChargesForPassenger;
+    data['IsForCovid'] = isForCovid;
+    data['IsForAdditionalChargesForCovid'] = isForAdditionalChargesForCovid;
+    data['AppointmentNotes'] = appointmentnotes;
+    data['SpecialityId'] = specialityid;
+    data['IsOnlineAppointment'] = IsOnlineAppointment;
+    data['SubServiceQuantity'] = quantity;
+    data['BranchLocationId'] = branchlocationid;
+    data['AppointmentNo'] = appointmentno;
+    data['TypeBit'] = typebit;
+
+    if (dTOlabGroupDetail != null) {
+      data['LabTests'] = dTOlabGroupDetail!.map((v) => v.toJson()).toList();
+    }
+    return data;
+  }
+}

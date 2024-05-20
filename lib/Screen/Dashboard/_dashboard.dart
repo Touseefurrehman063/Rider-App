@@ -9,10 +9,12 @@ import 'package:flutter_riderapp/Utilities.dart';
 import 'package:flutter_riderapp/View/_dashboard.dart';
 import 'package:flutter_riderapp/Widgets/Utils/languages_dialogue.dart';
 import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
+import 'package:flutter_riderapp/controllers/Auth_Controller/auth_controller.dart';
 import 'package:flutter_riderapp/controllers/Notification/dashboardcontroller.dart';
 import 'package:flutter_riderapp/helpers/color_manager.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 import 'package:local_auth/local_auth.dart';
 import 'package:persistent_bottom_nav_bar/persistent_tab_view.dart';
@@ -414,7 +416,7 @@ class _DrawerContentState extends State<DrawerContent> {
                             tag: 'profile',
                             child: CircleAvatar(
                               backgroundImage:
-                                  NetworkImage(ip + userprofile!.imagePath!),
+                                  NetworkImage(ip2 + userprofile!.imagePath!),
                               radius: 25,
                             ),
                           ),
@@ -447,7 +449,7 @@ class _DrawerContentState extends State<DrawerContent> {
                       const VisualDensity(vertical: -4, horizontal: 2),
                   leading: Text(
                     userprofile?.cNICNumber != null
-                        ? "National Id: ${userprofile?.cNICNumber}"
+                        ? "Emirates Id: ${userprofile?.cNICNumber}"
                         : "",
                     style: const TextStyle(
                         color: Colors.white,
@@ -1163,6 +1165,42 @@ class _DrawerContentState extends State<DrawerContent> {
                       }
                       setState(() {});
                     },
+                  ),
+                  SizedBox(
+                    height: Get.height * 0.02,
+                  ),
+                  ListTile(
+                    visualDensity:
+                        const VisualDensity(horizontal: 4, vertical: -4),
+                    contentPadding: EdgeInsets.symmetric(
+                        horizontal: Get.width * 0.06, vertical: 0),
+                    title: Row(
+                      children: [
+                        Text(
+                          'App Version:'.tr,
+                          style: GoogleFonts.poppins(
+                            textStyle: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: ColorManager.kWhiteColor,
+                              //  fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: Get.width * 0.09,
+                        ),
+                        Text(
+                          AuthController.i.appVersion,
+                          style: GoogleFonts.poppins(
+                            textStyle: GoogleFonts.poppins(
+                              fontSize: 14,
+                              color: ColorManager.kWhiteColor,
+                              //  fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               )

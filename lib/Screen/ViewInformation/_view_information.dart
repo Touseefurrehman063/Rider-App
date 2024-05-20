@@ -3,12 +3,17 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:blurry_modal_progress_hud/blurry_modal_progress_hud.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riderapp/AppConstants.dart';
+import 'package:flutter_riderapp/Components/customdigital_card/custom_digital_card.dart';
 import 'package:flutter_riderapp/Components/images/Images.dart';
+import 'package:flutter_riderapp/Components/images/custom_container/custom_container.dart';
 import 'package:flutter_riderapp/Models/appointmentdetail.dart';
 import 'package:flutter_riderapp/Models/checkinresponse.dart';
 import 'package:flutter_riderapp/Models/checkintry.dart';
+import 'package:flutter_riderapp/Models/consent_model/consent_model.dart';
 import 'package:flutter_riderapp/Models/in_routeModel.dart';
 import 'package:flutter_riderapp/Models/labsmodel.dart';
 import 'package:flutter_riderapp/Models/payment_method.dart';
@@ -16,11 +21,21 @@ import 'package:flutter_riderapp/Models/sample_delivered.dart';
 import 'package:flutter_riderapp/Models/samplebody.dart';
 import 'package:flutter_riderapp/Models/samplecollectedmodel.dart';
 import 'package:flutter_riderapp/Models/samplecollectionresponse.dart';
+import 'package:flutter_riderapp/Repositeries/upload_file/upload_file_repo.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_appointments_history.dart';
+import 'package:flutter_riderapp/Screen/Appointments_Screen/_today_appoinments.dart';
 import 'package:flutter_riderapp/Screen/Dashboard/_dashboard.dart';
+import 'package:flutter_riderapp/Screen/ViewInformation/edit_patient.dart';
+import 'package:flutter_riderapp/Screen/register_patient/lab_investigation.dart';
 import 'package:flutter_riderapp/Widgets/Custombutton.dart';
 import 'package:flutter_riderapp/Widgets/Customdropdown.dart';
 import 'package:flutter_riderapp/Widgets/Utils/toaster.dart';
+import 'package:flutter_riderapp/controllers/Auth_Controller/auth_controller.dart';
+import 'package:flutter_riderapp/controllers/consent_controller/consent_controller.dart';
+import 'package:flutter_riderapp/controllers/labinvestigation_controller/lab_investigation_controller.dart';
+import 'package:flutter_riderapp/data/Notification_repo/auth_repo.dart';
 import 'package:flutter_riderapp/helpers/color_manager.dart';
+import 'package:flutter_riderapp/helpers/pdf_view/pdf_view.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
@@ -30,6 +45,8 @@ import 'package:google_map_polyline_new/google_map_polyline_new.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:signature/signature.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Models/User.dart';
 import 'package:http/http.dart' as http;
@@ -44,9 +61,16 @@ class ViewInformation extends StatefulWidget {
   String labid;
 
   String empId;
+  String startdate;
+  String enddate;
 
   ViewInformation(
-      {required this.user, required this.empId, required this.labid, Key? key})
+      {required this.user,
+      required this.empId,
+      required this.labid,
+      required this.startdate,
+      required this.enddate,
+      Key? key})
       : super(key: key);
 
   @override
@@ -61,13 +85,15 @@ class _ViewInformationState extends State<ViewInformation> {
   List<LabsModel> Labs = [];
   bool isLoading = false;
   List<PaymentMethod> payments = [];
-  List<apointmentdetail> appointments = [];
+  // List<apointmentdetail> appointments = [];
   InrouteModel Inroute = InrouteModel();
   List<PatientServicelist> lst1 = [];
+  List<MiscellaneousServicesList> lst2 = [];
   double distance = 0.0;
   double time = 0.0;
   bool ispaymentselected = false;
-
+  String status = "";
+  String paymentstatus = "";
   List<String> paymentNameArray = ['Select Vehicle'];
   List<String> labsNameArray = ['selectlab'.tr];
   List<String> appointmentNameArray = ['appointment detail'];
@@ -78,6 +104,84 @@ class _ViewInformationState extends State<ViewInformation> {
   LatLng _currentLatLng = const LatLng(0.0, 0.0);
   final Completer<GoogleMapController> _controller = Completer();
   final Map<PolylineId, Polyline> _polylines = <PolylineId, Polyline>{};
+// SignatureController signcontroller=SignatureController(
+//   penStrokeWidth: 3,
+//   penColor: ColorManager.kDarkBlue,
+//   exportBackgroundColor: ColorManager.kGreyColor,
+//   exportPenColor: ColorManager.kblackColor,
+
+// );
+  // String EndDate = "";
+  // ignore: non_constant_identifier_names
+  // String StartDate = "";
+  var StartDate = formatDateWithTime(DateTime.now());
+  var EndDate = formatDateWithTime(DateTime.now(), isEndOfDay: true);
+  int TotalRecordsData = 0;
+  List<User> appointments1 = [];
+
+  // ignore: non_constant_identifier_names
+  void getappointments(
+      String empId,
+      // String StartDate,
+      // // ignore: non_constant_identifier_names
+      // String EndDate,
+
+      int length,
+      int start) async {
+    if (start == 0) {
+      // isLoadingData = true;
+      // setState(() {});
+    } else {
+      // isLoadingmoreData = true;
+      // setState(() {});
+    }
+    // var StartDate = formatDateWithTime(DateTime.now());
+    // var EndDate = formatDateWithTime(DateTime.now(), isEndOfDay: true);
+
+    var url = '$ip/api/account/GetAppointmentRequestList';
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+
+    var requestBody = {
+      'UserId': empId,
+      'StartDate': widget.startdate,
+      'EndDate': widget.enddate,
+      'length': length,
+      'start': start,
+    };
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(requestBody));
+    // ignore: avoid_print
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      try {
+        var data = jsonDecode(response.body);
+
+        // Accessing each appointment in the data array
+        List<dynamic> appointments = data["Data"];
+        for (var appointment in appointments) {
+          var labno = appointment["LabNo"];
+          if (labno == widget.user.LabNo) {
+            paymentstatus = appointment["PaymentStatusName"];
+            setState(() {});
+            // Do something with paymentstatus
+          }
+        }
+      } catch (e) {
+        // isLoadingData = false;
+        // isLoadingmoreData = false;
+        setState(() {});
+        throw Exception('Failed to load appointments');
+      }
+    } else {
+      // isLoadingData = false;
+      // isLoadingmoreData = false;
+      setState(() {});
+      throw Exception('Failed to load appointments');
+    }
+  }
 
   _getPolylinesWithLocation(riderloc, LatLng generic) async {
     distance = Geolocator.distanceBetween(
@@ -278,7 +382,7 @@ class _ViewInformationState extends State<ViewInformation> {
     final url = '$ip/api/Account/GetPaymentMethods';
     final headers = {'Content-Type': 'application/json'};
 
-    var requestBody = {"userId": widget.empId};
+    var requestBody = {"userId": widget.empId, "IsMobile": true};
     try {
       final response = await http.post(Uri.parse(url),
           headers: headers, body: jsonEncode(requestBody));
@@ -355,11 +459,12 @@ class _ViewInformationState extends State<ViewInformation> {
         if (data['Status'] != null &&
             data['Status'] == 1 &&
             data['Data'] != null) {
-          appointments = list.map((e) => apointmentdetail.fromJson(e)).toList();
+          LabInvestigationController.i.appointments =
+              list.map((e) => apointmentdetail.fromJson(e)).toList();
 
           List<String> appointmentDetail = ['appointment detail'];
 
-          print(appointments);
+          print(LabInvestigationController.i.appointments);
           setState(() {
             appointmentNameArray = appointmentDetail;
           });
@@ -392,46 +497,33 @@ class _ViewInformationState extends State<ViewInformation> {
     await _getCurrentLocation();
   }
 
+  getappserviceapi() async {
+    await appointmentserviceapi();
+  }
+
   @override
   void initState() {
+    getappserviceapi();
     super.initState();
+    status = widget.user.status;
+    paymentstatus = widget.user.paymentstatusname;
+    // getappointments(
+    //   widget.empId,
+    //   AppConstants.maximumDataTobeFetched,
+    //   0,
+    // );
+    // matchvalues();
 
     getloc();
     functions();
     callback();
     paymentapi();
-    appointmentserviceapi();
-
-//     if(widget.user.status=="Ride Started" && widget.user.status=="Ride Arrived"){
-// _getPolylinesWithLocation(_currentLatLng,ltlg);
-//     }
+    LabInvestigationController.i.addfunction();
+    LabInvestigationController.i.calculateamount();
+    // appointmentserviceapi();
+    // LabInvestigationController.i.updatetestlist();
+    // LabInvestigationController.i.date;
   }
-
-  // _addPolyLine() {
-  //   PolylineId id = PolylineId("poly");
-  //   Polyline polyline = Polyline(
-  //       polylineId: id, color: Colors.blue, points: polylineCoordinates);
-  //   polylines[id] = polyline;
-  //   setState(() {});
-  // }
-
-  // _getPolyline() async {
-  //   PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-  //       googleAPiKey,
-  //       PointLatLng(_currentLatLng.latitude, _currentLatLng.longitude),
-  //       const PointLatLng(33.6844,73.0479),
-  //       travelMode: TravelMode.driving,
-  //       wayPoints: [PolylineWayPoint(location: "Sabo, Yaba Lagos Nigeria")]);
-  //   if (result!=null) {
-  //     result.points.forEach((PointLatLng point) {
-  //       polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-  //     });
-  //   }
-  //   await _addPolyLine();
-  //   setState(() {
-
-  //   });
-  // }
 
   Future<Position> getUserCurrentLocation() async {
     await Geolocator.requestPermission()
@@ -555,7 +647,7 @@ class _ViewInformationState extends State<ViewInformation> {
   String? message;
 
   late Future<List<checkintry>> checkin;
-
+  String? msg;
   checkinapi() async {
     var url = '$ip/api/Booking/CheckInPatientAppointment';
     var header = {
@@ -571,20 +663,20 @@ class _ViewInformationState extends State<ViewInformation> {
     PatientCheckIn patientserviceobj =
         PatientCheckIn(patientId: widget.user.patientid);
 
-    for (apointmentdetail detail in appointments) {
+    for (apointmentdetail detail in LabInvestigationController.i.appointments) {
       PatientServicelist tempobj = PatientServicelist();
       tempobj.subServiceId = detail.subServiceId;
       tempobj.charges = detail.price.toString();
       tempobj.isAutoNumberGenerationEnabled = false;
-      tempobj.typeBit = "2";
+      tempobj.typeBit = widget.user.TypeBit.toString();
       tempobj.totalCharges = detail.price.toString();
       tempobj.subServiceCount = 1;
       tempobj.preference = 1;
       tempobj.specimenName = "Serum";
-      tempobj.vatpercentage = detail.vatpercentage;
-      tempobj.vatamount = detail.vatamount;
+      tempobj.vatpercentage = detail.vATPercentage;
+      tempobj.vatamount = detail.vATAmount;
 
-      if (appointments.contains(detail)) {
+      if (LabInvestigationController.i.appointments.contains(detail)) {
         lst1.add(tempobj);
       }
     }
@@ -608,11 +700,30 @@ class _ViewInformationState extends State<ViewInformation> {
       // Assuming you have a status field in the response indicating ride start success
       var status = data["Status"];
       dynamic detail = data["Detail"];
+      var id = data["Detail"]["id"];
+      dynamic beddetails = data["Detail"]["BedDetails"];
+      dynamic message = data["Detail"]["ErrorMessage"];
+      dynamic checkindept = data["Detail"]["CheckInDepartment"];
       if (status != null && status == 1 && detail != null) {
-        checkinreponselist.add(checkinresponse.fromJson(detail));
+        if (id < 1) {
+          ischeckin = false;
+          Showtoaster().classtoaster("$message");
+        } else {
+          checkinreponselist.add(checkinresponse.fromJson(detail));
+          Fluttertoast.showToast(
+              msg: msg ?? "Checkin Successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          widget.user.status = "Booked";
 
-        ischeckin = true;
-        debugPrint(response.body);
+          ischeckin = true;
+          setState(() {});
+          debugPrint(response.body);
+        }
       } else {
         ischeckin = false;
         debugPrint("Data is null");
@@ -624,6 +735,149 @@ class _ViewInformationState extends State<ViewInformation> {
 
   List<checkinresponse> checkinreponselist = [];
   // ignore: unused_field
+
+  // late Future<List<checkintry>> checkin;
+
+  checkinapidoctor() async {
+    var url = '$ip/api/Booking/CheckInPatientAppointment';
+    var header = {
+      'Content-Type': 'application/json',
+    };
+    apointmentdetail? detail;
+    PatientCheckIn patientcheckinobj =
+        PatientCheckIn(patientId: widget.user.patientid);
+    List<PatientCheckIn> lst = [];
+    lst.add(patientcheckinobj);
+    lst[0].checkInTypeId = "0F02A4F2-4787-47DF-BADD-32807F6C13ED";
+    lst[0].chargerate = "";
+    lst[0].paidamount = "";
+    lst[0].smssendto = 0;
+    lst[0].isonline = 0;
+    lst[0].patientserviceappointmentid = "";
+
+    // ignore: unused_local_variable
+    PatientCheckIn patientserviceobj =
+        PatientCheckIn(patientId: widget.user.patientid);
+
+    for (apointmentdetail detail in LabInvestigationController.i.appointments) {
+      MiscellaneousServicesList obj = MiscellaneousServicesList();
+      obj.subServiceId = detail.subServiceId;
+      obj.charges = detail.price.toString();
+      obj.isAutoNumberGenerationEnabled = false;
+      obj.typeBit = "0";
+      obj.totalCharges = detail.price.toString();
+      obj.subServiceCount = 1;
+      obj.preference = 1;
+      obj.specimenName = "Serum";
+      obj.vatpercentage = detail.vATPercentage;
+      obj.vatamount = detail.vATAmount;
+
+      if (LabInvestigationController.i.appointments.contains(detail)) {
+        lst2.add(obj);
+      }
+    }
+
+    checkintry checkin = checkintry(
+      patientCheckIn: lst,
+      isbooking: "1",
+      paymentNo: widget.user.LabNo,
+      doctorCheckInType: "3",
+      typebit: widget.user.TypeBit.toString(),
+      paymentmethodid: payments,
+      miscellaneousserviceslist: lst2,
+      userId: widget.empId,
+      branchLocationIds: widget.user.branchlocationid,
+    );
+
+    final response = await http.post(Uri.parse(url),
+        headers: header, body: jsonEncode(checkin));
+    print(checkin);
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      var data = jsonDecode(response.body);
+      print("Response data: $data");
+
+      // Assuming you have a status field in the response indicating ride start success
+      var status = data["Status"];
+      dynamic detail = data["Detail"];
+      var id = data["Detail"]["id"];
+      dynamic beddetails = data["Detail"]["BedDetails"];
+      dynamic message = data["Detail"]["errorMesage"];
+      dynamic checkindept = data["Detail"]["CheckInDepartment"];
+      if (status != null && status == 1 && detail != null) {
+        if (id == -1) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Please try again");
+        } else if (id == -3) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              "Patient is under observation due to ${beddetails ?? ""} Please correct informaton and re-print MRCard");
+        } else if (id == -2) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Patient already Checkedin");
+        } else if (id == -35) {
+          ischeckin = false;
+          Showtoaster().classtoaster("${message ?? ""}");
+        } else if (id == -5) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Bed Details");
+        } else if (id == -7) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              "Patient is in dead state, you are not able to checkin again.!");
+        } else if (id == -9) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Please Try Again");
+        } else if (id == -11) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Invalid Voucher Coupons");
+        } else if (id == -18) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              "Please enable Auto number generation for service count greater than zero!");
+        } else if (id == -17) {
+          ischeckin = false;
+          Showtoaster().classtoaster("Appointment is not Booked for Today");
+        } else if (id == -23) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              "Allowed rebooking restriction for ${checkindept ?? ""}");
+        } else if (id == -19) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              "User Session is closed. please Open user session.");
+        } else if (id == -20) {
+          ischeckin = false;
+          Showtoaster().classtoaster(
+              'Patient panel organization package contract is expired or deactivated.');
+        } else {
+          checkinreponselist.add(checkinresponse.fromJson(detail));
+          Fluttertoast.showToast(
+              msg: msg ?? "Checkin Successfully",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+          widget.user.status = "Booked";
+
+          ischeckin = true;
+          setState(() {});
+          debugPrint(response.body);
+        }
+      } else {
+        ischeckin = false;
+        debugPrint("Data is null");
+      }
+    } else {
+      throw Exception('Failed to checkin');
+    }
+  }
+
+  // List<checkinresponse> checkinreponselist = [];
+
   late Future<List<User>> _startride;
 
   Future<void> startRide() async {
@@ -644,26 +898,51 @@ class _ViewInformationState extends State<ViewInformation> {
       "RiderLocationURL":
           "https://maps.google.com/?q=${_currentLatLng.latitude},${_currentLatLng.longitude}"
     };
-    _getPolylinesWithLocation(
-        _currentLatLng, LatLng(ltlg[0].latitude, ltlg[0].longitude));
 
-    final response = await http.post(Uri.parse(url),
-        headers: headers, body: jsonEncode(requestBody));
-    print("Response: ${response.body}");
+    try {
+      _getPolylinesWithLocation(
+          _currentLatLng, LatLng(ltlg[0].latitude, ltlg[0].longitude));
 
-    if (response.statusCode == 200) {
-      var data = jsonDecode(response.body);
-      print("Response data: $data");
+      final response = await http.post(Uri.parse(url),
+          headers: headers, body: jsonEncode(requestBody));
+      print("Response: ${response.body}");
 
-      // Assuming you have a status field in the response indicating ride start success
-      var status = data["Status"];
-      if (status != null && status == 2) {
-        isRideStarted = true;
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        print("Response data: $data");
+
+        // Assuming you have a status field in the response indicating ride start success
+        var status = data["Status"];
+        String message = data["ErrorMessage"];
+        if (status != null && status == 1) {
+          widget.user.status = "Ride Started";
+          isRideStarted = true;
+          Fluttertoast.showToast(
+              msg: msg ?? message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.green,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        } else {
+          widget.user.status = "Pending";
+
+          isRideStarted = false;
+          Showtoaster().classtoaster(message);
+        }
       } else {
+        widget.user.status = "Pending";
+
         isRideStarted = false;
-        debugPrint("Data is null");
+        // Showtoaster().classtoaster(message);
+        throw Exception('Failed to start ride');
       }
-    } else {
+    } catch (e) {
+      widget.user.status = "Pending";
+
+      isRideStarted = false;
+      Showtoaster().classtoaster(message);
       throw Exception('Failed to start ride');
     }
   }
@@ -714,7 +993,7 @@ class _ViewInformationState extends State<ViewInformation> {
     };
 
     var requestBody = {
-      'LabNo': user.LabNo,
+      'LabNo': widget.user.LabNo,
       'PatientAppointmentId': user.Patientappoinmentid,
       "PatientId": user.patientid,
       "BranchLocationId": user.branchlocationid,
@@ -733,12 +1012,23 @@ class _ViewInformationState extends State<ViewInformation> {
       print("Response data: $data");
 
       var status = data["Status"];
-      if (status != null && status == 2) {
+      String message = data["Message"];
+      if (status != null && status == 1) {
         widget.user.status = "Ride Arrived";
         isRideEnd = true;
+        Fluttertoast.showToast(
+            msg: msg ?? message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
       } else {
+        widget.user.status = "Ride Started";
         isRideEnd = false;
-        debugPrint("Data is empty");
+        Showtoaster().classtoaster(message);
+        // debugPrint("Data is empty");
       }
     } else {
       throw Exception('Failed to end ride');
@@ -750,13 +1040,15 @@ class _ViewInformationState extends State<ViewInformation> {
     var headers = {
       'Content-Type': 'application/json',
     };
-
     var requestBody = {
-      'PatientId': user.patientid,
-      'UserId': widget.empId,
-      'LabNo': user.LabNo,
-      'BranchLocationId': user.branchlocationid,
-      'PatientAppointmentId': user.Patientappoinmentid,
+      "PatientId": widget.user.patientid,
+      "BranchLocationId": widget.user.branchlocationid,
+      "LabNo": widget.user.LabNo,
+      "RiderLatitude": _currentLatLng.latitude,
+      "RiderLongitude": _currentLatLng.longitude,
+      "RiderAddress": "",
+      "RiderRemarks": "ok",
+      "UserId": widget.empId,
       "RiderLocationURL":
           "https://maps.google.com/?q=${_currentLatLng.latitude},${_currentLatLng.longitude}"
     };
@@ -855,6 +1147,8 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  int fileCount = 1;
+
   Future<void> getsampleapi() async {
     var url = '$ip/api/Account/GetSampleCollectionServicesList';
     var headers = {
@@ -905,7 +1199,7 @@ class _ViewInformationState extends State<ViewInformation> {
 
   List<samplecollectionresponse> samplecollectionresponselst = [];
   List<ListLabServiceDataDetail> listlabsamplelst = [];
-
+  String? errormsg;
   Future<void> samplecollectionapi() async {
     var url = '$ip/api/account/SampleCollectionSubmitProcess';
     var headers = {
@@ -995,11 +1289,24 @@ class _ViewInformationState extends State<ViewInformation> {
 
       // Assuming you have a status field in the response indicating ride start success
       collectionstatus = data["Status"];
+      String samplemsg = data["ErrorMessage"];
 
       if (collectionstatus != 0 && collectionstatus == 1) {
+        widget.user.status == "Sample Collected";
+        Fluttertoast.showToast(
+            msg: errormsg ?? samplemsg,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
         isRideStarted = true;
       } else {
+        widget.user.status == "Booked";
+        Showtoaster().classtoaster(samplemsg);
         isRideStarted = false;
+
         debugPrint("Data is null");
       }
       setState(() {});
@@ -1025,6 +1332,645 @@ class _ViewInformationState extends State<ViewInformation> {
     target: LatLng(33.586203, 73.085603),
     zoom: 14.4746,
   );
+  bool isAddedLoading = false;
+  Future<void> AddConsentForm(list) async {
+    var url = '$ip/api/account/AddConsentForms';
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+
+    // var requestBody = body;
+    final requestBody = {
+      "PatientConsentToSaveData": list,
+    };
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(requestBody));
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      setState(() {});
+      var data = jsonDecode(response.body);
+      print("Response data: $data");
+
+      var status = data["Status"];
+      String message = data["ErrorMessage"];
+      if (status != null && status == 2) {
+        widget.user.status = "Consent Received";
+        setState(() {});
+        // isRideEnd = true;
+        Fluttertoast.showToast(
+            msg: msg ?? message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Get.back();
+      } else {
+        widget.user.status = "Ride Arrived";
+        // isRideEnd = false;
+        Showtoaster().classtoaster(message);
+        // debugPrint("Data is empty");
+      }
+    } else {
+      throw Exception('Failed to end ride');
+    }
+  }
+
+  // bool isAddedLoading = false;
+  Future<void> AddConsentForm2(list) async {
+    var url = '$ip/api/account/AddConsentForms';
+    var headers = {
+      'Content-Type': 'application/json',
+    };
+
+    // var requestBody = body;
+    final requestBody = {
+      "PatientConsentToSaveData": list,
+    };
+    final response = await http.post(Uri.parse(url),
+        headers: headers, body: jsonEncode(requestBody));
+    print("Response: ${response.body}");
+
+    if (response.statusCode == 200) {
+      setState(() {});
+      var data = jsonDecode(response.body);
+      print("Response data: $data");
+
+      var status = data["Status"];
+      String message = data["ErrorMessage"];
+      if (status != null && status == 2) {
+        digitalfile.clear();
+        CustomContainerController.i.clearpdflist();
+        widget.user.status = "Consent Received";
+
+        setState(() {});
+        // isRideEnd = true;
+        Fluttertoast.showToast(
+            msg: msg ?? message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+            fontSize: 16.0);
+        Get.back();
+      } else {
+        widget.user.status = "Ride Arrived";
+        // isRideEnd = false;
+        Showtoaster().classtoaster(message);
+        // debugPrint("Data is empty");
+      }
+    } else {
+      throw Exception('Failed to end ride');
+    }
+  }
+
+  Future<String> uploadPicture(File file) async {
+    String r = '';
+    var url = '$ip/api/account/UploadPicture';
+
+    var request = http.MultipartRequest('POST', Uri.parse(url));
+    request.files.add(await http.MultipartFile.fromPath('image', file.path));
+
+    final res = await request.send();
+
+    if (res.statusCode == 200) {
+      dynamic data = jsonDecode(await res.stream.bytesToString());
+      r = data["Path"];
+
+      print('Upload success: ');
+    } else {
+      print('Upload failed with status ${res.statusCode}');
+    }
+
+    return r;
+  }
+
+  List<ConsentModel> files = [];
+  List<ConsentModel> digitalfile = [];
+  void removeCard() {
+    setState(() {
+      files.clear();
+      digitalfile.clear();
+    });
+  }
+
+  // var cont = Get.put<CustomContainerController>(CustomContainerController());
+  Future<void> consentDialog(BuildContext context) async {
+    var cont = Get.put<CustomContainerController>(CustomContainerController());
+    // var cont = Get.find<CustomContainerController>();
+    updatedigitalfilepath(String path, int index) {
+      digitalfile[index].attachmentPath = path;
+
+      //
+    }
+
+    files.add(ConsentModel(
+      attachmentPath: null,
+      remarks: '',
+      consentFormStatus: "1",
+      userId: widget.empId,
+      patientId: widget.user.patientid,
+      paymentNumber: widget.user.LabNo,
+      // signAttachmentPath: null,
+    ));
+    digitalfile.add(ConsentModel(
+      attachmentPath: null,
+      remarks: '',
+      consentFormStatus: "1",
+      userId: widget.empId,
+      patientId: widget.user.patientid,
+      paymentNumber: widget.user.LabNo,
+      signAttachmentPath: null,
+    ));
+    await showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.all(Radius.circular(15.0)),
+              ),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              content: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    cont.isDigitalSelected
+                        ? Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: () {
+                                removeCard();
+                                Navigator.of(context).pop();
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: ColorManager.kRedColor,
+                              ),
+                            ),
+                          )
+                        : Align(
+                            alignment: Alignment.topRight,
+                            child: IconButton(
+                              onPressed: () {
+                                removeCard();
+                                Navigator.of(context).pop();
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: ColorManager.kRedColor,
+                              ),
+                            ),
+                          ),
+
+                    Center(
+                      child: Row(
+                        children: [
+                          Transform.scale(
+                            scale: 0.7,
+                            child: Radio(
+                              value: true,
+                              groupValue: cont.isDigitalSelected,
+                              onChanged: (value) {
+                                setState(() {
+                                  cont.isDigitalSelected = true;
+                                });
+                              },
+                            ),
+                          ),
+                          Text(
+                            'Digital',
+                            style: GoogleFonts.poppins(fontSize: 12),
+                          ),
+                          const SizedBox(width: 20),
+                          Transform.scale(
+                            scale: 0.7,
+                            child: Radio(
+                              value: false,
+                              groupValue: cont.isDigitalSelected,
+                              onChanged: (value) {
+                                setState(() {
+                                  cont.isDigitalSelected = false;
+                                });
+                              },
+                            ),
+                          ),
+                          Text(
+                            'Manual',
+                            style: GoogleFonts.poppins(fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                    cont.isDigitalSelected
+                        ? SizedBox(
+                            height: Get.height * 0.5,
+                            width: Get.width * 0.8,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: digitalfile.length,
+                              itemBuilder: (context, index) {
+                                return DigitalFilePickerCard(
+                                  fileModel: digitalfile[index],
+                                  onFileSelected: (filePath) {
+                                    setState(() {
+                                      digitalfile[index].attachmentPath =
+                                          updatedigitalfilepath(
+                                              CustomContainerController
+                                                  .i
+                                                  .selectedpdflist[index]
+                                                  .filePath,
+                                              0);
+                                    });
+                                  },
+                                  index: index,
+                                  onTextChanged: (text) {
+                                    setState(() {
+                                      digitalfile[index].remarks = text;
+                                    });
+                                  },
+                                  onAcceptRejectChanged: (value) {
+                                    setState(() {
+                                      digitalfile[index].consentFormStatus =
+                                          value;
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          )
+                        : SizedBox(
+                            height: Get.height * 0.55,
+                            width: Get.width * 0.8,
+                            child: ListView.builder(
+                              shrinkWrap: true,
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: files.length,
+                              itemBuilder: (context, index) {
+                                return FilePickerCard(
+                                  fileModel: files[index],
+                                  onFileSelected: (filePath) {
+                                    setState(() {
+                                      files[index].attachmentPath = filePath;
+                                    });
+                                  },
+                                  onTextChanged: (text) {
+                                    setState(() {
+                                      files[index].remarks = text;
+                                    });
+                                  },
+                                  onAcceptRejectChanged: (value) {
+                                    setState(() {
+                                      files[index].consentFormStatus = value;
+                                    });
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+                    // SizedBox(
+                    //     height: MediaQuery.of(context).size.height * 0.01),
+                    cont.isDigitalSelected
+                        ? Center(
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  digitalfile.add(ConsentModel(
+                                    attachmentPath: null,
+                                    remarks: '',
+                                    consentFormStatus: "1",
+                                    userId: widget.empId,
+                                    patientId: widget.user.patientid,
+                                    paymentNumber: widget.user.LabNo,
+                                    signAttachmentPath: null,
+                                  ));
+                                });
+                              },
+                              child: Text(
+                                "Add more +",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: TextButton(
+                              onPressed: () {
+                                setState(() {
+                                  files.add(ConsentModel(
+                                    attachmentPath: null,
+                                    remarks: '',
+                                    consentFormStatus: "1",
+                                    userId: widget.empId,
+                                    patientId: widget.user.patientid,
+                                    paymentNumber: widget.user.LabNo,
+                                    signAttachmentPath: null,
+                                  ));
+                                });
+                              },
+                              child: Text(
+                                "Add more +",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ),
+                          ),
+                    // SizedBox(
+                    //     height: MediaQuery.of(context).size.height * 0.02),
+                    cont.isDigitalSelected
+                        ? Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.05),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      setState(() {
+                                        isAddedLoading = true;
+                                      });
+                                      List<ConsentModel> data = [];
+                                      log("${CustomContainerController.i.pdflist.length}");
+                                      log("${digitalfile.length}");
+                                      // Iterate through files list and create a map for each entry
+                                      for (int i = 0;
+                                          i <
+                                              CustomContainerController
+                                                  .i.pdflist.length;
+                                          i++) {
+                                        updatedigitalfilepath(
+                                            CustomContainerController
+                                                .i.pdflist[i].filePath,
+                                            i);
+                                      }
+                                      for (var file in digitalfile) {
+                                        File? base64Image;
+                                        String? signature;
+                                        if (cont.exportedImage != null) {
+                                          Uint8List imageInUnit8List = cont
+                                              .exportedImage!; // store unit8List image here ;
+                                          final tempDir =
+                                              await getTemporaryDirectory();
+                                          File fdtile = await File(
+                                                  '${tempDir.path}/image.png')
+                                              .create();
+                                          fdtile.writeAsBytesSync(
+                                              imageInUnit8List);
+                                          // base64Image = File.fromRawPath(
+                                          //     cont.exportedImage!);
+                                          signature = await UploadFileRepo()
+                                              .updatePicture(fdtile);
+                                          // base64Encode(
+                                          //     cont.exportedImage!);
+                                        }
+                                        print(
+                                            'Base64 image path: $base64Image');
+                                        {
+                                          {
+                                            // print(
+                                            //     "File path for index $i: ${CustomContainerController.i.selectedpdflist[i].filePath}");
+                                            ConsentModel entry1 = ConsentModel(
+                                              attachmentPath:
+                                                  file.attachmentPath,
+                                              // file.attachmentPath ??
+                                              //     'No file selected',
+                                              // updatedigitalfilepath(
+                                              //     CustomContainerController
+                                              //         .i
+                                              //         .selectedpdflist[i]
+                                              //         .filePath,
+                                              //     i),
+                                              remarks: file.remarks,
+                                              consentFormStatus:
+                                                  file.consentFormStatus ??
+                                                      'Not specified',
+                                              userId: file.userId,
+                                              paymentNumber: file.paymentNumber,
+                                              patientId: file.patientId,
+                                              signAttachmentPath:
+                                                  signature ?? '',
+                                            );
+                                            data.add(entry1);
+                                          }
+                                        }
+                                      }
+                                      if (data[0].attachmentPath !=
+                                              "No file selected" ||
+                                          data[0].attachmentPath != null) {
+                                        for (int i = 0; i < data.length; i++) {
+                                          if (digitalfile[i].attachmentPath !=
+                                                  null &&
+                                              cont.exportedImage!.isNotEmpty) {
+                                            digitalfile[i].attachmentPath =
+                                                CustomContainerController
+                                                    .i
+                                                    .selectedpdflist[i]
+                                                    .filePath;
+                                            digitalfile[i].signAttachmentPath =
+                                                data[i].signAttachmentPath;
+                                          } else {
+                                            print('File path is null');
+                                            Showtoaster().classtoaster(
+                                                "Please Select Consent Form First");
+                                            isAddedLoading = false;
+                                            return; // Exit the loop and function if attachment path is null
+                                          }
+                                        }
+                                        await AddConsentForm2(digitalfile);
+                                        setState(() {
+                                          isAddedLoading = false;
+                                        });
+                                        // now call 2nd API
+                                      } else {
+                                        Showtoaster().classtoaster(
+                                            "Please Fill all Fields");
+                                      }
+
+                                      // if (data[0].signAttachmentPath !=
+                                      //     "No file selected") {
+                                      //   for (int i = 0;
+                                      //       i < data.length;
+                                      //       i++) {
+                                      //     if (digitalfile[i]
+                                      //             .signAttachmentPath !=
+                                      //         null) {
+                                      //       File file = File(digitalfile[i]
+                                      //           .signAttachmentPath!); // Convert String filePath to File object
+                                      //       String signpath =
+                                      //           await uploadPicture(file);
+                                      //       print(
+                                      //           'Uploaded image path: $signpath');
+                                      //       // Update the attachmentPath in the files list with the API response imagePath
+                                      //       digitalfile[i]
+                                      //               .signAttachmentPath =
+                                      //           signpath;
+                                      //       // Handle imagePath as needed
+                                      //     } else {
+                                      //       print('File path is null');
+                                      //     }
+                                      //   }
+                                      //   await AddConsentForm2(digitalfile);
+                                      //   setState(() {
+                                      //     isAddedLoading = false;
+                                      //   });
+                                      //   // now call 2 api
+                                      // } else {
+                                      //   Showtoaster().classtoaster(
+                                      //       "Please Fill all Fields");
+                                      // }
+                                    } catch (e) {
+                                      setState(() {
+                                        isAddedLoading = false;
+                                      });
+                                      Showtoaster()
+                                          .classtoaster("Something Went wrong");
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: ColorManager.kDarkBlue,
+                                    fixedSize: const Size(380, 4),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                  child: isAddedLoading == true
+                                      ? const CircularProgressIndicator(
+                                          color: ColorManager.kWhiteColor,
+                                          strokeWidth: 2.0,
+                                        )
+                                      : Text(
+                                          'Submit',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: ColorManager.kWhiteColor,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: Get.width * 0.05),
+                              child: Align(
+                                alignment: Alignment.bottomCenter,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    try {
+                                      setState(() {
+                                        isAddedLoading = true;
+                                      });
+                                      List<ConsentModel> data = [];
+                                      // Iterate through files list and create a map for each entry
+                                      for (var file in files) {
+                                        String? base64Image;
+                                        if (cont.exportedImage != null) {
+                                          base64Image =
+                                              base64Encode(cont.exportedImage!);
+                                        }
+                                        print(
+                                            'Base64 image path: $base64Image');
+                                        {
+                                          ConsentModel entry = ConsentModel(
+                                            attachmentPath:
+                                                file.attachmentPath ??
+                                                    'No file selected',
+                                            remarks: file.remarks,
+                                            consentFormStatus:
+                                                file.consentFormStatus ??
+                                                    'Not specified',
+                                            userId: file.userId,
+                                            paymentNumber: file.paymentNumber,
+                                            patientId: file.patientId,
+                                            // signAttachmentPath: base64Image,
+                                          );
+                                          data.add(entry);
+                                        }
+                                      }
+
+                                      if (data[0].attachmentPath !=
+                                              "No file selected" ||
+                                          data[0].remarks != "") {
+                                        for (int i = 0; i < data.length; i++) {
+                                          if (files[i].attachmentPath != null) {
+                                            File file = File(files[i]
+                                                .attachmentPath!); // Convert String filePath to File object
+                                            String imagePath =
+                                                await uploadPicture(file);
+                                            print(
+                                                'Uploaded image path: $imagePath');
+                                            // Update the attachmentPath in the files list with the API response imagePath
+                                            files[i].attachmentPath = imagePath;
+                                            // Handle imagePath as needed
+                                          } else {
+                                            print('File path is null');
+                                          }
+                                        }
+                                        await AddConsentForm(files);
+                                        setState(() {
+                                          isAddedLoading = false;
+                                        });
+                                        // now call 2 api
+                                      } else {
+                                        Showtoaster().classtoaster(
+                                            "Please Fill all Fields");
+                                      }
+                                    } catch (e) {
+                                      setState(() {
+                                        isAddedLoading = false;
+                                      });
+                                      Showtoaster()
+                                          .classtoaster("Something Went wrong");
+                                    }
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: ColorManager.kDarkBlue,
+                                    fixedSize: const Size(380, 4),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                  ),
+                                  child: isAddedLoading == true
+                                      ? const CircularProgressIndicator(
+                                          color: ColorManager.kWhiteColor,
+                                          strokeWidth: 2.0,
+                                        )
+                                      : Text(
+                                          "Submit",
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold,
+                                            color: ColorManager.kWhiteColor,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                          ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   void _showStartRideDialog() {
     showCupertinoDialog(
@@ -1258,9 +2204,18 @@ class _ViewInformationState extends State<ViewInformation> {
     }
   }
 
+  // matchvalues() {
+  //   LabInvestigationController.i.date =
+  //       DateFormat('d MMMM y').format(DateTime.parse(""));
+  // }
+
   @override
   Widget build(BuildContext context) {
-    double totalAppointmentPrice = calculateTotalPrice(appointments);
+    double totalAppointmentPrice =
+        calculateTotalPrice(LabInvestigationController.i.appointments);
+    final LabInvestigationController labController =
+        Get.put(LabInvestigationController());
+    String newdate = LabInvestigationController.i.date;
     return BlurryModalProgressHUD(
         inAsyncCall: isLoading,
         blurEffectIntensity: 4,
@@ -1357,7 +2312,7 @@ class _ViewInformationState extends State<ViewInformation> {
                           },
                           child: Padding(
                             padding: EdgeInsets.only(
-                              top: MediaQuery.of(context).size.height * 0.04,
+                              top: MediaQuery.of(context).size.height * 0.06,
                               left: MediaQuery.of(context).size.width * 0.04,
                             ),
                             child: const Icon(
@@ -1407,52 +2362,53 @@ class _ViewInformationState extends State<ViewInformation> {
                                     Padding(
                                       padding: EdgeInsets.only(
                                           left: Get.width * 0.01),
-                                      child: Text(
-                                        '${DateFormat('d MMMM y').format(DateTime.parse(widget.user.StartDate!))} | ${widget.user.time ?? ""}',
-                                        style: const TextStyle(
-                                            fontSize: 10,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            LabInvestigationController
+                                                    .i.appointments.isNotEmpty
+                                                ? '${DateFormat('d MMMM y').format(DateTime.parse(LabInvestigationController.i.appointments[0].bookingDate! ?? "${widget.user.StartDate}"))} | ${LabInvestigationController.i.appointments[0].startTime ?? "${widget.user.time}"}'
+                                                : '', // If the list is empty, display an empty string
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            LabInvestigationController
+                                                    .i.appointments.isNotEmpty
+                                                ? "${LabInvestigationController.i.appointments[0].status ?? "${widget.user.status}"}"
+                                                    ""
+                                                : "",
+                                            style: const TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.white),
+                                          )
+                                        ],
                                       ),
                                     ),
                                     const SizedBox(height: 5),
                                     Row(
+                                      // crossAxisAlignment:
+                                      //     CrossAxisAlignment.start,
+                                      // mainAxisAlignment:
+                                      //     MainAxisAlignment.spaceBetween,
                                       children: [
-                                        const Icon(
-                                          Icons.person,
+                                        Image.asset(
+                                          'assets/ticket.png',
                                           color: Colors.white,
+                                          width: 22,
+                                          height: 22,
                                         ),
-                                        const SizedBox(width: 10),
-                                        Flexible(
-                                          child: Text(
-                                            widget.user.patientName ?? "",
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 20,
-                                              color: Colors.white,
-                                              fontWeight: FontWeight.bold,
-                                            ),
-                                            overflow: TextOverflow.clip,
-                                            maxLines: 1,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(
-                                      height: 5,
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Icon(
-                                          Icons.edit_document,
-                                          color: Colors.white,
-                                        ),
-                                        const SizedBox(
-                                          width: 10,
+                                        SizedBox(
+                                          width: Get.width * 0.03,
                                         ),
                                         Flexible(
                                           child: Text.rich(
                                             TextSpan(
-                                              text: "Test  | ",
+                                              text: "Appt.  |  ",
                                               style: const TextStyle(
                                                 fontSize: 12,
                                                 color: Colors.white,
@@ -1460,10 +2416,16 @@ class _ViewInformationState extends State<ViewInformation> {
                                               ),
                                               children: [
                                                 TextSpan(
-                                                  text: widget.user.test
-                                                          ?.toString()
-                                                          .trim() ??
-                                                      "",
+                                                  text: LabInvestigationController
+                                                          .i
+                                                          .appointments
+                                                          .isNotEmpty
+                                                      ? LabInvestigationController
+                                                              .i
+                                                              .appointments[0]
+                                                              .appointmentNo ??
+                                                          " ${widget.user.appointmentno}"
+                                                      : "",
                                                   style: GoogleFonts.poppins(
                                                     fontSize: 12,
                                                     fontWeight:
@@ -1477,10 +2439,151 @@ class _ViewInformationState extends State<ViewInformation> {
                                             // maxLines: 2,
                                           ),
                                         ),
+                                        SizedBox(width: Get.width * 0.18),
+                                        if (widget.user.status == "Pending" ||
+                                            widget.user.status ==
+                                                "Ride Started" ||
+                                            widget.user.status ==
+                                                "Ride Arrived" ||
+                                            widget.user.status ==
+                                                "Consent Received" ||
+                                            widget.user.status == "Booked" ||
+                                            widget.user.status ==
+                                                "Sample Collected" ||
+                                            widget.user.status ==
+                                                "Sample Delivered")
+                                          // widget.user.paymentstatusvalue !=
+                                          //             "1" ||
+                                          //         paymentstatus != "Paid"
+                                          IconButton(
+                                            icon: const Icon(Icons.edit,
+                                                color: Colors.white),
+                                            onPressed: () async {
+                                              await AuthRepo()
+                                                  .getPatientBasicInfo(
+                                                      widget.user.patientid);
+                                              Get.to(() => EditPatientNew(
+                                                  pid: widget.user.patientid));
+                                            },
+                                          ),
+                                        SizedBox(width: Get.width * 0.02),
+                                        if (widget.user.status != "Booked")
+                                          widget.user.paymentstatusvalue !=
+                                                      "1" ||
+                                                  paymentstatus != "Paid"
+                                              ? Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.end,
+                                                  children: [
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        LabInvestigationController
+                                                            .i
+                                                            .clearpage();
+
+                                                        await Get.to(
+                                                            LabInvestigations(
+                                                          user: widget.user,
+                                                          patientid: widget
+                                                              .user.patientid,
+                                                        ));
+                                                        await appointmentserviceapi();
+                                                        setState(() {});
+                                                      },
+                                                      child: const Icon(
+                                                        Icons.edit_document,
+                                                        color: Colors.white,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                )
+                                              : const SizedBox.shrink(),
                                       ],
                                     ),
                                     const SizedBox(height: 5),
                                     Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.person,
+                                          color: Colors.white,
+                                        ),
+                                        const SizedBox(width: 10),
+                                        SizedBox(
+                                          width: Get.width * 0.67,
+                                          child: Text(
+                                            LabInvestigationController
+                                                    .i.appointments.isNotEmpty
+                                                ? " ${LabInvestigationController.i.appointments[0].patientName?.toString().trim() ?? "${widget.user.patientName}"}"
+                                                : "",
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 20,
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(
+                                      height: 5,
+                                    ),
+                                    Builder(builder: (context) {
+                                      return Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const Icon(
+                                            Icons.edit_document,
+                                            color: Colors.white,
+                                          ),
+                                          const SizedBox(
+                                            width: 10,
+                                          ),
+                                          Flexible(
+                                            child: Text.rich(
+                                              TextSpan(
+                                                text: "test".tr,
+                                                style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Colors.white,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                                children: [
+                                                  for (int i = 0;
+                                                      i <
+                                                          LabInvestigationController
+                                                              .i
+                                                              .appointments
+                                                              .length;
+                                                      i++)
+                                                    TextSpan(
+                                                        text: LabInvestigationController
+                                                                .i
+                                                                .appointments
+                                                                .isNotEmpty
+                                                            ? " ${LabInvestigationController.i.appointments[i].subServiceName ?? "${widget.user.test}"} (${LabInvestigationController.i.appointments[i].subServiceQuantity ?? ""}),"
+                                                            : "",
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .normal)),
+                                                ],
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 3,
+                                            ),
+                                          ),
+                                        ],
+                                      );
+                                    }),
+                                    const SizedBox(height: 5),
+                                    Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Icon(Icons.pin_drop,
                                             color: Colors.white),
@@ -1497,8 +2600,16 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   fontWeight: FontWeight.bold),
                                               children: [
                                                 TextSpan(
-                                                    text: widget.user.address ??
-                                                        "",
+                                                    text: LabInvestigationController
+                                                            .i
+                                                            .appointments
+                                                            .isNotEmpty
+                                                        ? LabInvestigationController
+                                                                .i
+                                                                .appointments[0]
+                                                                .address ??
+                                                            "${widget.user.address}"
+                                                        : "",
                                                     style: GoogleFonts.poppins(
                                                         fontSize: 12,
                                                         fontWeight:
@@ -1511,12 +2622,11 @@ class _ViewInformationState extends State<ViewInformation> {
                                     ),
                                   ],
                                 ),
-                                trailing: Text(
-                                  widget.user.status ?? "",
-                                  style: const TextStyle(
-                                      fontSize: 12, color: Colors.white),
-                                ),
                               ),
+
+                              // SizedBox(
+                              //   height: Get.height * 0.02,
+                              // ),
 
                               if (widget.user.status == "Pending")
                                 Padding(
@@ -1549,6 +2659,32 @@ class _ViewInformationState extends State<ViewInformation> {
                                       ),
                                     ),
                                   ),
+                                ),
+                              if (widget.user.status == "Pending")
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                              if (widget.user.status == "Pending")
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "paymentstatus".tr,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      "${widget.user.paymentstatusname ?? " "} ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
                               // SizedBox(
                               //   height:
@@ -1761,28 +2897,91 @@ class _ViewInformationState extends State<ViewInformation> {
                                   ),
                                 ),
                               if (widget.user.status == "Ride Started")
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                              if (widget.user.status == "Ride Started")
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "paymentstatus".tr,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      "${widget.user.paymentstatusname ?? " "} ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
+
+                              if (widget.user.status == "Ride Arrived")
                                 Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: Get.height * 0.03),
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        "Ride Started Successfully",
-                                        style: GoogleFonts.poppins(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.normal,
-                                            color: Colors.white),
+                                      horizontal: Get.width * 0.05),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        // Navigator.push(context, MaterialPageRoute(builder: (context)=> ViewInformation(user:widget.user)));
+                                        consentDialog(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        fixedSize: const Size(380, 4),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(
+                                              15), // Set the border radius here
+                                        ),
                                       ),
-                                    ],
+                                      child: Text(
+                                        'Add Consent'.tr,
+                                        style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.blue),
+                                      ),
+                                    ),
                                   ),
+                                ),
+                              if (widget.user.status == "Ride Arrived")
+                                SizedBox(
+                                  height: Get.height * 0.01,
+                                ),
+                              if (widget.user.status == "Ride Arrived")
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      "paymentstatus".tr,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Text(
+                                      "${widget.user.paymentstatusname ?? " "} ",
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12,
+                                        color: Colors.white,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
                                 ),
 
                               //Here
 
-                              if (widget.user.status == "Ride Arrived")
+                              if (widget.user.status == "Consent Received")
                                 Padding(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: Get.width * 0.05),
@@ -1829,10 +3028,10 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                           .clear)),
                                                             ],
                                                           ),
-                                                          SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      0.02),
+                                                          // SizedBox(
+                                                          //     height:
+                                                          //         Get.height *
+                                                          //             0.02),
                                                           TextFormField(
                                                             decoration:
                                                                 InputDecoration(
@@ -1952,64 +3151,93 @@ class _ViewInformationState extends State<ViewInformation> {
                                         width: 0.01,
                                       ),
                                       // if(isRideEnd && !isRideCancel)
-                                      if (widget.user.status == "Ride Arrived")
+                                      if (widget.user.status ==
+                                          "Consent Received")
                                         SizedBox(
                                           width: Get.width * 0.43,
                                           child: ElevatedButton(
-                                              onPressed: () async {
-                                                if (ispaymentselected == true ||
-                                                    (widget.user.paymentstatusvalue ==
-                                                            "1" &&
-                                                        ispaymentselected ==
-                                                            false)) {
-                                                  ischeckin = true;
-                                                  distance = 0.0;
-                                                  time = 0.0;
-                                                  if (ischeckin) {
-                                                    widget.user.status =
-                                                        'Booked';
-                                                    isLoading = false;
-                                                    setState(() {});
-                                                    try {
+                                            onPressed: () async {
+                                              // Check if payment method is selected
+                                              if (ispaymentselected == true ||
+                                                  widget.user
+                                                          .paymentstatusvalue ==
+                                                      "1") {
+                                                ischeckin = true;
+                                                if (ischeckin == true) {
+                                                  // Perform booking
+
+                                                  // widget.user.status = 'Booked';
+                                                  isLoading = false;
+                                                  setState(() {});
+
+                                                  try {
+                                                    if (widget.user.TypeBit == 2 ||
+                                                        widget.user.TypeBit ==
+                                                            3) {
                                                       await checkinapi();
-                                                      // _polylines.clear();
-                                                      //  _markers.remove(0);
-                                                      // await callback();
-                                                      await getsampleapi();
-                                                      setState(() {
-                                                        isLoading = false;
-                                                      });
-                                                    } catch (e) {
-                                                      setState(() {
-                                                        isLoading = false;
-                                                      });
+                                                      getappointments(
+                                                        widget.empId,
+                                                        AppConstants
+                                                            .maximumDataTobeFetched,
+                                                        0,
+                                                      );
+                                                    } else if (widget
+                                                                .user.TypeBit ==
+                                                            8 ||
+                                                        widget.user.TypeBit ==
+                                                            25 ||
+                                                        widget.user.TypeBit ==
+                                                            26 ||
+                                                        widget.user.TypeBit ==
+                                                            27 ||
+                                                        widget.user.TypeBit ==
+                                                            28 ||
+                                                        widget.user.TypeBit ==
+                                                            29) {
+                                                      await checkinapidoctor();
+                                                      getappointments(
+                                                        widget.empId,
+                                                        AppConstants
+                                                            .maximumDataTobeFetched,
+                                                        0,
+                                                      );
                                                     }
 
+                                                    await getsampleapi();
                                                     setState(() {
-                                                      // message='Checkin Successfully';
+                                                      isLoading = false;
+                                                    });
+                                                  } catch (e) {
+                                                    log(e.toString());
+                                                    setState(() {
+                                                      isLoading = false;
                                                     });
                                                   }
-                                                } else {
-                                                  Showtoaster().classtoaster(
-                                                      "pleaseselectpaymentmethod"
-                                                          .tr);
                                                 }
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(15),
-                                                ),
+                                              } else {
+                                                // Payment method not selected
+                                                Showtoaster().classtoaster(
+                                                    "pleaseselectpaymentmethod"
+                                                        .tr);
+                                              }
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: Colors.white,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(15),
                                               ),
-                                              child: Text(
-                                                "checkin".tr,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.blue),
-                                              )),
-                                        ),
+                                            ),
+                                            child: Text(
+                                              "checkin".tr,
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.blue,
+                                              ),
+                                            ),
+                                          ),
+                                        )
                                     ],
                                   ),
                                 ),
@@ -2021,177 +3249,241 @@ class _ViewInformationState extends State<ViewInformation> {
                                   child: Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
+                                    // crossAxisAlignment:
+                                    //     CrossAxisAlignment.center,
                                     children: [
                                       // if(chk)
-                                      SizedBox(
-                                        width: Get.width * 0.43,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 0),
-                                          child: ElevatedButton(
-                                              onPressed: () {
-                                                showDialog<void>(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
+                                      widget.user.status == "Booked" &&
+                                              (widget.user.TypeBit == 2 ||
+                                                  widget.user.TypeBit == 3)
+                                          ? SizedBox(
+                                              width: Get.width * 0.43,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 0),
+                                                child: ElevatedButton(
+                                                    onPressed: () {
+                                                      showDialog<void>(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return AlertDialog(
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          30),
+                                                            ),
+                                                            content: SizedBox(
+                                                              height:
+                                                                  Get.height *
+                                                                      0.23,
+                                                              child: Column(
+                                                                children: [
+                                                                  Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      const Text(
+                                                                          ""),
+                                                                      Text('cancelride'
+                                                                          .tr),
+                                                                      InkWell(
+                                                                          onTap:
+                                                                              () {
+                                                                            Get.back();
+                                                                          },
+                                                                          child:
+                                                                              const Icon(CupertinoIcons.clear)),
+                                                                    ],
+                                                                  ),
+                                                                  SizedBox(
+                                                                      height: Get
+                                                                              .height *
+                                                                          0.02),
+                                                                  TextFormField(
+                                                                    decoration:
+                                                                        InputDecoration(
+                                                                      labelText:
+                                                                          'remarks'
+                                                                              .tr,
+                                                                      enabledBorder: const OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              width: 1,
+                                                                              color: Colors.black)),
+                                                                      disabledBorder:
+                                                                          InputBorder
+                                                                              .none,
+                                                                      border: const OutlineInputBorder(
+                                                                          borderSide: BorderSide(
+                                                                              width: 1,
+                                                                              color: Colors.black)),
+                                                                    ),
+                                                                    controller:
+                                                                        _remarksController,
+                                                                    // placeholder:
+                                                                    //     'enterremarks'
+                                                                    //         .tr,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    height:
+                                                                        Get.height *
+                                                                            0.03,
+                                                                  ),
+                                                                  SizedBox(
+                                                                    width:
+                                                                        Get.width *
+                                                                            0.7,
+                                                                    child:
+                                                                        CupertinoButton(
+                                                                      color: Colors
+                                                                          .blue,
+                                                                      borderRadius: const BorderRadius
+                                                                          .all(
+                                                                          Radius.circular(
+                                                                              15.0)),
+                                                                      child:
+                                                                          Text(
+                                                                        'ok'.tr,
+                                                                      ),
+                                                                      onPressed:
+                                                                          () async {
+                                                                        widget
+                                                                            .user
+                                                                            .status = "Ride Started";
+                                                                        if (_remarksController
+                                                                            .text
+                                                                            .isNotEmpty) {
+                                                                          chk =
+                                                                              false;
+                                                                          String
+                                                                              remarks =
+                                                                              _remarksController.text;
+                                                                          isRideCancel =
+                                                                              true;
+                                                                          if (isRideCancel) {
+                                                                            setState(() {
+                                                                              message = 'Ride Cancel successfully!';
+                                                                            });
+                                                                          }
+                                                                          await CancelRide(
+                                                                              widget.user,
+                                                                              remarks);
+                                                                          isRideCancel =
+                                                                              true;
+                                                                          setState(
+                                                                              () {});
+                                                                          _remarksController
+                                                                              .clear();
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        } else {
+                                                                          Showtoaster()
+                                                                              .classtoaster("pleaseenterremarks".tr);
+                                                                        }
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          );
+                                                        },
+                                                      );
+                                                    },
+                                                    style: ElevatedButton
+                                                        .styleFrom(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      fixedSize:
+                                                          const Size(140, 4),
                                                       shape:
                                                           RoundedRectangleBorder(
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(30),
+                                                            BorderRadius.circular(
+                                                                15), // Set the border radius here
                                                       ),
-                                                      content: SizedBox(
-                                                        height:
-                                                            Get.height * 0.23,
-                                                        child: Column(
-                                                          children: [
-                                                            Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                const Text(""),
-                                                                Text(
-                                                                    'cancelride'
-                                                                        .tr),
-                                                                InkWell(
-                                                                    onTap: () {
-                                                                      Get.back();
-                                                                    },
-                                                                    child: const Icon(
-                                                                        CupertinoIcons
-                                                                            .clear)),
-                                                              ],
-                                                            ),
-                                                            SizedBox(
-                                                                height:
-                                                                    Get.height *
-                                                                        0.02),
-                                                            TextFormField(
-                                                              decoration:
-                                                                  InputDecoration(
-                                                                labelText:
-                                                                    'remarks'
-                                                                        .tr,
-                                                                enabledBorder: const OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .black)),
-                                                                disabledBorder:
-                                                                    InputBorder
-                                                                        .none,
-                                                                border: const OutlineInputBorder(
-                                                                    borderSide: BorderSide(
-                                                                        width:
-                                                                            1,
-                                                                        color: Colors
-                                                                            .black)),
-                                                              ),
-                                                              controller:
-                                                                  _remarksController,
-                                                              // placeholder:
-                                                              //     'enterremarks'
-                                                              //         .tr,
-                                                            ),
-                                                            SizedBox(
-                                                              height:
-                                                                  Get.height *
-                                                                      0.03,
-                                                            ),
-                                                            SizedBox(
-                                                              width: Get.width *
-                                                                  0.7,
-                                                              child:
-                                                                  CupertinoButton(
-                                                                color:
-                                                                    Colors.blue,
-                                                                borderRadius:
-                                                                    const BorderRadius
-                                                                        .all(
-                                                                        Radius.circular(
-                                                                            15.0)),
-                                                                child: Text(
-                                                                  'ok'.tr,
-                                                                ),
-                                                                onPressed:
-                                                                    () async {
-                                                                  widget.user
-                                                                          .status =
-                                                                      "Ride Started";
-                                                                  if (_remarksController
-                                                                      .text
-                                                                      .isNotEmpty) {
-                                                                    chk = false;
-                                                                    String
-                                                                        remarks =
-                                                                        _remarksController
-                                                                            .text;
-                                                                    isRideCancel =
-                                                                        true;
-                                                                    if (isRideCancel) {
-                                                                      setState(
-                                                                          () {
-                                                                        message =
-                                                                            'Ride Cancel successfully!';
-                                                                      });
-                                                                    }
-                                                                    await CancelRide(
-                                                                        widget
-                                                                            .user,
-                                                                        remarks);
-                                                                    isRideCancel =
-                                                                        true;
-                                                                    setState(
-                                                                        () {});
-                                                                    _remarksController
-                                                                        .clear();
-                                                                    Navigator.of(
-                                                                            context)
-                                                                        .pop();
-                                                                  } else {
-                                                                    Showtoaster()
-                                                                        .classtoaster(
-                                                                            "pleaseenterremarks".tr);
-                                                                  }
-                                                                },
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.red,
-                                                fixedSize: const Size(140, 4),
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          15), // Set the border radius here
-                                                ),
+                                                    ),
+                                                    child: Text(
+                                                      "cancel".tr,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              color:
+                                                                  Colors.white),
+                                                    )),
                                               ),
-                                              child: Text(
-                                                "cancel".tr,
-                                                style: GoogleFonts.poppins(
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.white),
-                                              )),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 0.01,
-                                      ),
+                                            )
+                                          :
+
+                                          // log("Image tapped");
+                                          // const SizedBox(
+                                          //   width: 0.01,
+                                          // // ),
+                                          // if (widget.user.status == "Booked" &&
+                                          //     (widget.user.TypeBit == 8 ||
+                                          //         widget.user.TypeBit == 25))
+                                          SizedBox(
+                                              width: Get.width * 0.43,
+                                              child: ElevatedButton(
+                                                  onPressed: () async {
+                                                    Navigator.push(
+                                                        context,
+                                                        MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                PdfViewerPage(
+                                                                  url: widget
+                                                                      .user
+                                                                      .InvoiceURL,
+                                                                )));
+
+                                                    // if (await canLaunch(ip2 +
+                                                    //     widget
+                                                    //         .user.InvoiceURL)) {
+                                                    //   await launch(ip2 +
+                                                    //       widget
+                                                    //           .user.InvoiceURL);
+                                                    // } else {
+                                                    //   Fluttertoast.showToast(
+                                                    //       msg:
+                                                    //           'Could not launch ${ip2 + widget.user.InvoiceURL}');
+                                                    // }
+                                                  },
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                    backgroundColor:
+                                                        Colors.green,
+                                                    // fixedSize: const Size(140, 4),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              15), // Set the border radius here
+                                                    ),
+                                                  ),
+                                                  child: Text(
+                                                    "Print".tr,
+                                                    style: GoogleFonts.poppins(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.white),
+                                                  )),
+                                            ),
                                       // if(!isRideEnd && !isRideCancel)
-                                      if (widget.user.status == "Booked")
-                                        SizedBox(
+                                      // if (widget.user.status == "Booked")
+                                      Visibility(
+                                        visible:
+                                            widget.user.status == "Booked" &&
+                                                (widget.user.TypeBit == 2 ||
+                                                    widget.user.TypeBit == 3),
+                                        child: SizedBox(
                                           width: Get.width * 0.43,
                                           child: ElevatedButton(
                                               onPressed: () async {
@@ -2217,12 +3509,209 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     color: Colors.blue),
                                               )),
                                         ),
+                                      ),
+                                      if (widget.user.status == "Booked" &&
+                                          (widget.user.TypeBit == 8 ||
+                                              widget.user.TypeBit == 25 ||
+                                              widget.user.TypeBit == 26 ||
+                                              widget.user.TypeBit == 27 ||
+                                              widget.user.TypeBit == 28 ||
+                                              widget.user.TypeBit == 29))
+                                        SizedBox(
+                                          // height: Get.height * 0.04,
+                                          width: Get.width * 0.43,
+                                          child: ElevatedButton(
+                                              onPressed: () {
+                                                isLoading = true;
+                                                setState(() {});
+                                                try {
+                                                  CompleteRide(widget.user);
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
+                                                } catch (e) {
+                                                  setState(() {
+                                                    isLoading = false;
+                                                  });
+                                                }
+                                                setState(() {
+                                                  isLoading = false;
+                                                });
+
+                                                showDialog<void>(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: Get.height *
+                                                              0.15),
+                                                      child:
+                                                          CupertinoAlertDialog(
+                                                        content: Column(
+                                                          children: [
+                                                            const SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                            Image.asset(
+                                                                'assets/show.png'),
+                                                            const SizedBox(
+                                                              height: 20,
+                                                            ),
+                                                            Align(
+                                                              alignment: Alignment
+                                                                  .bottomCenter,
+                                                              child: Text(
+                                                                'thankyou'.tr,
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .poppins(
+                                                                  fontSize: 20,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 30,
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        actions: <Widget>[
+                                                          CupertinoButton(
+                                                            color: ColorManager
+                                                                .kDarkBlue,
+                                                            borderRadius:
+                                                                const BorderRadius
+                                                                    .all(
+                                                                    Radius.circular(
+                                                                        10.0)),
+                                                            child: Text(
+                                                              'Back'.tr,
+                                                            ),
+                                                            onPressed:
+                                                                () async {
+                                                              DateTime
+                                                                  startDate =
+                                                                  DateTime.parse(
+                                                                      widget
+                                                                          .user
+                                                                          .StartDate!);
+                                                              DateTime today =
+                                                                  DateTime
+                                                                      .now();
+
+                                                              if (startDate.year == today.year &&
+                                                                  startDate
+                                                                          .month ==
+                                                                      today
+                                                                          .month &&
+                                                                  startDate
+                                                                          .day ==
+                                                                      today
+                                                                          .day) {
+                                                                Navigator
+                                                                    .pushReplacement(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        TodayAppoinments(
+                                                                            empId:
+                                                                                widget.empId),
+                                                                  ),
+                                                                );
+                                                              } else {
+                                                                Navigator
+                                                                    .pushReplacement(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder: (context) =>
+                                                                        AppointmentHistory(
+                                                                            empId:
+                                                                                widget.empId),
+                                                                  ),
+                                                                );
+                                                              }
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          15), // Set the border radius here
+                                                ),
+                                              ),
+                                              child: Text(
+                                                "Completed".tr,
+                                                style: GoogleFonts.poppins(
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.blue),
+                                              )),
+                                        )
                                     ],
                                   ),
                                 ),
-                              widget.user.status == "Booked"
-                                  ? SizedBox(height: Get.height * 0.07)
-                                  : const SizedBox.shrink(),
+
+                              // SizedBox(
+                              //   height: Get.height * 0.02,
+                              // ),
+                              Visibility(
+                                visible: widget.user.status == "Completed",
+                                child: Center(
+                                  child: SizedBox(
+                                    width: Get.width * 0.83,
+                                    child: ElevatedButton(
+                                        onPressed: () async {
+                                          Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PdfViewerPage(
+                                                        url: widget
+                                                            .user.InvoiceURL,
+                                                      )));
+
+                                          // if (await canLaunch(
+                                          //     ip2 + widget.user.InvoiceURL)) {
+                                          //   await launch(
+                                          //       ip2 + widget.user.InvoiceURL);
+                                          // } else {
+                                          //   Fluttertoast.showToast(
+                                          //       msg:
+                                          //           'Could not launch ${ip2 + widget.user.InvoiceURL}');
+                                          // }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Colors.green,
+                                          // fixedSize: const Size(140, 4),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                                15), // Set the border radius here
+                                          ),
+                                        ),
+                                        child: Text(
+                                          "Print".tr,
+                                          style: GoogleFonts.poppins(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white),
+                                        )),
+                                  ),
+                                ),
+                              ),
+
+                              // widget.user.status == "Booked"
+                              //     ? SizedBox(height: Get.height * 0.07)
+                              //     : const SizedBox.shrink(),
                               if (widget.user.status == "Booked")
                                 Center(
                                   child: Row(
@@ -2238,7 +3727,13 @@ class _ViewInformationState extends State<ViewInformation> {
                                         textAlign: TextAlign.center,
                                       ),
                                       Text(
-                                        "$totalAppointmentPrice ",
+                                        LabInvestigationController
+                                                .i.appointments.isNotEmpty
+                                            ? LabInvestigationController
+                                                    .i.appointments[0].total
+                                                    .toString() ??
+                                                "0.0"
+                                            : "",
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
@@ -2267,7 +3762,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           textAlign: TextAlign.center,
                                         ),
                                         Text(
-                                          "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                          "$paymentstatus  ",
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
                                             color: Colors.white,
@@ -2281,6 +3776,7 @@ class _ViewInformationState extends State<ViewInformation> {
                               //checked in
 
                               if (widget.user.status == "Ride Arrived" ||
+                                  widget.user.status == "Consent Received" ||
                                   widget.user.status == "Sample Collected" ||
                                   widget.user.status == "In Route" ||
                                   widget.user.status == "Sample Delivered")
@@ -2296,115 +3792,112 @@ class _ViewInformationState extends State<ViewInformation> {
                                         Column(children: [
                                           Row(
                                             children: [
-                                              Column(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (widget.user.status ==
-                                                      "Ride Arrived")
-                                                    SizedBox(
-                                                        child: widget.user
-                                                                    .paymentstatusvalue !=
-                                                                "1"
-                                                            ? Text(
-                                                                "discount".tr,
-                                                                style: const TextStyle(
-                                                                    color: Colors
-                                                                        .white),
-                                                              )
-                                                            : const SizedBox
-                                                                .shrink()),
-                                                  if (widget.user.status ==
-                                                      "Ride Arrived")
-                                                    SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.04,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.27,
-                                                      child: widget.user
-                                                                  .paymentstatusvalue !=
-                                                              "1"
-                                                          ? Padding(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                      vertical:
-                                                                          Get.height *
-                                                                              0.01),
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  Text(
-                                                                    'yes'.tr,
-                                                                    style: const TextStyle(
-                                                                        color: Colors
-                                                                            .white),
-                                                                  ),
-                                                                  Obx(() =>
-                                                                      SizedBox(
-                                                                        width: MediaQuery.of(context).size.width *
-                                                                            0.06,
-                                                                        child:
-                                                                            Radio(
-                                                                          value:
-                                                                              'yes'.tr,
-                                                                          groupValue:
-                                                                              _selectedOption.value, // Access value property
-                                                                          fillColor:
-                                                                              MaterialStateColor.resolveWith((states) => Colors.white),
-                                                                          onChanged:
-                                                                              (value) {
-                                                                            _selectedOption.value =
-                                                                                value!; // Update _selectedOption value
-                                                                          },
-                                                                        ),
-                                                                      )),
-                                                                  Obx(() => Row(
-                                                                        mainAxisSize:
-                                                                            MainAxisSize.min,
-                                                                        children: [
-                                                                          Text(
-                                                                            'no'.tr,
-                                                                            style:
-                                                                                const TextStyle(color: Colors.white),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width:
-                                                                                MediaQuery.of(context).size.width * 0.06,
-                                                                            child:
-                                                                                Radio(
-                                                                              value: 'no'.tr,
-                                                                              groupValue: _selectedOption.value,
-                                                                              fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
-                                                                              onChanged: (value) {
-                                                                                discount = TextEditingController();
-                                                                                dsct = "0.0";
-                                                                                setState(() {});
-                                                                                _selectedOption.value = value!;
-                                                                              },
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      )),
-                                                                ],
-                                                              ),
-                                                            )
-                                                          : const SizedBox
-                                                              .shrink(),
-                                                    ),
-                                                ],
-                                              ),
+                                              // Column(
+                                              //   mainAxisAlignment:
+                                              //       MainAxisAlignment.end,
+                                              //   crossAxisAlignment:
+                                              //       CrossAxisAlignment.start,
+                                              //   children: [
+                                              //     // if (widget.user.status ==
+                                              //     //     "Ride Arrived")
+                                              //       // SizedBox(
+                                              //       //     child: widget.user
+                                              //       //                 .paymentstatusvalue ==
+                                              //       //             "1"
+                                              //       //         ? Text(
+                                              //       //             "discount".tr,
+                                              //       //             style: const TextStyle(
+                                              //       //                 color: Colors
+                                              //       //                     .white),
+                                              //       //           )
+                                              //       //         : const SizedBox
+                                              //       //             .shrink()),
+                                              //       if (widget.user.status ==
+                                              //           "Ride Arrived")
+                                              //         SizedBox(
+                                              //           height: MediaQuery.of(
+                                              //                       context)
+                                              //                   .size
+                                              //                   .height *
+                                              //               0.04,
+                                              //           width: MediaQuery.of(
+                                              //                       context)
+                                              //                   .size
+                                              //                   .width *
+                                              //               0.27,
+                                              //           child: widget.user
+                                              //                       .paymentstatusvalue !=
+                                              //                   "1"
+                                              //               ? Padding(
+                                              //                   padding: EdgeInsets
+                                              //                       .symmetric(
+                                              //                           vertical:
+                                              //                               Get.height *
+                                              //                                   0.01),
+                                              //                   child: Row(
+                                              //                     mainAxisAlignment:
+                                              //                         MainAxisAlignment
+                                              //                             .start,
+                                              //                     children: [
+                                              //                       Text(
+                                              //                         'yes'.tr,
+                                              //                         style: const TextStyle(
+                                              //                             color:
+                                              //                                 Colors.white),
+                                              //                       ),
+                                              //                       Obx(() =>
+                                              //                           SizedBox(
+                                              //                             width:
+                                              //                                 MediaQuery.of(context).size.width * 0.06,
+                                              //                             child:
+                                              //                                 Radio(
+                                              //                               value:
+                                              //                                   'yes'.tr,
+                                              //                               groupValue:
+                                              //                                   _selectedOption.value, // Access value property
+                                              //                               fillColor:
+                                              //                                   MaterialStateColor.resolveWith((states) => Colors.white),
+                                              //                               onChanged:
+                                              //                                   (value) {
+                                              //                                 _selectedOption.value = value!; // Update _selectedOption value
+                                              //                               },
+                                              //                             ),
+                                              //                           )),
+                                              //                       Obx(
+                                              //                           () =>
+                                              //                               Row(
+                                              //                                 mainAxisSize: MainAxisSize.min,
+                                              //                                 children: [
+                                              //                                   Text(
+                                              //                                     'no'.tr,
+                                              //                                     style: const TextStyle(color: Colors.white),
+                                              //                                   ),
+                                              //                                   SizedBox(
+                                              //                                     width: MediaQuery.of(context).size.width * 0.06,
+                                              //                                     child: Radio(
+                                              //                                       value: 'no'.tr,
+                                              //                                       groupValue: _selectedOption.value,
+                                              //                                       fillColor: MaterialStateColor.resolveWith((states) => Colors.white),
+                                              //                                       onChanged: (value) {
+                                              //                                         discount = TextEditingController();
+                                              //                                         dsct = "0.0";
+                                              //                                         setState(() {});
+                                              //                                         _selectedOption.value = value!;
+                                              //                                       },
+                                              //                                     ),
+                                              //                                   ),
+                                              //                                 ],
+                                              //                               )),
+                                              //                     ],
+                                              //                   ),
+                                              //                 )
+                                              //               : const SizedBox
+                                              //                   .shrink(),
+                                              //         ),
+                                              //   ],
+                                              // ),
                                               widget.user.status ==
-                                                      "Ride Arrived"
+                                                      "Consent Received"
                                                   ? Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
@@ -2424,11 +3917,11 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                     .size
                                                                     .width *
                                                                 0.37,
-                                                            height: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .height *
-                                                                0.05,
+                                                            // height: MediaQuery.of(
+                                                            //             context)
+                                                            //         .size
+                                                            //         .height *
+                                                            //     0.05,
                                                             child: widget.user
                                                                         .paymentstatusvalue !=
                                                                     "1"
@@ -2513,147 +4006,147 @@ class _ViewInformationState extends State<ViewInformation> {
                                                                     .shrink(),
                                                           ),
                                                         ),
-                                                        Obx(
-                                                          () => _selectedOption ==
-                                                                  'yes'.tr
-                                                              ? Row(
-                                                                  children: [
-                                                                    Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        border: Border.all(
-                                                                            color:
-                                                                                Colors.black,
-                                                                            width: 0.5),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(5.0),
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.22,
-                                                                      height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height *
-                                                                          0.05,
-                                                                      child:
-                                                                          DropdownButtonFormField(
-                                                                        decoration:
-                                                                            const InputDecoration(
-                                                                          contentPadding:
-                                                                              EdgeInsets.only(bottom: 12),
-                                                                          border:
-                                                                              InputBorder.none,
-                                                                        ),
-                                                                        value:
-                                                                            dropdownvalue,
-                                                                        items: item1.map((String
-                                                                            items) {
-                                                                          return DropdownMenuItem(
-                                                                            value:
-                                                                                items,
-                                                                            child:
-                                                                                Center(
-                                                                              child: Text(
-                                                                                "  $items",
-                                                                                //  textAlign: AlignmentDirectional.topCenter,
-                                                                              ),
-                                                                            ),
-                                                                          );
-                                                                        }).toList(),
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          color:
-                                                                              Colors.black,
-                                                                          fontSize:
-                                                                              12,
-                                                                        ),
-                                                                        onChanged:
-                                                                            (String?
-                                                                                newValue) {
-                                                                          setState(
-                                                                              () {
-                                                                            dropdownvalue =
-                                                                                newValue!;
-                                                                          });
-                                                                        },
-                                                                        alignment:
-                                                                            Alignment.center,
-                                                                        elevation:
-                                                                            0,
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      width: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width *
-                                                                          0.15,
-                                                                      height: MediaQuery.of(context)
-                                                                              .size
-                                                                              .height *
-                                                                          0.05,
-                                                                      child:
-                                                                          TextFormField(
-                                                                        controller:
-                                                                            discount,
-                                                                        onChanged:
-                                                                            (val) {
-                                                                          if (dropdownvalue == "percentage".tr &&
-                                                                              val.replaceAll('0', '') !=
-                                                                                  "") {
-                                                                            dsct = int.parse(val) >= 100
-                                                                                ? totalAppointmentPrice.toString()
-                                                                                : ((totalAppointmentPrice - ((totalAppointmentPrice / 100) * int.parse(val)))).toString();
-                                                                          } else if (dropdownvalue != "" &&
-                                                                              val.replaceAll('0', '') !=
-                                                                                  "") {
-                                                                            dsct = double.parse(val) > totalAppointmentPrice
-                                                                                ? totalAppointmentPrice.toString()
-                                                                                : (totalAppointmentPrice - int.parse(val)).toString();
-                                                                          } else if (discount.text.isEmpty ||
-                                                                              val.replaceAll('0', '') == "") {
-                                                                            dsct =
-                                                                                "0.0";
-                                                                          }
-                                                                          setState(
-                                                                              () {});
-                                                                        },
-                                                                        keyboardType:
-                                                                            TextInputType.number,
-                                                                        decoration:
-                                                                            InputDecoration(
-                                                                          contentPadding: EdgeInsets.symmetric(
-                                                                              vertical: Get.height * 0.01,
-                                                                              horizontal: Get.width * 0.02),
-                                                                          filled:
-                                                                              true,
-                                                                          fillColor:
-                                                                              Colors.white,
-                                                                          hintText:
-                                                                              dropdownvalue,
-                                                                          border:
-                                                                              OutlineInputBorder(
-                                                                            borderSide:
-                                                                                const BorderSide(color: Colors.black),
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(5.0),
-                                                                          ),
-                                                                        ),
-                                                                        style:
-                                                                            const TextStyle(
-                                                                          color:
-                                                                              Colors.black, // Text color
-                                                                          fontSize:
-                                                                              12.0, // Text size
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              : const SizedBox(),
-                                                        ),
+                                                        // Obx(
+                                                        //   () => _selectedOption ==
+                                                        //           'yes'.tr
+                                                        //       ? Row(
+                                                        //           children: [
+                                                        //             Container(
+                                                        //               decoration:
+                                                        //                   BoxDecoration(
+                                                        //                 border: Border.all(
+                                                        //                     color:
+                                                        //                         Colors.black,
+                                                        //                     width: 0.5),
+                                                        //                 borderRadius:
+                                                        //                     BorderRadius.circular(5.0),
+                                                        //                 color: Colors
+                                                        //                     .white,
+                                                        //               ),
+                                                        //               width: MediaQuery.of(context)
+                                                        //                       .size
+                                                        //                       .width *
+                                                        //                   0.22,
+                                                        //               height: MediaQuery.of(context)
+                                                        //                       .size
+                                                        //                       .height *
+                                                        //                   0.05,
+                                                        //               child:
+                                                        //                   DropdownButtonFormField(
+                                                        //                 decoration:
+                                                        //                     const InputDecoration(
+                                                        //                   contentPadding:
+                                                        //                       EdgeInsets.only(bottom: 12),
+                                                        //                   border:
+                                                        //                       InputBorder.none,
+                                                        //                 ),
+                                                        //                 value:
+                                                        //                     dropdownvalue,
+                                                        //                 items: item1.map((String
+                                                        //                     items) {
+                                                        //                   return DropdownMenuItem(
+                                                        //                     value:
+                                                        //                         items,
+                                                        //                     child:
+                                                        //                         Center(
+                                                        //                       child: Text(
+                                                        //                         "  $items",
+                                                        //                         //  textAlign: AlignmentDirectional.topCenter,
+                                                        //                       ),
+                                                        //                     ),
+                                                        //                   );
+                                                        //                 }).toList(),
+                                                        //                 style:
+                                                        //                     const TextStyle(
+                                                        //                   color:
+                                                        //                       Colors.black,
+                                                        //                   fontSize:
+                                                        //                       12,
+                                                        //                 ),
+                                                        //                 onChanged:
+                                                        //                     (String?
+                                                        //                         newValue) {
+                                                        //                   setState(
+                                                        //                       () {
+                                                        //                     dropdownvalue =
+                                                        //                         newValue!;
+                                                        //                   });
+                                                        //                 },
+                                                        //                 alignment:
+                                                        //                     Alignment.center,
+                                                        //                 elevation:
+                                                        //                     0,
+                                                        //               ),
+                                                        //             ),
+                                                        //             SizedBox(
+                                                        //               width: MediaQuery.of(context)
+                                                        //                       .size
+                                                        //                       .width *
+                                                        //                   0.15,
+                                                        //               height: MediaQuery.of(context)
+                                                        //                       .size
+                                                        //                       .height *
+                                                        //                   0.05,
+                                                        //               child:
+                                                        //                   TextFormField(
+                                                        //                 controller:
+                                                        //                     discount,
+                                                        //                 onChanged:
+                                                        //                     (val) {
+                                                        //                   if (dropdownvalue == "percentage".tr &&
+                                                        //                       val.replaceAll('0', '') !=
+                                                        //                           "") {
+                                                        //                     dsct = int.parse(val) >= 100
+                                                        //                         ? totalAppointmentPrice.toString()
+                                                        //                         : ((totalAppointmentPrice - ((totalAppointmentPrice / 100) * int.parse(val)))).toString();
+                                                        //                   } else if (dropdownvalue != "" &&
+                                                        //                       val.replaceAll('0', '') !=
+                                                        //                           "") {
+                                                        //                     dsct = double.parse(val) > totalAppointmentPrice
+                                                        //                         ? totalAppointmentPrice.toString()
+                                                        //                         : (totalAppointmentPrice - int.parse(val)).toString();
+                                                        //                   } else if (discount.text.isEmpty ||
+                                                        //                       val.replaceAll('0', '') == "") {
+                                                        //                     dsct =
+                                                        //                         "0.0";
+                                                        //                   }
+                                                        //                   setState(
+                                                        //                       () {});
+                                                        //                 },
+                                                        //                 keyboardType:
+                                                        //                     TextInputType.number,
+                                                        //                 decoration:
+                                                        //                     InputDecoration(
+                                                        //                   contentPadding: EdgeInsets.symmetric(
+                                                        //                       vertical: Get.height * 0.01,
+                                                        //                       horizontal: Get.width * 0.02),
+                                                        //                   filled:
+                                                        //                       true,
+                                                        //                   fillColor:
+                                                        //                       Colors.white,
+                                                        //                   hintText:
+                                                        //                       dropdownvalue,
+                                                        //                   border:
+                                                        //                       OutlineInputBorder(
+                                                        //                     borderSide:
+                                                        //                         const BorderSide(color: Colors.black),
+                                                        //                     borderRadius:
+                                                        //                         BorderRadius.circular(5.0),
+                                                        //                   ),
+                                                        //                 ),
+                                                        //                 style:
+                                                        //                     const TextStyle(
+                                                        //                   color:
+                                                        //                       Colors.black, // Text color
+                                                        //                   fontSize:
+                                                        //                       12.0, // Text size
+                                                        //                 ),
+                                                        //               ),
+                                                        //             ),
+                                                        //           ],
+                                                        //         )
+                                                        //       : const SizedBox(),
+                                                        // ),
                                                       ],
                                                     )
                                                   : const SizedBox.shrink(),
@@ -2768,7 +4261,6 @@ class _ViewInformationState extends State<ViewInformation> {
                                                     alignment:
                                                         Alignment.centerRight,
                                                     child: SizedBox(
-                                                      height: Get.height * 0.05,
                                                       width: Get.width * 0.4,
                                                       child: ElevatedButton(
                                                         onPressed: () async {
@@ -2888,7 +4380,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           //           textAlign: TextAlign.center,
                                           //         ),
                                           //         Text(
-                                          //           "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                          //           "${widget.user.paymentstatusname ?? " "} ",
                                           //           style: GoogleFonts.poppins(
                                           //             fontSize: 12,
                                           //             color: Colors.white,
@@ -2902,7 +4394,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           widget.user.status == "In Route"
                                               ? SizedBox(
                                                   height: Get.height * 0.05,
-                                                  width: Get.width * 0.88,
+                                                  width: Get.width * 0.87,
                                                   child: ElevatedButton(
                                                     onPressed: () async {
                                                       isLoading = true;
@@ -2936,7 +4428,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                                             timeInSecForIosWeb:
                                                                 1,
                                                             backgroundColor:
-                                                                Colors.red,
+                                                                Colors.green,
                                                             textColor:
                                                                 Colors.white,
                                                             fontSize: 16.0);
@@ -2980,130 +4472,202 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   ),
                                                 )
                                               : const SizedBox.shrink(),
-                                          widget.user.status == "In Route"
-                                              ? SizedBox(
-                                                  height: Get.height * 0.07)
-                                              : const SizedBox.shrink(),
-                                          widget.user.status ==
-                                                  "Sample Delivered"
-                                              ? SizedBox(
-                                                  height: Get.height * 0.05,
-                                                  width: Get.width * 0.88,
-                                                  child: ElevatedButton(
-                                                      onPressed: () {
-                                                        isLoading = true;
-                                                        setState(() {});
-                                                        try {
-                                                          CompleteRide(
-                                                              widget.user);
-                                                          setState(() {
-                                                            isLoading = false;
-                                                          });
-                                                        } catch (e) {
-                                                          setState(() {
-                                                            isLoading = false;
-                                                          });
-                                                        }
-                                                        setState(() {
-                                                          isLoading = false;
-                                                        });
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              widget.user.status ==
+                                                      "Sample Delivered"
+                                                  ? SizedBox(
+                                                      width: Get.width * 0.4,
+                                                      child: ElevatedButton(
+                                                          onPressed: () async {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            PdfViewerPage(
+                                                                              url: widget.user.InvoiceURL,
+                                                                            )));
+                                                            log("Image tapped");
+                                                          },
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.green,
+                                                            // fixedSize: const Size(140, 4),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15), // Set the border radius here
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            "Print".tr,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .white),
+                                                          )),
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                              SizedBox(
+                                                width: Get.width * 0.075,
+                                              ),
+                                              widget.user.status == "In Route"
+                                                  ? SizedBox(
+                                                      height: Get.height * 0.02)
+                                                  : const SizedBox.shrink(),
+                                              widget.user.status ==
+                                                      "Sample Delivered"
+                                                  ? SizedBox(
+                                                      // height: Get.height * 0.04,
+                                                      width: Get.width * 0.4,
+                                                      child: ElevatedButton(
+                                                          onPressed: () {
+                                                            isLoading = true;
+                                                            setState(() {});
+                                                            try {
+                                                              CompleteRide(
+                                                                  widget.user);
+                                                              setState(() {
+                                                                isLoading =
+                                                                    false;
+                                                              });
+                                                            } catch (e) {
+                                                              setState(() {
+                                                                isLoading =
+                                                                    false;
+                                                              });
+                                                            }
+                                                            setState(() {
+                                                              isLoading = false;
+                                                            });
 
-                                                        showDialog<void>(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return CupertinoAlertDialog(
-                                                              content: Column(
-                                                                children: [
-                                                                  const SizedBox(
-                                                                    height: 30,
-                                                                  ),
-                                                                  Image.asset(
-                                                                      'assets/show.png'),
-                                                                  const SizedBox(
-                                                                    height: 20,
-                                                                  ),
-                                                                  Align(
-                                                                    alignment:
-                                                                        Alignment
-                                                                            .center,
-                                                                    child: Text(
-                                                                      'thankyou'
-                                                                          .tr,
-                                                                      style: GoogleFonts
-                                                                          .poppins(
-                                                                        fontSize:
-                                                                            20,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                      ),
+                                                            showDialog<void>(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return Padding(
+                                                                  padding: EdgeInsets.only(
+                                                                      top: Get.height *
+                                                                          0.15),
+                                                                  child:
+                                                                      CupertinoAlertDialog(
+                                                                    content:
+                                                                        Column(
+                                                                      children: [
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                        Image.asset(
+                                                                            'assets/show.png'),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              20,
+                                                                        ),
+                                                                        Align(
+                                                                          alignment:
+                                                                              Alignment.bottomCenter,
+                                                                          child:
+                                                                              Text(
+                                                                            'thankyou'.tr,
+                                                                            style:
+                                                                                GoogleFonts.poppins(
+                                                                              fontSize: 20,
+                                                                              fontWeight: FontWeight.bold,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              30,
+                                                                        ),
+                                                                      ],
                                                                     ),
+                                                                    actions: <Widget>[
+                                                                      CupertinoButton(
+                                                                        color: ColorManager
+                                                                            .kDarkBlue,
+                                                                        borderRadius: const BorderRadius
+                                                                            .all(
+                                                                            Radius.circular(10.0)),
+                                                                        child:
+                                                                            Text(
+                                                                          'Back'
+                                                                              .tr,
+                                                                        ),
+                                                                        onPressed:
+                                                                            () async {
+                                                                          if (AuthController.i.today ==
+                                                                              "today") {
+                                                                            Navigator.pushReplacement(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                builder: (context) => TodayAppoinments(empId: widget.empId),
+                                                                              ),
+                                                                            );
+                                                                          } else if (AuthController.i.today ==
+                                                                              "history") {
+                                                                            Navigator.pushReplacement(
+                                                                              context,
+                                                                              MaterialPageRoute(
+                                                                                builder: (context) => AppointmentHistory(empId: widget.empId),
+                                                                              ),
+                                                                            );
+                                                                          }
+                                                                        },
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                  const SizedBox(
-                                                                    height: 30,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              actions: <Widget>[
-                                                                CupertinoButton(
-                                                                  color: ColorManager
-                                                                      .kDarkBlue,
-                                                                  borderRadius:
-                                                                      const BorderRadius
-                                                                          .all(
-                                                                          Radius.circular(
-                                                                              5.0)),
-                                                                  child: Text(
-                                                                    'backhome'
-                                                                        .tr,
-                                                                  ),
-                                                                  onPressed:
-                                                                      () async {
-                                                                    Navigator.push(
-                                                                        context,
-                                                                        MaterialPageRoute(
-                                                                            builder: (context) => Dashboard(
-                                                                                  empId: widget.empId,
-                                                                                  userName: userprofile?.fullName ?? "",
-                                                                                )));
-                                                                  },
-                                                                ),
-                                                              ],
+                                                                );
+                                                              },
                                                             );
                                                           },
-                                                        );
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            Colors.white,
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.circular(
-                                                                  15), // Set the border radius here
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                        "ridecompleted".tr,
-                                                        style:
-                                                            GoogleFonts.poppins(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                color: Colors
-                                                                    .blue),
-                                                      )),
-                                                )
-                                              : const SizedBox.shrink(),
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.white,
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          15), // Set the border radius here
+                                                            ),
+                                                          ),
+                                                          child: Text(
+                                                            "Completed".tr,
+                                                            style: GoogleFonts
+                                                                .poppins(
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    color: Colors
+                                                                        .blue),
+                                                          )),
+                                                    )
+                                                  : const SizedBox.shrink(),
+                                            ],
+                                          ),
                                           widget.user.status ==
                                                   "Sample Delivered"
                                               ? SizedBox(
-                                                  height: Get.height * 0.07)
+                                                  height: Get.height * 0.01)
                                               : const SizedBox.shrink(),
-                                          if (widget.user.status ==
-                                              "Ride Arrived")
+                                          if (widget.user.StatusValue == 20)
                                             Obx(
                                               () => _selectedOption == 'yes'.tr
                                                   ? Center(
@@ -3170,104 +4734,173 @@ class _ViewInformationState extends State<ViewInformation> {
                                                   : const SizedBox(),
                                             ),
                                         ]),
-                                        Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.end,
-                                          children: [
-                                            if (widget.user.status ==
-                                                "Ride Arrived")
-                                              Row(
+                                        widget.user.paymentstatusvalue != "1"
+                                            ? Column(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.end,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.end,
                                                 children: [
-                                                  Text(
-                                                    "amount".tr,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
+                                                  if (widget.user.status ==
+                                                      "Consent Received")
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "amount".tr,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ),
+                                                        Text(
+                                                          widget.user.amount
+                                                                  .toString() ??
+                                                              "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ),
+                                                      ],
                                                     ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                  Text(
-                                                    "$totalAppointmentPrice ",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
+                                                  if (widget.user.status ==
+                                                      "Consent Received")
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "discount".tr,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ),
+                                                        LabInvestigationController
+                                                                    .i
+                                                                    .appointments
+                                                                    .isNotEmpty &&
+                                                                LabInvestigationController
+                                                                        .i
+                                                                        .appointments[
+                                                                            0]
+                                                                        .discountType ==
+                                                                    2
+                                                            ? Text(
+                                                                LabInvestigationController
+                                                                        .i
+                                                                        .appointments
+                                                                        .isNotEmpty
+                                                                    ? "${LabInvestigationController.i.appointments[0].discount ?? "0.0"}%"
+                                                                    : "0.0%",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .poppins(
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right,
+                                                              )
+                                                            : Text(
+                                                                LabInvestigationController
+                                                                        .i
+                                                                        .appointments
+                                                                        .isNotEmpty
+                                                                    ? "${LabInvestigationController.i.appointments[0].discount ?? "0.0"}"
+                                                                    : "0.0",
+                                                                style:
+                                                                    GoogleFonts
+                                                                        .poppins(
+                                                                  fontSize: 10,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  color: Colors
+                                                                      .white,
+                                                                ),
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .right,
+                                                              )
+                                                      ],
                                                     ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
+                                                  if (widget.user.status ==
+                                                      "Consent Received")
+                                                    Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        Text(
+                                                          "totalamount".tr,
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ),
+                                                        Text(
+                                                          LabInvestigationController
+                                                                  .i
+                                                                  .appointments
+                                                                  .isNotEmpty
+                                                              ? LabInvestigationController
+                                                                      .i
+                                                                      .appointments[
+                                                                          0]
+                                                                      .total
+                                                                      .toString() ??
+                                                                  "0.0"
+                                                              : "",
+                                                          style: GoogleFonts
+                                                              .poppins(
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Colors.white,
+                                                          ),
+                                                          textAlign:
+                                                              TextAlign.right,
+                                                        ),
+                                                      ],
+                                                    ),
                                                 ],
-                                              ),
-                                            if (widget.user.status ==
-                                                "Ride Arrived")
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    "discount".tr,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                  Text(
-                                                    "${discount.text.isNotEmpty ? dropdownvalue == "percentage".tr && double.parse(discount.text.toString()) >= 100 ? totalAppointmentPrice : (totalAppointmentPrice) - double.parse(dsct ?? "0.0") : 0.0} ",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                ],
-                                              ),
-                                            if (widget.user.status ==
-                                                "Ride Arrived")
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  Text(
-                                                    "totalamount".tr,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                  Text(
-                                                    "${discount.text.isNotEmpty && discount.text.toString().replaceAll('.', '').replaceAll('0', '') != "" ? dropdownvalue != "percentage".tr && (double.parse(discount.text)).toString() == totalAppointmentPrice.toString() ? 0.0 : dropdownvalue == "percentage".tr && discount.text.toString() == '100' ? 0.0 : dsct : totalAppointmentPrice} ",
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 10,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.white,
-                                                    ),
-                                                    textAlign: TextAlign.right,
-                                                  ),
-                                                ],
-                                              ),
-                                          ],
-                                        )
+                                              )
+                                            : const SizedBox.shrink(),
                                       ]),
                                 ),
-                              if (widget.user.status == "Ride Arrived")
+                              if (widget.user.status == "Consent Received")
                                 SizedBox(
                                     width:
                                         MediaQuery.of(context).size.width * 1,
+                                    // height: MediaQuery.of(context).size.height *
+                                    //     0.06,
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -3281,7 +4914,7 @@ class _ViewInformationState extends State<ViewInformation> {
                                           textAlign: TextAlign.center,
                                         ),
                                         Text(
-                                          "${widget.user.paymentstatusname ?? " Unpaid"} ",
+                                          "${widget.user.paymentstatusname ?? " "} ",
                                           style: GoogleFonts.poppins(
                                             fontSize: 12,
                                             color: Colors.white,
@@ -3290,70 +4923,53 @@ class _ViewInformationState extends State<ViewInformation> {
                                         ),
                                       ],
                                     )),
-                              if (widget.user.status == "Pending")
-                                SizedBox(
-                                  height: Get.height * 0.07,
-                                ),
-                              if (widget.user.status == "Pending")
-                                Center(
-                                  child: Padding(
-                                    padding:
-                                        EdgeInsets.only(top: Get.height * 0.02),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          "order".tr,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                        ),
-                                        Text(
-                                          "${widget.user.LabNo ?? " #0001"} ",
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                              // if (widget.user.status == "Pending")
+                              //   SizedBox(
+                              //     height: Get.height * 0.03,
+                              //   ),
+                              // if (widget.user.status == "Pending" ||
+                              //     widget.user.status == "Ride Arrived" ||
+                              //     widget.user.status == "Ride Started" ||
+                              //     widget.user.status == "Consent Received" ||
+                              //     widget.user.status == "Booked" ||
+                              //     widget.user.status == "Sample Collected")
+                              //   Center(
+                              //     child: Padding(
+                              //       padding:
+                              //           EdgeInsets.only(top: Get.height * 0.01),
+                              //       child: Row(
+                              //         mainAxisAlignment:
+                              //             MainAxisAlignment.center,
+                              //         children: [
+                              //           Text(
+                              //             "App. #:".tr,
+                              //             style: GoogleFonts.poppins(
+                              //               fontSize: 12,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.white,
+                              //             ),
+                              //             textAlign: TextAlign.center,
+                              //           ),
+                              //           Text(
+                              //             "${widget.user.LabNo ?? " #0001"} ",
+                              //             style: GoogleFonts.poppins(
+                              //               fontSize: 10,
+                              //               fontWeight: FontWeight.bold,
+                              //               color: Colors.white,
+                              //             ),
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
 
-                              if (widget.user.status == "Pending")
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "paymentstatus".tr,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Text(
-                                      "${widget.user.paymentstatusname ?? " Unpaid"} ",
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12,
-                                        color: Colors.white,
-                                      ),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              widget.user.status == "Sample Collected"
-                                  ? SizedBox(height: Get.height * 0.07)
-                                  : const SizedBox.shrink(),
+                              // widget.user.status == "Sample Collected"
+                              //     ? SizedBox(height: Get.height * 0.04)
+                              //     : const SizedBox.shrink(),
                               widget.user.status == "Sample Collected"
                                   ? Center(
                                       child: Text(
-                                        "Total Amount: $totalAppointmentPrice ",
+                                        "Total Amount: ${widget.user.totalamount ?? "0.0"} ",
                                         style: GoogleFonts.poppins(
                                           fontSize: 12,
                                           fontWeight: FontWeight.bold,
@@ -3437,4 +5053,33 @@ class _ViewInformationState extends State<ViewInformation> {
                   )),
                 ]))));
   }
+}
+
+String formatDateWithTime(DateTime dateTime, {bool isEndOfDay = false}) {
+  if (isEndOfDay) {
+    return DateFormat("yyyy-MM-dd HH:mm:ss").format(
+        DateTime(dateTime.year, dateTime.month, dateTime.day, 23, 59, 59));
+  } else {
+    return DateFormat("yyyy-MM-dd HH:mm:ss")
+        .format(DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0));
+  }
+}
+
+String formatDateFromLastYear(DateTime dateTime) {
+  DateTime lastYear = DateTime(dateTime.year - 1, dateTime.month, dateTime.day);
+  return DateFormat("yyyy-MM-dd").format(lastYear);
+}
+
+// String formatEndOfMonth(DateTime dateTime) {
+//   DateTime lastDayOfMonth = DateTime(dateTime.year, dateTime.month + 1, 0);
+//   return DateFormat("yyyy-MM-dd").format(lastDayOfMonth);
+// }
+String formatEndOfMonth(DateTime dateTime) {
+  DateTime lastDayOfMonth = DateTime(dateTime.year, dateTime.month + 1, 0);
+  return DateFormat("yyyy-MM-dd")
+      .format(lastDayOfMonth.add(const Duration(days: 1)));
+}
+
+String formatDate(DateTime dateTime) {
+  return DateFormat("yyyy-MM-dd").format(dateTime);
 }

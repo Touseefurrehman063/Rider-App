@@ -1,15 +1,26 @@
 class apointmentdetail {
   dynamic id;
-  dynamic subServiceId;
+  String? subServiceId;
   dynamic subServiceName;
   dynamic price;
-  dynamic paymentMethodId;
-  dynamic branchLocationId;
+  String? paymentMethodId;
+  String? branchLocationId;
   dynamic userId;
   dynamic patientId;
-  dynamic appointmentNo;
-  dynamic vatamount;
-  dynamic vatpercentage;
+  String? appointmentNo;
+  String? status;
+  dynamic statusValue;
+  dynamic vATPercentage;
+  dynamic vATAmount;
+  dynamic typeBit;
+  dynamic subServiceQuantity;
+  String? bookingDate;
+  String? startTime;
+  String? address;
+  String? patientName;
+  dynamic total;
+  dynamic discountType;
+  dynamic discount;
 
   apointmentdetail(
       {this.id,
@@ -21,8 +32,19 @@ class apointmentdetail {
       this.userId,
       this.patientId,
       this.appointmentNo,
-      this.vatamount,
-      this.vatpercentage});
+      this.status,
+      this.statusValue,
+      this.vATPercentage,
+      this.vATAmount,
+      this.typeBit,
+      this.subServiceQuantity,
+      this.bookingDate,
+      this.startTime,
+      this.address,
+      this.patientName,
+      this.total,
+      this.discountType,
+      this.discount});
 
   apointmentdetail.fromJson(Map<String, dynamic> json) {
     id = json['Id'];
@@ -34,8 +56,19 @@ class apointmentdetail {
     userId = json['UserId'];
     patientId = json['PatientId'];
     appointmentNo = json['AppointmentNo'];
-    vatamount=json['VATAmount'];
-    vatpercentage=json['VATPercentage'];
+    status = json['Status'];
+    statusValue = json['StatusValue'];
+    vATPercentage = json['VATPercentage'];
+    vATAmount = json['VATAmount'];
+    typeBit = json['TypeBit'];
+    subServiceQuantity = json['SubServiceQuantity'];
+    bookingDate = json['BookingDate'];
+    startTime = json['StartTime'];
+    address = json['Address'];
+    patientName = json['PatientName'];
+    total = json['Total'];
+    discountType = json['DiscountType'];
+    discount = json['Discount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -49,8 +82,19 @@ class apointmentdetail {
     data['UserId'] = userId;
     data['PatientId'] = patientId;
     data['AppointmentNo'] = appointmentNo;
-    data['VATPercentage']=vatpercentage;
-    data['VATAmount']=vatamount;
+    data['Status'] = status;
+    data['StatusValue'] = statusValue;
+    data['VATPercentage'] = vATPercentage;
+    data['VATAmount'] = vATAmount;
+    data['TypeBit'] = typeBit;
+    data['SubServiceQuantity'] = subServiceQuantity;
+    data['BookingDate'] = bookingDate;
+    data['StartTime'] = startTime;
+    data['Address'] = address;
+    data['PatientName'] = patientName;
+    data['Total'] = total;
+    data['DiscountType'] = discountType;
+    data['Discount'] = discount;
     return data;
   }
 }

@@ -56,7 +56,7 @@ class _Welcome1State extends State<Welcome1> {
                 Padding(
                   padding: EdgeInsets.only(bottom: Get.height * 0.5),
                   child: Text(
-                    'helpful'.tr,
+                    'Sidra Rider',
                     style: GoogleFonts.poppins(
                       textStyle: const TextStyle(
                         color: Colors.white,
